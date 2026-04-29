@@ -1,0 +1,205 @@
+Prompt Endings:
+Show me the snippets of code and functions needed for me to paste in. Show me exactly where to place each piece of code with good detail and context so I can be confident with my placement. I really like it when you show me where the old code is that I will now be replacing. I really like where the game is at right now so let's make sure we keep it intact while doing this.
+
+
+past imp dungeons regular units tier 10, bosses tier 15.
+
+-----------------------
+---At Some Point Do---
+
+arnold tutorial screen (basically a q/a)
+
+gear faster maybe?
+
+----------------
+---On Release---
+disable '`' devconsole
+
+---------------
+---------------
+Map Buttons
+
+V: Village
+First village, clicking pulls up the tavern ui.
+The village is a quaint snowy old style village settlement. A small keep, a tavern, scattered houses, a gate to the outside world. A small keep is to the west, the tavern in the center, and the gate to the east, opening up to the outside world, where the next tile will go.
+
+1: Easy - Satyrs Glade, Murkin Wetlands, Icy Highland
+This area has a snowy glade of evergreens in the west and south, wetlands to the north, and the icy highlands to the east.
+
+2: Medium - Sorrowshade Hollow, Forgotten Crypt, Bandit Den
+This area has the wetlands from the south merge into the sorrowshade hollow. The hollow is a haunted woods, dark and mysterious and dangerous with purple leaves filled trees. The West side of this wood falls way to more and more dead and twisted trees due to the presence of the crypt. The purple hollow transitions to a beautiful autumn wood with orange leaves, with a nice woods just north of the purple wood. The purple wood takes up the rest of the east and south as well.
+
+3: Hard - Gold Mine, Centaur Cliffs, Orc Warlands
+This area has orange autumn trees in the south sweeping across into the west, deserted warlands with red orc battle flag and tents in the north north west, and to the north east a gold mine set into some rocky mountains with just a touch of snow.
+
+4: Forsaken - Snapdragon Swamp, Lizardman Volcano, Puzzle Sanctuary
+This area has dangerous swamplands to the south east with purple and green plants, The north west has dangerous volcanos, and the north east has a purple circular portal with an icy atmosphere and a giant stone cold black citadel behind that portal.
+
+5: Nightmare - Bloodleaf Depths, Naga Ruins, Forgotten Sewers
+This area has tall ancient trees that are like sequoia trees but with slightly more red in the bark texture. These trees are all over the top of the entirety of the area. There is a small clearing in the south that contains water and naga building ruins in the water. To the far west there is a tiny clearing showing the top of a drain with green gas rising out of it over the treeline.
+
+6. Hell - Oblivion, Abyssal Labyrinth, Scorching Crater
+This area has burning lava spilling out from a volcano in the south west, lava on fire rolling over the land. the lava flaming river runs from the volcano in the south west to a scorching crater located in the south east. There is oblivion everywhere, fires, and cracked black ground, flaming lava pools. In the north east there is a gated hedgemaze, where the hedge is actually abyssal purple walls hexed and terrifying, with a tiny clearing in the middle of the maze.
+
+7. Impossible - Tristam Plague, City of Illusions, Dragon Fortress
+This area has a plagued village to the north. The village has a green haze and is deserted and run down. There is another village of similar scale to the south west. It has purple portals in all four corners of that village circle. In the south east there is an elevated platform of scorched ground that has weather interacting with it. There is a thunderstorm, a blizzard, a fire, and a shadow bolt, all interacting with this section.
+
+8. Mythical - Marine Fortress, Astral Nexus, Temple of Time
+This area is off the coast, it's got the tips of a fortress rising out of the water, insinuating that the fortress is over the surface. This is in the south east closer to land. The north west features a temple on an island inside a time bubble. It appears from the future. The top of the area contains a floating cathedral of planetary study.
+
+9. Divine - Celestial Garden, Throne of Storms, Heart of the World
+
+C: City
+A: Arena
+
+
+-Ascended
+Starlight Citadel – Cosmic Archon (Ascended 1) (Lv 500)
+Origin Core – Primeval Entity (Ascended 2) (Lv 500)
+Final Aetherium – Eternal Singularity (Ascended 3) (Lv 500)
+
+
+
+---------------
+---------------
+New Dungeons (replace all #):
+Prompt 1 (dungeons.json, enemies.json, spells.json, spellLogic.js):
+
+DO NOT WRITE ANY CODE. WE ARE THEORY CRAFTING OUR DESIGNS BEFORE WRITING CODE.
+
+We have a turn based strategy game. We need to design our next # dungeons. The names of these dungeons are: #. I will attach the dungeons (dungeons.json), enemies (enemies.json), spells (spells.json), and the spell logic (spellLogic.js). Use these to get yourself familiar with our coding trends, our scaling, and how we format everything. For instance, every dungeon should have a final boss on wave 5. The dungeons from here on out will also have a boss on wave 3, and the final boss on wave 5. Both bosses will be the level of the dungeon. Other non boss units will scale between dungeon level - 20, and dungeon level as the waves go on. The first 2 waves can have 3 units each, the 3rd wave through the final wave should all have 5 units per wave. View our previous dungeons to see these trends. Notice that we have existing buffs and debuffs already listed, you can find these buffs and debuffs in battle.js as well as in our existing spells in spells.json. Any existing units should not be used in these dungeons, we will create fresh dungeon waves, units, spells, and spellLogic. We can use existing spells if you think it fits the theme of the dungeon, but feel free to create fresh, each spell will have it's own icon so recreating a similar spell is welcome rather than reusing where possible. This way I maintain the theme of each dungeon separately. Use our existing code and data as a guide for the new designs. Lean into the themes and get creative. I have one rule with theme, no spiders or similar arachnid style creatures.
+
+Before writing any code at all, analyze the previous trends and code. Figure out what exactly would be interesting to fight. They don't need to be impossibly difficult, or walk over weak, but we lets have it be interesting to fight. Utilize the buffs and debuffs, passives, aoe spells, healing and shielding, anything you consider to be interesting and thematical. Do not write code. This is the planning stage. Analyze, focus in on what is important here, and repeat back to me your designs. Really analyze and think. Pay attention to the details. Focus on good scaling and playability. Interesting concepts and designs that follow our thematics. If we need to make any modifications or additions to the battle system itself to implement certain spells please let me know and I can give you access to the file at a later time for those spells specifically. For now simply comment in the spelllogic for that spell that it needs further implementation, and let me know personally. Try your best to make all spells based on the current logic we have, without needing further implementation. The first spell should never be a passive, and should have 0 cooldown. The first spell is basic typically and deals a bit of damage. The rest of the spells are more creative. We want all spells to be based on current spell logic without needing new code inserted into the battle system if possible. Unless you have a really great idea, then ask specifically. All buffs and debuffs are already available. The buffs and debuffs available to you will be included below, as will the rules for stats per unit.
+
+Reminder of hard rules: No arachnids. Do not use matriarch or patriarch. For unit spells, the first spell has a cooldown of 0 and usually deals damage in some way. Spells can target enemy, all enemies, ally, all allies, or self. There is no adjacent logic and we don't want it. Every unit should have 2-3 spells. Bosses have 3 spells + 1 passive spell. Remember you can add passives as well, but passives 'count' as a spell, just cannot be the first spell. Passives are more rare and are 1-2 passives per dungeon at most. Spells can use any buff/debuff already included in the list below. Create spells using logic in spellLogic.js. You can modify/add to spellLogic.js itself, I just don't want you to need the battle.js file itself, if there is additional logic required in the battle system itself I would prefer a different concept. Each dungeon is 5 waves. The waves 3-5 are 5 units each. Wave 3 has a boss, and wave 5 has the final boss.
+
+// Buffs
+    'Boss': '50% stun resistance, 25% damage reduction',
+    'Increase Attack': '+50% attack damage',
+    'Increase Speed': '+33% action bar progress',
+    'Increase Defense': '+25% damage reduction, and -25% damage taken',
+    'Immune': 'Cannot gain debuffs',
+    'Shield': `Absorbs ${Math.round(buffDebuff.shieldAmount || 0)} damage`,
+    'Frost Armor': '+25% damage reduction, attackers are slowed',
+            
+            // Debuffs
+            'Reduce Attack': '-50% attack damage',
+            'Reduce Speed': '-33% action bar progress',
+            'Reduce Defense': '-25% damage reduction, and +25% damage taken',
+            'Blight': 'No health regen, cannot be healed',
+            'Bleed': 'Takes 5% max HP damage each turn',
+            'Stun': 'Cannot act on next turn',
+            'Taunt': 'Must attack the unit that taunted',
+            'Silence': 'Forces skill 1 attack on random enemy',
+            'Mark': '+25% damage taken, cannot gain buffs or evade'
+
+Below is our stats system for our units. The rules are fairly rigid. Treat these units as tier #, with bosses being tier #. Recognize the rules and how they work. Point pools for initial stats and modifier stats are separate. Point pools for attribute stats and non attribute stats are separate. These means 4 different point pools to work with. Again follow the theme and unit design for these.
+
+Show me the snippets of code and functions needed for me to paste in. Show me exactly where to place each piece of code with good detail and context so I can be confident with my placement. I really like it when you show me where the old code is that I will now be replacing. I really like where the game is at right now so let's make sure we keep it intact while doing this.
+
+# STAT SYSTEM
+## 1. INITIAL STATS (Level 1 Base Values)
+Points to distribute by tier:
+Tier 0: 12 pts (min 3/stat)    Tier 3: 36 pts (min 6/stat)
+Tier 1: 16 pts (min 4/stat)    Tier 4: 48 pts (min 8/stat)
+Tier 2: 24 pts (min 5/stat)    Tier 5+: 48 + tier*2 (min tier+3 per stat)
+Attribute costs: 1 point = 1 STR/AGI/INT
+
+Non-attribute costs (max 50% in any stat) - (Tier 1 gets 16 points for attributes, and an additional 16 points for non attributes, point pools are separate):
+- 1 point = 10 HP | 0.67 Regen | 1 Attack | 0.67 Speed | 1.33 Armor | 2 Resist
+
+## 2. MODIFIERS (Per-Level Scaling)
+### Attributes (Required totals):
+Tier 0: 3.0 (min 1.0/stat)     Tier 3: 9.0 (min 2.0/stat)
+Tier 1: 4.0 (min 1.25/stat)    Tier 4: 12.0 (min 2.5/stat)
+Tier 2: 6.0 (min 1.5/stat)     Tier 5+: 12.0 + tier/2 (min tier/2 per stat)
+
+### Non-Attributes:
+BASELINE (all classes get):
+- modHP: 2.5
+- modAttack: 0.1
+- modArmor: 0.01
+- modResist: 0.005
+
+BONUS POINTS by tier: 20/24/28/32/36 (tier 5+: 36 + tier/2)
+- 1 point = 0.1 modHP | 0.02 modAttack | 0.05 modArmor | 0.025 modResist
+
+Then after all the code is written, give me a list of all the spells or anything else that was added that will need special implementation into the battle system.
+
+We need to design our next # dungeons. The names of these dungeons are: #. #Describe theme/units/spells etc#
+
+I do not want you to write any code right now. I simply want you to help design the theme of the units and spells first. DO NOT WRITE CODE YET. Just design.
+
+
+
+
+
+
+
+
+
+
+Prompt 2:
+Go back over the rest of the spells and see if minor reworks could have them fit within our current spell logic. Remember we have spell logic helpers as well and passives that already exist. After checking and updating those spells we can start.
+
+Write for me all the code for the dungeon waves in the dungeons.json, all the enemies in enemies.json, all the spells in spells.json, so I can copy paste them all in. Remember when you are writing the units stats that you are following the stat rules that I have included at the bottom of this prompt.
+
+Below is our stats system for our units. The rules are fairly rigid. Treat these units as tier #, with bosses being tier #. Recognize the rules and how they work. Point pools for initial stats and modifier stats are separate. Point pools for attribute stats and non attribute stats are separate. These means 4 different point pools to work with. Again follow the theme and unit design for these.
+
+Show me the snippets of code and functions needed for me to paste in. Show me exactly where to place each piece of code with good detail and context so I can be confident with my placement. I really like it when you show me where the old code is that I will now be replacing. I really like where the game is at right now so let's make sure we keep it intact while doing this.
+
+# STAT SYSTEM
+## 1. INITIAL STATS (Level 1 Base Values)
+Points to distribute by tier:
+Tier 0: 12 pts (min 3/stat)    Tier 3: 36 pts (min 6/stat)
+Tier 1: 16 pts (min 4/stat)    Tier 4: 48 pts (min 8/stat)
+Tier 2: 24 pts (min 5/stat)    Tier 5+: 48 + tier*2 (min tier+3 per stat)
+Attribute costs: 1 point = 1 STR/AGI/INT
+
+Non-attribute costs (max 50% in any stat) - (Tier 1 gets 16 points for attributes, and an additional 16 points for non attributes, point pools are separate):
+- 1 point = 10 HP | 0.67 Regen | 1 Attack | 0.67 Speed | 1.33 Armor | 2 Resist
+
+## 2. MODIFIERS (Per-Level Scaling)
+### Attributes (Required totals):
+Tier 0: 3.0 (min 1.0/stat)     Tier 3: 9.0 (min 2.0/stat)
+Tier 1: 4.0 (min 1.25/stat)    Tier 4: 12.0 (min 2.5/stat)
+Tier 2: 6.0 (min 1.5/stat)     Tier 5+: 12.0 + tier/2 (min tier/2 per stat)
+
+### Non-Attributes:
+BASELINE (all classes get):
+- modHP: 2.5
+- modAttack: 0.1
+- modArmor: 0.01
+- modResist: 0.005
+
+BONUS POINTS by tier: 20/24/28/32/36 (tier 5+: 36 + tier/2)
+- 1 point = 0.1 modHP | 0.02 modAttack | 0.05 modArmor | 0.025 modResist
+
+Then after all the code is written, give me a list of all the spells or anything else that was added that will need special implementation into the battle system.
+
+
+
+
+
+
+
+Prompt 3 (battle.js, spellLogic.js, paste spells.json snippet from the above prompt output):
+attached: battle.js and spellLogic.js
+pasted: spells.json snippet
+
+Let's check some spells and see if they work in our current battle system and if their descriptions are accurate. Don't just guess, analyze and look at the details. Walk me through how this spell works step by step. Confirm each step along the way. Double check everything. If the spell doesn't work, explain why and provide the code that is needed, as well as the exact location on where to place that code with context. Hopefully we don't need more code in our battle.js system and can get this to work via our spellLogic.js. Potentially even using our helper functions if we can. Some of these spells may even need to be updated to use our helper functions or our updated battle.js hooks. If that is the case let us update them. Analyze the spell and it's implementation, and all the logic. Double and triple verify and check every detail. A lot of the spells are working great, so there might not be an issue, we are verifying and walking through each spell systematically.
+
+Look at the spellHelpers in spellLogic.js. Make sure we are using them where we can and not rewriting the same code over and over. Make sure the scaling in the json entry matches the scaling we use in the spellLogic.
+
+Every single spell that deals damage should have a base attack, a 1.0 attack scaling ratio, and a variable stat ratio like str, agi, or int. If spells don't deal damage they don't need this.
+
+We don't want to add debugging. we are simply verifying spells function in our current environment by walking through them logically. sometimes if it's a passive especially we might have forgotten to add additional implementation. some of these are simple and are already funcitioning perfectly. Some are just inconsistent by directly implementing themselves rather than using the spell helpers. do you understand now?
+Show me the snippets of code and functions needed for me to paste in. Show me exactly where to place each piece of code with good detail and context so I can be confident with my placement. I really like it when you show me where the old code is that I will now be replacing. I really like where the game is at right now so let's make sure we keep it intact while doing this. Below is the snippet pasted from our spells.json file.  Finally after confirming function, offer balancing feedback if applicable.
+
+//spells.json data
+
+
+
+
+
+

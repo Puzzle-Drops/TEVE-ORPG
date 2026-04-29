@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arena Team Generator</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        h2 {
+            color: #4CAF50;
+            margin-top: 30px;
+        }
+        .controls, .add-teams-section {
+            background-color: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .control-group {
+            display: inline-block;
+            margin-right: 20px;
+            vertical-align: middle;
+        }
+        label {
+            color: #e0e0e0;
+            margin-right: 10px;
+        }
+        input[type="number"], select {
+            background-color: #3d3d3d;
+            color: #e0e0e0;
+            border: 1px solid #555;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 120px;
+        }
+        select {
+            width: 180px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        #output {
+            background-color: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-size: 12px;
+            max-height: 600px;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .team-info {
+            background-color: #3d3d3d;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #4CAF50;
+        }
+        .copy-button {
+            background-color: #2196F3;
+            font-size: 14px;
+            padding: 8px 16px;
+        }
+        .copy-button:hover {
+            background-color: #1976D2;
+        }
+        .progress {
+            background-color: #3d3d3d;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .add-button {
+            background-color: #FF9800;
+        }
+        .add-button:hover {
+            background-color: #F57C00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Arena Team Generator</h1>
+        <p style="text-align: center; color: #888; margin-bottom: 20px;">
+            Generates teams 1-100 (levels 5-500) plus additional level 500 teams with Dragon Fortress items
+        </p>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="additionalTeams">Additional Level 500 Teams:</label>
+                <input type="number" id="additionalTeams" min="0" max="1000" value="10">
+            </div>
+            <button onclick="generateAllTeams()">Generate All Teams</button>
+            <button onclick="copyToClipboard()" class="copy-button">Copy JSON</button>
+        </div>
+
+        <h2>Add Teams by Item Set</h2>
+        <div class="add-teams-section">
+            <div class="control-group">
+                <label for="itemSet">Item Set:</label>
+                <select id="itemSet">
+                    <option value="glade">Satyr's Glade</option>
+                    <option value="wetland">Murkin Wetlands</option>
+                    <option value="icy">Icy Highland</option>
+                    <option value="hollow">Sorrowshade Hollow</option>
+                    <option value="crypt">Forgotten Crypt</option>
+                    <option value="bandit">Bandit Den</option>
+                    <option value="gold">Gold Mine</option>
+                    <option value="cliff">Tribal Cliffs</option>
+                    <option value="orc">Orc Warlands</option>
+                    <option value="swamp">Snapdragon Swamp</option>
+                    <option value="lizardman">Lizardman Volcano</option>
+                    <option value="puzzle">Puzzle Sanctuary</option>
+                    <option value="bloodleaf">Bloodleaf Depths</option>
+                    <option value="naga">Naga Ruins</option>
+                    <option value="sewer">Forgotten Sewers</option>
+                    <option value="oblivion">Oblivion</option>
+                    <option value="labyrinth">Abyssal Labyrinth</option>
+                    <option value="crater">Scorching Crater</option>
+                    <option value="plague">Tristam Plague</option>
+                    <option value="illusion">City of Illusions</option>
+                    <option value="dragon">Dragon Fortress</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="setLevel">Level:</label>
+                <input type="number" id="setLevel" min="5" max="500" step="5" value="500">
+            </div>
+            <button onclick="generateFiveTeams()" class="add-button">Generate 5 Teams</button>
+        </div>
+
+        <div id="progress" class="progress" style="display: none;"></div>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        const maleNames = ['Aelar', 'Brin', 'Dain', 'Finn', 'Hal', 'Kael', 'Liam', 'Magnus', 
+                           'Nolan', 'Owen', 'Quinn', 'Rowan', 'Soren', 'Thane', 'Ulric', 'Viktor'];
+        const femaleNames = ['Aria', 'Cara', 'Eira', 'Gwen', 'Ivy', 'Jade', 'Kira', 'Luna', 
+                             'Maya', 'Nova', 'Ophelia', 'Piper', 'Rose', 'Sage', 'Tara', 'Vera'];
+
+        const teamNamePrefixes = [
+            "Vanquishers", "Dominators", "Overlords", "Conquerors", "Destroyers", "Raiders",
+            "Guardians", "Champions", "Warriors", "Hunters", "Stalkers", "Assassins",
+            "Defenders", "Crusaders", "Knights", "Paladins", "Rangers", "Scouts",
+            "Slayers", "Executioners", "Reapers", "Harbingers", "Sentinels", "Watchers",
+            "Vanguards", "Elites", "Masters", "Lords", "Commanders", "Generals",
+            "Legends", "Heroes", "Saviors", "Protectors", "Avengers", "Vindicators",
+            "Titans", "Giants", "Colossi", "Behemoths", "Juggernauts", "Destroyers",
+            "Annihilators", "Obliterators", "Devastators", "Ravagers", "Marauders", "Pillagers",
+            "Berserkers", "Zealots", "Fanatics", "Maniacs", "Lunatics", "Psychopaths",
+            "Nightmares", "Terrors", "Horrors", "Fiends", "Demons", "Devils",
+            "Angels", "Seraphs", "Cherubs", "Archangels", "Celestials", "Divines",
+            "Immortals", "Eternals", "Timeless", "Ancients", "Primordials", "Originals",
+            "Alphas", "Omegas", "Primes", "Ultimates", "Supremes", "Absolutes",
+            "Perfects", "Flawless", "Immaculate", "Pristine", "Pure", "Sacred",
+            "Blessed", "Holy", "Divine", "Righteous", "Virtuous", "Noble",
+            "Royal", "Imperial", "Majestic", "Regal", "Sovereign", "Monarchs",
+            "Emperors", "Kings", "Princes", "Dukes", "Barons", "Knights",
+            "Legion", "Battalion", "Regiment", "Company", "Squad", "Unit",
+            "Force", "Army", "Brigade", "Division", "Corps", "Phalanx"
+        ];
+
+        const dungeonItems = {
+            glade: {
+                weapon: ['glade_fangblade', 'glade_shadowfang'],
+                chest: ['glade_hidewrap'],
+                head: ['glade_horncap'],
+                offhand: ['glade_wicker_guard'],
+                legs: ['glade_stepbinds'],
+                trinket: ['glade_focus']
+            },
+            wetland: {
+                weapon: ['wetland_blightmaul', 'wetland_murkspire'],
+                chest: ['wetland_soddenwrap'],
+                head: ['wetland_miretooth'],
+                offhand: ['wetland_brackenguard'],
+                legs: ['wetland_fenstompers'],
+                trinket: ['wetland_mirecharm']
+            },
+            icy: {
+                weapon: ['icy_howler', 'icy_frostfang'],
+                chest: ['icy_mauler_plate'],
+                head: ['icy_wolfhood'],
+                offhand: ['icy_fangguard'],
+                legs: ['icy_tundrastride'],
+                trinket: ['icy_shardcore']
+            },
+            hollow: {
+                weapon: ['hollow_whisperstaff', 'hollow_banshee_edge'],
+                chest: ['hollow_shroudmail'],
+                head: ['hollow_wailcrown'],
+                offhand: ['hollow_sorrowshield'],
+                legs: ['hollow_gloomsteps'],
+                trinket: ['hollow_tearstone']
+            },
+            crypt: {
+                weapon: ['crypt_bonecleaver', 'crypt_stitchblade'],
+                chest: ['crypt_stitchplate'],
+                head: ['crypt_bonecrown'],
+                offhand: ['crypt_graveguard'],
+                legs: ['crypt_tombwalkers'],
+                trinket: ['crypt_phylactery']
+            },
+            bandit: {
+                weapon: ['bandit_dagger', 'bandit_shadowdagger'],
+                chest: ['bandit_leathercoat'],
+                head: ['bandit_shadowhood'],
+                offhand: ['bandit_parryguard'],
+                legs: ['bandit_prowlpants'],
+                trinket: ['bandit_lockpick']
+            },
+            gold: {
+                weapon: ['gold_pickaxe', 'gold_kingsbane'],
+                chest: ['gold_vaultplate'],
+                head: ['gold_greedhelm'],
+                offhand: ['gold_coinshield'],
+                legs: ['gold_minerstrides'],
+                trinket: ['gold_nugget']
+            },
+            cliff: {
+                weapon: ['cliff_lance', 'cliff_bloodspear'],
+                chest: ['cliff_stampmail'],
+                head: ['cliff_warhelm'],
+                offhand: ['cliff_tribeguard'],
+                legs: ['cliff_hoofguards'],
+                trinket: ['cliff_warhorn']
+            },
+            orc: {
+                weapon: ['orc_cleaver', 'orc_doomhammer'],
+                chest: ['orc_warplate'],
+                head: ['orc_skullcap'],
+                offhand: ['orc_bulwark'],
+                legs: ['orc_battlegrieves'],
+                trinket: ['orc_totem']
+            },
+            swamp: {
+                weapon: ['swamp_talonclaw', 'swamp_kingstaff'],
+                chest: ['swamp_featherrobe'],
+                head: ['swamp_wisdomcrest'],
+                offhand: ['swamp_wingguard'],
+                legs: ['swamp_talonsteps'],
+                trinket: ['swamp_moonstone']
+            },
+            lizardman: {
+                weapon: ['lizardman_firedagger', 'lizardman_trickblade'],
+                chest: ['lizardman_moltenscale'],
+                head: ['lizardman_scalemask'],
+                offhand: ['lizardman_scaleshield'],
+                legs: ['lizardman_lavasteps'],
+                trinket: ['lizardman_firegem']
+            },
+            puzzle: {
+                weapon: ['puzzle_soulstaff', 'puzzle_lichbane'],
+                chest: ['puzzle_cryptrobe'],
+                head: ['puzzle_lichcrown'],
+                offhand: ['puzzle_undeadward'],
+                legs: ['puzzle_bonestrides'],
+                trinket: ['puzzle_phylactery']
+            },
+            bloodleaf: {
+                weapon: ['bloodleaf_moonbow', 'bloodleaf_wolfclaw'],
+                chest: ['bloodleaf_ridervest'],
+                head: ['bloodleaf_wolfhelm'],
+                offhand: ['bloodleaf_natureguard'],
+                legs: ['bloodleaf_swiftstrides'],
+                trinket: ['bloodleaf_wolfcharm']
+            },
+            naga: {
+                weapon: ['naga_seabow', 'naga_serpentfang'],
+                chest: ['naga_scalemail'],
+                head: ['naga_tidalcrest'],
+                offhand: ['naga_tidalshield'],
+                legs: ['naga_coilguards'],
+                trinket: ['naga_pearlcore']
+            },
+            sewer: {
+                weapon: ['sewer_devourjaw', 'sewer_plaguebringer'],
+                chest: ['sewer_rotplate'],
+                head: ['sewer_plaguemask'],
+                offhand: ['sewer_corrodeshield'],
+                legs: ['sewer_sludgeboots'],
+                trinket: ['sewer_toxicshard']
+            },
+            oblivion: {
+                weapon: ['oblivion_soulreaper', 'oblivion_hadesclaw'],
+                chest: ['oblivion_soulplate'],
+                head: ['oblivion_doomcrown'],
+                offhand: ['oblivion_styxguard'],
+                legs: ['oblivion_hellstrides'],
+                trinket: ['oblivion_deathstone']
+            },
+            labyrinth: {
+                weapon: ['labyrinth_mindrazor', 'labyrinth_voidripper'],
+                chest: ['labyrinth_voidmail'],
+                head: ['labyrinth_mindhelm'],
+                offhand: ['labyrinth_psychward'],
+                legs: ['labyrinth_mazesteps'],
+                trinket: ['labyrinth_mindgem']
+            },
+            crater: {
+                weapon: ['crater_infernostaff', 'crater_phoenixwing'],
+                chest: ['crater_magmaplate'],
+                head: ['crater_blazecrown'],
+                offhand: ['crater_pyroshield'],
+                legs: ['crater_emberstrides'],
+                trinket: ['crater_phoenix_heart']
+            },
+            plague: {
+                weapon: ['plague_blightstaff', 'plague_pandemic'],
+                chest: ['plague_blightrobes'],
+                head: ['plague_miasmahood'],
+                offhand: ['plague_miasmaward'],
+                legs: ['plague_rotwalkers'],
+                trinket: ['plague_pestcore']
+            },
+            illusion: {
+                weapon: ['illusion_phantomblade', 'illusion_realityshard'],
+                chest: ['illusion_shimmermail'],
+                head: ['illusion_miragecrown'],
+                offhand: ['illusion_mirrorshield'],
+                legs: ['illusion_deceivers'],
+                trinket: ['illusion_prism']
+            },
+            dragon: {
+                weapon: ['dragon_fangblade', 'dragon_hydrafang'],
+                chest: ['dragon_scalefortress'],
+                head: ['dragon_hydracrown'],
+                offhand: ['dragon_scalebulwark'],
+                legs: ['dragon_wyrmstrides'],
+                trinket: ['dragon_heartstone']
+            }
+        };
+
+        // Class options by tier and mainstat
+        // Gender-specific classes are marked with {male: 'class', female: 'class'}
+        const classesByTier = {
+            0: {
+                str: ['villager'],
+                agi: ['villager'],
+                int: ['villager']
+            },
+            1: {
+                str: ['swordsman', 'druid'],
+                agi: ['archer', 'thief', 'witch_hunter'],
+                int: ['acolyte', 'initiate', 'templar', 'druid']
+            },
+            2: {
+                str: ['knight', 'arch_druid'],
+                agi: ['ranger', 'rogue', 'slayer', 'arch_templar'],
+                int: ['cleric', 'mage', 'arch_druid', 'arch_templar']
+            },
+            3: {
+                str: ['imperial_knight', 'crusader', 'shapeshifter'],
+                agi: ['marksman', 'tracker', 'assassin', 'stalker', 'dark_templar', 'inquisitor', 'witcher'],
+                int: [{male: 'priest', female: 'priestess'}, {male: 'patriarch', female: 'matriarch'}, {male: 'wizard', female: 'witch'}, 'sage', 'shaman', 'high_templar']
+            },
+            4: {
+                str: ['champion', 'avenger', 'runemaster'],
+                agi: ['sniper', 'monster_hunter', 'phantom_assassin', 'master_stalker', 'dark_arch_templar', 'grand_inquisitor', 'professional_witcher'],
+                int: ['hierophant', {male: 'prophet', female: 'prophetess'}, {male: 'white_wizard', female: 'white_witch'}, 'arch_sage', 'summoner', 'grand_templar']
+            }
+        };
+
+        const itemSlots = ['weapon', 'chest', 'head', 'offhand', 'legs', 'trinket'];
+
+        let generatedJSON = null;
+        let currentTeamNumber = 1;
+
+        function getRandomElement(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function getDungeonForLevel(level, teamNum) {
+            // Team 100 (level 500) uses illusion items
+            if (teamNum === 100) return 'illusion';
+            // Teams 101+ at level 500 use dragon items
+            if (teamNum > 100 && level === 500) return 'dragon';
+            
+            // Regular level-based dungeon selection
+            if (level <= 25) return 'glade';
+            if (level <= 50) return 'wetland';
+            if (level <= 75) return 'icy';
+            if (level <= 100) return 'hollow';
+            if (level <= 125) return 'crypt';
+            if (level <= 150) return 'bandit';
+            if (level <= 175) return 'gold';
+            if (level <= 200) return 'cliff';
+            if (level <= 225) return 'orc';
+            if (level <= 250) return 'swamp';
+            if (level <= 275) return 'lizardman';
+            if (level <= 300) return 'puzzle';
+            if (level <= 325) return 'bloodleaf';
+            if (level <= 350) return 'naga';
+            if (level <= 375) return 'sewer';
+            if (level <= 400) return 'oblivion';
+            if (level <= 425) return 'labyrinth';
+            if (level <= 450) return 'crater';
+            if (level <= 475) return 'plague';
+            if (level <= 500) return 'illusion';
+            return 'dragon';
+        }
+
+        function getClassTier(level) {
+            if (level <= 50) return 0;
+            if (level <= 100) return 1;
+            if (level <= 200) return 2;
+            if (level <= 300) return 3;
+            return 4;
+        }
+
+        function getClassName(level, mainstat, gender) {
+            const tier = getClassTier(level);
+            const availableClasses = classesByTier[tier][mainstat];
+            if (!availableClasses || availableClasses.length === 0) {
+                return `villager_${gender}`;
+            }
+            
+            // Get a random class option
+            const classOption = getRandomElement(availableClasses);
+            
+            // Check if it's a gender-specific class
+            if (typeof classOption === 'object' && classOption.male && classOption.female) {
+                const className = gender === 'male' ? classOption.male : classOption.female;
+                return `${className}_${gender}`;
+            }
+            
+            // Regular class that works for both genders
+            return `${classOption}_${gender}`;
+        }
+
+        function generateQuality(minQuality, maxQuality, isRed) {
+            const quality = [0, 0, 0, 0];
+            const numRolls = isRed ? 4 : 3;
+            
+            for (let i = 0; i < numRolls; i++) {
+                quality[i] = getRandomInt(minQuality, maxQuality);
+            }
+            
+            return quality;
+        }
+
+        function applyRefined(quality) {
+            // Count non-zero rolls
+            const nonZeroCount = quality.filter(q => q > 0).length;
+            
+            if (nonZeroCount < 4) {
+                // Add a random quality roll
+                for (let i = 0; i < 4; i++) {
+                    if (quality[i] === 0) {
+                        quality[i] = getRandomInt(1, 5);
+                        break;
+                    }
+                }
+            } else if (nonZeroCount === 4) {
+                // Check if all are 5
+                if (quality.every(q => q === 5 || q === 0)) {
+                    // Add 5th roll
+                    quality.push(5);
+                } else {
+                    // Set lowest to 5
+                    let minIndex = -1;
+                    let minValue = 6;
+                    for (let i = 0; i < 4; i++) {
+                        if (quality[i] > 0 && quality[i] < minValue) {
+                            minValue = quality[i];
+                            minIndex = i;
+                        }
+                    }
+                    if (minIndex !== -1) {
+                        quality[minIndex] = 5;
+                    }
+                }
+            }
+            
+            return quality;
+        }
+
+        function generateGear(teamNum, level, itemSet) {
+            const dungeon = itemSet || getDungeonForLevel(level, teamNum);
+            const itemSetData = dungeonItems[dungeon];
+            
+            // After level 50 (team 10), all items are perfect
+            if (level > 50) {
+                const heroes = [];
+                for (let h = 0; h < 5; h++) {
+                    const gear = {};
+                    for (const slot of itemSlots) {
+                        const itemId = slot === 'weapon' ? itemSetData.weapon[1] : itemSetData[slot][0];
+                        gear[slot] = {
+                            id: itemId,
+                            quality: [5, 5, 5, 5, 5],
+                            refined: true
+                        };
+                    }
+                    heroes.push(gear);
+                }
+                return heroes;
+            }
+            
+            // For teams 1-10, use special rules
+            // Teams 1-5 use pattern 1-5, teams 6-10 use pattern 1-5 again
+            const patternNum = ((teamNum - 1) % 5) + 1;
+            
+            const upgradedWeaponSlots = patternNum === 5 ? 5 : patternNum;
+            const redItemsPerHero = patternNum === 5 ? 6 : 2 + (patternNum - 1);
+            const refinedItemsPerHero = patternNum === 5 ? 6 : 2 + (patternNum - 1);
+            const minQuality = patternNum === 5 ? 5 : patternNum;
+            const maxQuality = 5;
+            
+            const heroes = [];
+            let upgradedWeaponCount = 0;
+            
+            for (let h = 0; h < 5; h++) {
+                const gear = {};
+                let redCount = 0;
+                let refinedCount = 0;
+                const shuffledSlots = [...itemSlots].sort(() => Math.random() - 0.5);
+                
+                for (const slot of shuffledSlots) {
+                    let itemId;
+                    if (slot === 'weapon') {
+                        if (upgradedWeaponCount < upgradedWeaponSlots) {
+                            itemId = itemSetData.weapon[1];
+                            upgradedWeaponCount++;
+                        } else {
+                            itemId = itemSetData.weapon[0];
+                        }
+                    } else {
+                        itemId = itemSetData[slot][0];
+                    }
+                    
+                    const isRed = redCount < redItemsPerHero;
+                    if (isRed) redCount++;
+                    
+                    let quality;
+                    if (patternNum === 5) {
+                        // Team 5 pattern always has perfect 5s
+                        quality = [5, 5, 5, 5];
+                    } else {
+                        quality = generateQuality(minQuality, maxQuality, isRed);
+                    }
+                    
+                    const isRefined = refinedCount < refinedItemsPerHero;
+                    if (isRefined) {
+                        quality = applyRefined(quality);
+                        refinedCount++;
+                    }
+                    
+                    gear[slot] = {
+                        id: itemId,
+                        quality: quality,
+                        ...(isRefined && { refined: true })
+                    };
+                }
+                
+                heroes.push(gear);
+            }
+            
+            return heroes;
+        }
+
+        function generateTeam(teamNum, forceGender = null, forceDungeon = null, forceLevel = null) {
+            const level = forceLevel || (teamNum <= 100 ? teamNum * 5 : 500);
+            const dungeon = forceDungeon || getDungeonForLevel(level, teamNum);
+            const dungeonName = dungeon.charAt(0).toUpperCase() + dungeon.slice(1);
+            
+            // For level 500 teams, use appropriate name
+            let displayName = dungeonName;
+            if (level === 500) {
+                if (teamNum === 100) displayName = "Illusion";
+                else if (teamNum > 100) displayName = "Dragon";
+            }
+            
+            const teamPrefix = teamNamePrefixes[(teamNum - 1) % teamNamePrefixes.length];
+            const teamId = `${teamNum}_-_${displayName.toLowerCase()}_${teamPrefix.toLowerCase()}`;
+            const teamName = `${teamNum} - ${displayName} ${teamPrefix}`;
+            
+            const usedNames = new Set();
+            const usedClasses = new Set();
+            const heroes = [];
+            
+            // Generate gear for all heroes first
+            const allGear = generateGear(teamNum, level, forceDungeon);
+            
+            // Determine mainstats for each hero (ensure mix)
+            const mainstats = ['str', 'agi', 'int', 'str', 'agi'];
+            for (let i = mainstats.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [mainstats[i], mainstats[j]] = [mainstats[j], mainstats[i]];
+            }
+            
+            for (let i = 0; i < 5; i++) {
+                let gender;
+                if (forceGender) {
+                    gender = forceGender;
+                } else {
+                    // For mixed teams, ensure we have at least 2 of each gender
+                    const maleCount = heroes.filter(h => h.gender === 'male').length;
+                    const femaleCount = heroes.filter(h => h.gender === 'female').length;
+                    
+                    if (maleCount >= 3) {
+                        gender = 'female';
+                    } else if (femaleCount >= 3) {
+                        gender = 'male';
+                    } else {
+                        gender = Math.random() < 0.5 ? 'male' : 'female';
+                    }
+                }
+                
+                const namePool = gender === 'male' ? maleNames : femaleNames;
+                
+                // Find unused name
+                let name;
+                do {
+                    name = getRandomElement(namePool);
+                } while (usedNames.has(`${gender}_${name}`));
+                usedNames.add(`${gender}_${name}`);
+                
+                // Get class based on level and mainstat
+                let className;
+                let attempts = 0;
+                do {
+                    className = getClassName(level, mainstats[i], gender);
+                    attempts++;
+                    if (attempts > 20) {
+                        // Fallback to ensure we don't get stuck
+                        className = `villager_${gender}`;
+                        break;
+                    }
+                } while (usedClasses.has(className));
+                usedClasses.add(className);
+                
+                const hero = {
+                    className: className,
+                    name: name,
+                    level: level,
+                    gender: gender,
+                    gear: allGear[i]
+                };
+                
+                heroes.push(hero);
+            }
+            
+            return {
+                id: teamId,
+                name: teamName,
+                heroes: heroes
+            };
+        }
+
+        function generateFiveTeamsForDungeon(startTeamNum, dungeon, level) {
+            const teams = [];
+            const genderRequirements = ['male', 'female', null, null, null];
+            
+            // Shuffle the gender requirements so all-male and all-female teams are randomly positioned
+            for (let i = genderRequirements.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [genderRequirements[i], genderRequirements[j]] = [genderRequirements[j], genderRequirements[i]];
+            }
+            
+            for (let i = 0; i < 5; i++) {
+                const teamLevel = startTeamNum <= 100 ? (startTeamNum + i) * 5 : level;
+                teams.push(generateTeam(startTeamNum + i, genderRequirements[i], dungeon, teamLevel));
+            }
+            
+            return teams;
+        }
+
+        function generateAllTeams() {
+            const progressDiv = document.getElementById('progress');
+            progressDiv.style.display = 'block';
+            progressDiv.textContent = 'Generating teams...';
+            
+            const additionalTeams = parseInt(document.getElementById('additionalTeams').value) || 10;
+            const totalTeams = 100 + additionalTeams;
+            
+            const teams = [];
+            currentTeamNumber = 1;
+            
+            // Generate teams 1-100 (levels 5-500) in sets of 5
+            for (let setIndex = 0; setIndex < 20; setIndex++) {
+                const startTeamNum = setIndex * 5 + 1;
+                
+                // Positions 1 and 5 must be mixed, positions 2-4 can have the all-male and all-female teams
+                const middlePositions = [1, 2, 3]; // indices 1, 2, 3 (positions 2, 3, 4)
+                const shuffledMiddle = [...middlePositions].sort(() => Math.random() - 0.5);
+                const malePosition = shuffledMiddle[0];
+                const femalePosition = shuffledMiddle[1];
+                
+                const genderRequirements = [null, null, null, null, null]; // all mixed by default
+                genderRequirements[malePosition] = 'male';
+                genderRequirements[femalePosition] = 'female';
+                
+                for (let teamInSet = 0; teamInSet < 5; teamInSet++) {
+                    const teamNum = startTeamNum + teamInSet;
+                    const level = teamNum * 5; // Each team's level is teamNum * 5
+                    const dungeon = getDungeonForLevel(level, teamNum);
+                    
+                    teams.push(generateTeam(teamNum, genderRequirements[teamInSet], dungeon, level));
+                }
+                
+                progressDiv.textContent = `Generated ${teams.length}/${totalTeams} teams...`;
+            }
+            
+            // Generate additional level 500 teams in sets of 5
+            const remainingSets = Math.floor(additionalTeams / 5);
+            const remainingTeams = additionalTeams % 5;
+            
+            for (let i = 0; i < remainingSets; i++) {
+                const fiveTeams = generateFiveTeamsForDungeon(101 + i * 5, 'dragon', 500);
+                teams.push(...fiveTeams);
+                progressDiv.textContent = `Generated ${teams.length}/${totalTeams} teams...`;
+            }
+            
+            // Generate any remaining teams (if not divisible by 5)
+            for (let i = 0; i < remainingTeams; i++) {
+                teams.push(generateTeam(101 + remainingSets * 5 + i, null, 'dragon', 500));
+            }
+            
+            currentTeamNumber = teams.length + 1;
+            
+            generatedJSON = {
+                teams: teams
+            };
+            
+            progressDiv.style.display = 'none';
+            const output = document.getElementById('output');
+            output.innerHTML = `<div class="team-info">Generated ${teams.length} teams successfully! (${additionalTeams} additional level 500 teams)</div>`;
+            output.innerHTML += JSON.stringify(generatedJSON, null, 2);
+        }
+
+        function generateFiveTeams() {
+            const itemSet = document.getElementById('itemSet').value;
+            const level = parseInt(document.getElementById('setLevel').value);
+            
+            if (!generatedJSON) {
+                generatedJSON = { teams: [] };
+            }
+            
+            const fiveTeams = generateFiveTeamsForDungeon(currentTeamNumber, itemSet, level);
+            generatedJSON.teams.push(...fiveTeams);
+            currentTeamNumber += 5;
+            
+            const output = document.getElementById('output');
+            output.innerHTML = `<div class="team-info">Added 5 ${itemSet} teams at level ${level}. Total teams: ${generatedJSON.teams.length}</div>`;
+            output.innerHTML += JSON.stringify(generatedJSON, null, 2);
+        }
+
+        function copyToClipboard() {
+            if (!generatedJSON) {
+                alert('Please generate teams first!');
+                return;
+            }
+            
+            const jsonString = JSON.stringify(generatedJSON, null, 2);
+            navigator.clipboard.writeText(jsonString).then(() => {
+                alert('JSON copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy to clipboard');
+            });
+        }
+
+        // Generate teams on load
+        window.onload = () => {
+            generateAllTeams();
+        };
+    </script>
+</body>
+</html>

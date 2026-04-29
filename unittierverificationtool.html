@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit & Hero Tier Verification Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        
+        .input-section {
+            margin-bottom: 20px;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .results {
+            margin-top: 20px;
+        }
+        
+        .unit-result {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        
+        .unit-result.pass {
+            background-color: #e8f5e9;
+            border-color: #4CAF50;
+        }
+        
+        .unit-result.fail {
+            background-color: #ffebee;
+            border-color: #f44336;
+        }
+        
+        .unit-name {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .error {
+            color: #d32f2f;
+            margin: 5px 0;
+        }
+        
+        .success {
+            color: #388e3c;
+            margin: 5px 0;
+        }
+        
+        .details {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .section {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Unit & Hero Tier Verification Tool</h1>
+        
+        <div class="input-section">
+            <h3>Paste enemies.json or heroes/classes.json content here:</h3>
+            <p style="color: #666; font-size: 14px;">
+                Enemies: Easy (0/1) → Medium (1/2) → Hard (2/3) → Forsaken (3/4) → 
+                Nightmare (4/5) → Hell (5/6) → Impossible (6/7) → Endgame (8/10)<br>
+                Heroes: Tier is included in the unit data
+            </p>
+            <textarea id="jsonInput" placeholder="Paste your JSON data here..."></textarea>
+            <button onclick="checkUnits()">Check Units</button>
+        </div>
+        
+        <div id="results" class="results"></div>
+        
+        <div id="exportSection" style="display: none; margin-top: 20px;">
+            <button onclick="exportFixedValues()" style="background-color: #2196F3;">Export Fixed Values</button>
+        </div>
+    </div>
+
+    <script>
+        // Tier requirements
+        const tierRequirements = {};
+        
+        // Define tier 0-4
+        tierRequirements[0] = {
+            attributePoints: 12,
+            minPerAttribute: 3,
+            modifierTotal: 3.0,
+            minPerModifier: 1.0,
+            bonusPoints: 20
+        };
+        
+        tierRequirements[1] = {
+            attributePoints: 16,
+            minPerAttribute: 4,
+            modifierTotal: 4.0,
+            minPerModifier: 1.25,
+            bonusPoints: 24
+        };
+        
+        tierRequirements[2] = {
+            attributePoints: 24,
+            minPerAttribute: 5,
+            modifierTotal: 6.0,
+            minPerModifier: 1.5,
+            bonusPoints: 28
+        };
+        
+        tierRequirements[3] = {
+            attributePoints: 36,
+            minPerAttribute: 6,
+            modifierTotal: 9.0,
+            minPerModifier: 2.0,
+            bonusPoints: 32
+        };
+        
+        tierRequirements[4] = {
+            attributePoints: 48,
+            minPerAttribute: 8,
+            modifierTotal: 12.0,
+            minPerModifier: 2.5,
+            bonusPoints: 36
+        };
+        
+        // Define tier 5-10
+        tierRequirements[5] = {
+            attributePoints: 58,
+            minPerAttribute: 8,
+            modifierTotal: 14.5,
+            minPerModifier: 2.5,
+            bonusPoints: 38.5
+        };
+        
+        tierRequirements[6] = {
+            attributePoints: 60,
+            minPerAttribute: 9,
+            modifierTotal: 15.0,
+            minPerModifier: 3.0,
+            bonusPoints: 39
+        };
+        
+        tierRequirements[7] = {
+            attributePoints: 62,
+            minPerAttribute: 10,
+            modifierTotal: 15.5,
+            minPerModifier: 3.5,
+            bonusPoints: 39.5
+        };
+        
+        tierRequirements[8] = {
+            attributePoints: 64,
+            minPerAttribute: 11,
+            modifierTotal: 16.0,
+            minPerModifier: 4.0,
+            bonusPoints: 40
+        };
+        
+        tierRequirements[9] = {
+            attributePoints: 66,
+            minPerAttribute: 12,
+            modifierTotal: 16.5,
+            minPerModifier: 4.5,
+            bonusPoints: 40.5
+        };
+        
+        tierRequirements[10] = {
+            attributePoints: 68,
+            minPerAttribute: 13,
+            modifierTotal: 17.0,
+            minPerModifier: 5.0,
+            bonusPoints: 41
+        };
+        
+        // For tier 5+
+        function getTierRequirements(tier) {
+            if (tier <= 10) return tierRequirements[tier];
+            
+            return {
+                attributePoints: 48 + tier * 2,
+                minPerAttribute: tier + 3,
+                modifierTotal: 12.0 + tier / 2,
+                minPerModifier: tier / 2,
+                bonusPoints: 36 + tier / 2
+            };
+        }
+        
+        // Non-attribute point costs
+        const nonAttributeCosts = {
+            hp: 10,
+            hpRegen: 0.67,
+            attack: 1,
+            attackSpeed: 0.67,
+            armor: 1.33,
+            resist: 2
+        };
+        
+        // Baseline modifiers
+        const baselineModifiers = {
+            hp: 2.5,
+            attack: 0.1,
+            armor: 0.01,
+            resist: 0.005
+        };
+        
+        // Bonus modifier costs
+        const bonusModifierCosts = {
+            hp: 0.1,
+            attack: 0.02,
+            armor: 0.05,
+            resist: 0.025
+        };
+        
+        let originalData = null; // Store the original data for export
+        let dataType = null; // 'enemies' or 'heroes'
+        
+        function checkUnits() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            
+            try {
+                const jsonText = document.getElementById('jsonInput').value;
+                if (!jsonText.trim()) {
+                    resultsDiv.innerHTML = '<div class="error">Please paste JSON data</div>';
+                    return;
+                }
+                
+                const data = JSON.parse(jsonText);
+                originalData = data; // Store for export
+                
+                // Determine data type
+                let unitsData;
+                if (data.classes) {
+                    dataType = 'heroes';
+                    unitsData = data.classes;
+                } else {
+                    dataType = 'enemies';
+                    unitsData = data;
+                }
+                
+                // Check each unit
+                let hasUnits = false;
+                for (const [unitId, unit] of Object.entries(unitsData)) {
+                    // Skip tester_male for heroes
+                    if (dataType === 'heroes' && unitId === 'tester_male') {
+                        continue;
+                    }
+                    
+                    let expectedTier;
+                    if (dataType === 'heroes') {
+                        // For heroes, use the tier from the unit data
+                        expectedTier = unit.tier;
+                        if (expectedTier === undefined) {
+                            console.log(`No tier found for hero ${unitId}`);
+                            continue;
+                        }
+                    } else {
+                        // For enemies, determine expected tier based on dungeon
+                        const expectedTiers = getExpectedTiers(unitsData);
+                        expectedTier = expectedTiers[unitId];
+                        if (expectedTier === undefined) {
+                            console.log(`No expected tier found for enemy ${unitId}`);
+                            continue;
+                        }
+                    }
+                    
+                    hasUnits = true;
+                    const result = checkUnit(unit, expectedTier);
+                    displayResult(unitId, unit, expectedTier, result);
+                }
+                
+                // Show export button if units were processed
+                if (hasUnits) {
+                    document.getElementById('exportSection').style.display = 'block';
+                }
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">Error parsing JSON: ${error.message}</div>`;
+            }
+        }
+        
+        function checkUnit(unit, expectedTier) {
+            const tolerance = 1; // "Anything within 1 point will count"
+            const requirements = getTierRequirements(expectedTier);
+            const errors = [];
+            const details = [];
+            
+            // Check initial stats (attributes)
+            const attributeTotal = (unit.initial.str || 0) + (unit.initial.agi || 0) + (unit.initial.int || 0);
+            details.push(`Initial Attribute points: ${attributeTotal} (expected: ${requirements.attributePoints})`);
+            
+            if (Math.abs(attributeTotal - requirements.attributePoints) > tolerance) {
+                errors.push(`Attribute total ${attributeTotal} doesn't match tier ${expectedTier} requirement of ${requirements.attributePoints}`);
+            }
+            
+            // Check minimum per attribute
+            if (unit.initial.str < requirements.minPerAttribute) {
+                errors.push(`STR ${unit.initial.str} below minimum ${requirements.minPerAttribute}`);
+            }
+            if (unit.initial.agi < requirements.minPerAttribute) {
+                errors.push(`AGI ${unit.initial.agi} below minimum ${requirements.minPerAttribute}`);
+            }
+            if (unit.initial.int < requirements.minPerAttribute) {
+                errors.push(`INT ${unit.initial.int} below minimum ${requirements.minPerAttribute}`);
+            }
+            
+            // Check non-attribute points
+            const nonAttrPoints = calculateNonAttributePoints(unit.initial);
+            details.push(`Initial Non-attribute points used: ${nonAttrPoints.toFixed(1)} (max: ${requirements.attributePoints})`);
+            
+            // Check modifiers
+            const modifierTotal = (unit.modifiers.str || 0) + (unit.modifiers.agi || 0) + (unit.modifiers.int || 0);
+            details.push(`Modifier total: ${modifierTotal.toFixed(2)} (expected: ${requirements.modifierTotal})`);
+            
+            if (Math.abs(modifierTotal - requirements.modifierTotal) > 0.1) { // Small tolerance for float precision
+                errors.push(`Modifier total ${modifierTotal.toFixed(2)} doesn't match tier ${expectedTier} requirement of ${requirements.modifierTotal}`);
+            }
+            
+            // Check minimum per modifier
+            if (unit.modifiers.str < requirements.minPerModifier) {
+                errors.push(`STR modifier ${unit.modifiers.str} below minimum ${requirements.minPerModifier}`);
+            }
+            if (unit.modifiers.agi < requirements.minPerModifier) {
+                errors.push(`AGI modifier ${unit.modifiers.agi} below minimum ${requirements.minPerModifier}`);
+            }
+            if (unit.modifiers.int < requirements.minPerModifier) {
+                errors.push(`INT modifier ${unit.modifiers.int} below minimum ${requirements.minPerModifier}`);
+            }
+            
+            // Check bonus modifier points
+            const bonusPoints = calculateBonusModifierPoints(unit.modifiers);
+            details.push(`Bonus modifier points used: ${bonusPoints.toFixed(1)} (expected: ${requirements.bonusPoints})`);
+            
+            if (Math.abs(bonusPoints - requirements.bonusPoints) > tolerance) {
+                errors.push(`Bonus modifier points ${bonusPoints.toFixed(1)} doesn't match tier ${expectedTier} requirement of ${requirements.bonusPoints}`);
+            }
+            
+            return {
+                pass: errors.length === 0,
+                errors: errors,
+                details: details
+            };
+        }
+        
+        function calculateNonAttributePoints(initial) {
+            let points = 0;
+            
+            if (initial.hp > 0) points += initial.hp / nonAttributeCosts.hp;
+            if (initial.hpRegen > 0) points += initial.hpRegen / nonAttributeCosts.hpRegen;
+            if (initial.attack > 0) points += initial.attack / nonAttributeCosts.attack;
+            if (initial.attackSpeed > 0) points += initial.attackSpeed / nonAttributeCosts.attackSpeed;
+            if (initial.armor > 0) points += initial.armor / nonAttributeCosts.armor;
+            if (initial.resist > 0) points += initial.resist / nonAttributeCosts.resist;
+            
+            return points;
+        }
+        
+        function calculateBonusModifierPoints(modifiers) {
+            let points = 0;
+            
+            // Calculate bonus over baseline
+            const hpBonus = (modifiers.hp || 0) - baselineModifiers.hp;
+            const attackBonus = (modifiers.attack || 0) - baselineModifiers.attack;
+            const armorBonus = (modifiers.armor || 0) - baselineModifiers.armor;
+            const resistBonus = (modifiers.resist || 0) - baselineModifiers.resist;
+            
+            if (hpBonus > 0) points += hpBonus / bonusModifierCosts.hp;
+            if (attackBonus > 0) points += attackBonus / bonusModifierCosts.attack;
+            if (armorBonus > 0) points += armorBonus / bonusModifierCosts.armor;
+            if (resistBonus > 0) points += resistBonus / bonusModifierCosts.resist;
+            
+            return points;
+        }
+        
+        function displayResult(unitId, unit, expectedTier, result) {
+            const resultsDiv = document.getElementById('results');
+            const unitDiv = document.createElement('div');
+            unitDiv.className = `unit-result ${result.pass ? 'pass' : 'fail'}`;
+            
+            let html = `
+                <div class="unit-name">${unit.name} (${unitId})</div>
+                <div>Expected Tier: ${expectedTier}`;
+            
+            if (dataType === 'enemies') {
+                html += ` | Boss: ${unit.boss ? 'Yes' : 'No'}`;
+            } else if (dataType === 'heroes') {
+                html += ` | Mainstat: ${unit.mainstat}`;
+            }
+            
+            html += '</div>';
+            
+            if (result.pass) {
+                html += '<div class="success">✓ Unit matches tier requirements</div>';
+            } else {
+                html += '<div class="error">✗ Unit does not match tier requirements</div>';
+                result.errors.forEach(error => {
+                    html += `<div class="error">• ${error}</div>`;
+                });
+            }
+            
+            html += '<div class="section">';
+            html += '<div class="section-title">Details:</div>';
+            result.details.forEach(detail => {
+                html += `<div class="details">• ${detail}</div>`;
+            });
+            html += '</div>';
+            
+            unitDiv.innerHTML = html;
+            resultsDiv.appendChild(unitDiv);
+        }
+        
+        function getExpectedTiers(enemiesData) {
+            // Dungeon groups and their tier mapping
+            const dungeonTiers = {
+                // Dungeons 1-3 (Easy): tier 0 enemies, tier 1 bosses
+                easy: { enemy: 0, boss: 1 },
+                // Dungeons 4-6 (Medium): tier 1 enemies, tier 2 bosses
+                medium: { enemy: 1, boss: 2 },
+                // Dungeons 7-9 (Hard): tier 2 enemies, tier 3 bosses
+                hard: { enemy: 2, boss: 3 },
+                // Dungeons 10-12 (Forsaken): tier 3 enemies, tier 4 bosses
+                forsaken: { enemy: 3, boss: 4 },
+                // Dungeons 13-15 (Nightmare): tier 4 enemies, tier 5 bosses
+                nightmare: { enemy: 4, boss: 5 },
+                // Dungeons 16-18 (Hell): tier 5 enemies, tier 6 bosses
+                hell: { enemy: 5, boss: 6 },
+                // Dungeons 19-21 (Impossible): tier 6 enemies, tier 7 bosses
+                impossible: { enemy: 6, boss: 7 },
+                // Dungeons 22+ (Mythical and beyond): tier 8 enemies, tier 10 bosses
+                endgame: { enemy: 8, boss: 10 }
+            };
+            
+            // Map unit IDs to dungeon groups
+            const unitDungeonGroups = {
+                // Easy dungeons (1-3)
+                "satyr_youth": "easy",
+                "aggressive_satyr": "easy",
+                "satyr_instigator": "easy",
+                "murkin_warrior": "easy",
+                "murkin_brawler": "easy",
+                "murkin_initiate": "easy",
+                "murkin_elder": "easy",
+                "murkin_chieftain": "easy",
+                "ice_troll": "easy",
+                "ice_troll_king": "easy",
+                "water_elemental": "easy",
+                "frost_wolf": "easy",
+                "frostfang": "easy",
+                "ice_bear": "easy",
+                "grizzly_ice_bear": "easy",
+                
+                // Medium dungeons (4-6)
+                "wailing_banshee": "medium",
+                "corrupted_ent": "medium",
+                "toxic_sludge": "medium",
+                "shadow_wisp": "medium",
+                "twisted_treant": "medium",
+                "banshee_matriarch": "medium",
+                "banshee_queen": "medium",
+                "undead_swordsman": "medium",
+                "undead_archer": "medium",
+                "undead_mage": "medium",
+                "necromancer": "medium",
+                "vampire": "medium",
+                "death_knight": "medium",
+                "stitched_horror": "medium",
+                "bandit_thug": "medium",
+                "bandit_cutthroat": "medium",
+                "bandit_archer": "medium",
+                "bandit_enforcer": "medium",
+                "bandit_assassin": "medium",
+                "bandit_captain": "medium",
+                "bandit_lord": "medium",
+                
+                // Hard dungeons (7-9)
+                "goblin_tinkerer": "hard",
+                "goblin_grenadier": "hard",
+                "goblin_mechanic": "hard",
+                "goblin_demolitionist": "hard",
+                "goblin_mining_mech": "hard",
+                "tribal_scout": "hard",
+                "tribal_warrior": "hard",
+                "tribal_mystic": "hard",
+                "tribal_warchief": "hard",
+                "tribal_chieftain": "hard",
+                "orc_grunt": "hard",
+                "orc_berserker": "hard",
+                "orc_bloodshaman": "hard",
+                "orc_warlord": "hard",
+                "orc_blademaster": "hard",
+                
+                // Forsaken dungeons (10-12)
+                "snapdragon_spitter": "forsaken",
+                "ogre_bruiser": "forsaken",
+                "ogre_witch": "forsaken",
+                "swamp_lurker": "forsaken",
+                "bog_beast": "forsaken",
+                "owlkin_king": "forsaken",
+                "lizardman_warrior": "forsaken",
+                "lizardman_shaman": "forsaken",
+                "owlkin_hunter": "forsaken",
+                "lava_elemental": "forsaken",
+                "owlkin_warchief": "forsaken",
+                "lizardman_trickster": "forsaken",
+                "ice_revenant": "forsaken",
+                "frost_specter": "forsaken",
+                "frozen_gargoyle": "forsaken",
+                "soul_wraith": "forsaken",
+                "crypt_king": "forsaken",
+                "lich_queen": "forsaken",
+                
+                // Nightmare dungeons (13-15)
+                "elven_hunter": "nightmare",
+                "elven_archer": "nightmare",
+                "swift_wolf": "nightmare",
+                "shadow_assassin": "nightmare",
+                "elven_bladedancer": "nightmare",
+                "elven_queen": "nightmare",
+                "naga_warrior": "nightmare",
+                "naga_tidecaller": "nightmare",
+                "naga_serpent_guard": "nightmare",
+                "naga_siren": "nightmare",
+                "naga_warlord": "nightmare",
+                "naga_empress": "nightmare",
+                "plague_bearer": "nightmare",
+                "toxic_sludge_enemy": "nightmare",
+                "corrupted_alchemist": "nightmare",
+                "sewer_lurker": "nightmare",
+                "putrid_abomination": "nightmare",
+                "plague_master": "nightmare",
+                
+                // Hell dungeons (16-18)
+                "hades": "hell",
+                "mindreaver": "hell",
+                "flame_revenant": "hell",
+                "imp_tormentor": "hell",
+                "hell_knight": "hell",
+                "succubus": "hell",
+                "pit_fiend": "hell",
+                "demon_lord": "hell",
+                "mind_flayer": "hell",
+                "void_walker": "hell",
+                "aberration": "hell",
+                "illusionist": "hell",
+                "labyrinth_guardian": "hell",
+                "magma_elemental": "hell",
+                "flame_dancer": "hell",
+                "obsidian_golem": "hell",
+                "phoenix": "hell",
+                "inferno_lord": "hell",
+                
+                // Impossible dungeons (19-21)
+                "plaguebound_archbishop": "impossible",
+                "mirage": "impossible",
+                "ancient_hydra": "impossible",
+                
+                // Endgame dungeons (22+)
+                "pugs": "endgame",
+                "voidcaller_seraphim": "endgame",
+                "chronomancer_veyra": "endgame",
+                "elysian_watcher": "endgame",
+                "sovereign": "endgame",
+                "worldshaper": "endgame",
+                "cosmic_archon": "endgame",
+                "primeval_entity": "endgame",
+                "eternal_singularity": "endgame"
+            };
+            
+            const expectedTiers = {};
+            
+            // Build expected tier mapping based on whether unit is boss or not
+            for (const [unitId, unit] of Object.entries(enemiesData)) {
+                const dungeonGroup = unitDungeonGroups[unitId];
+                if (!dungeonGroup) {
+                    console.log(`No dungeon group found for ${unitId}`);
+                    continue;
+                }
+                
+                const tierMapping = dungeonTiers[dungeonGroup];
+                expectedTiers[unitId] = unit.boss ? tierMapping.boss : tierMapping.enemy;
+            }
+            
+            return expectedTiers;
+        }
+        
+        function exportFixedValues() {
+            if (!originalData) return;
+            
+            let fixedData;
+            
+            if (dataType === 'heroes') {
+                // For heroes, preserve the structure and non-unit data
+                fixedData = JSON.parse(JSON.stringify(originalData));
+                
+                for (const [unitId, unit] of Object.entries(originalData.classes)) {
+                    // Skip tester_male
+                    if (unitId === 'tester_male') {
+                        continue;
+                    }
+                    
+                    const expectedTier = unit.tier;
+                    if (expectedTier === undefined) continue;
+                    
+                    fixedData.classes[unitId] = fixUnit(JSON.parse(JSON.stringify(unit)), expectedTier);
+                }
+            } else {
+                // For enemies, just process the units
+                fixedData = {};
+                const expectedTiers = getExpectedTiers(originalData);
+                
+                for (const [unitId, unit] of Object.entries(originalData)) {
+                    const expectedTier = expectedTiers[unitId];
+                    if (expectedTier === undefined) continue;
+                    
+                    fixedData[unitId] = fixUnit(JSON.parse(JSON.stringify(unit)), expectedTier);
+                }
+            }
+            
+            // Copy to clipboard
+            const jsonString = JSON.stringify(fixedData, null, 2);
+            navigator.clipboard.writeText(jsonString).then(() => {
+                alert('Fixed values copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy to clipboard:', err);
+                alert('Failed to copy to clipboard. Check console for the data.');
+                console.log(jsonString);
+            });
+        }
+        
+        function fixUnit(unit, expectedTier) {
+            const requirements = getTierRequirements(expectedTier);
+            
+            // Fix initial attributes (maintaining ratios)
+            const currentAttrTotal = unit.initial.str + unit.initial.agi + unit.initial.int;
+            if (currentAttrTotal > 0) {
+                // Calculate ratios
+                const strRatio = unit.initial.str / currentAttrTotal;
+                const agiRatio = unit.initial.agi / currentAttrTotal;
+                const intRatio = unit.initial.int / currentAttrTotal;
+                
+                // Scale to expected total
+                let newStr = Math.round(strRatio * requirements.attributePoints);
+                let newAgi = Math.round(agiRatio * requirements.attributePoints);
+                let newInt = Math.round(intRatio * requirements.attributePoints);
+                
+                // Ensure minimums are met
+                newStr = Math.max(newStr, requirements.minPerAttribute);
+                newAgi = Math.max(newAgi, requirements.minPerAttribute);
+                newInt = Math.max(newInt, requirements.minPerAttribute);
+                
+                // Adjust for rounding errors
+                let total = newStr + newAgi + newInt;
+                const diff = requirements.attributePoints - total;
+                
+                if (diff !== 0) {
+                    // Add/subtract difference to/from the largest value
+                    const values = [
+                        { attr: 'str', val: newStr },
+                        { attr: 'agi', val: newAgi },
+                        { attr: 'int', val: newInt }
+                    ];
+                    values.sort((a, b) => b.val - a.val);
+                    
+                    if (values[0].attr === 'str') newStr += diff;
+                    else if (values[0].attr === 'agi') newAgi += diff;
+                    else newInt += diff;
+                }
+                
+                unit.initial.str = newStr;
+                unit.initial.agi = newAgi;
+                unit.initial.int = newInt;
+            }
+            
+            // Fix modifiers (maintaining ratios)
+            const currentModTotal = unit.modifiers.str + unit.modifiers.agi + unit.modifiers.int;
+            if (currentModTotal > 0) {
+                const strModRatio = unit.modifiers.str / currentModTotal;
+                const agiModRatio = unit.modifiers.agi / currentModTotal;
+                const intModRatio = unit.modifiers.int / currentModTotal;
+                
+                unit.modifiers.str = Math.max(
+                    parseFloat((strModRatio * requirements.modifierTotal).toFixed(2)),
+                    requirements.minPerModifier
+                );
+                unit.modifiers.agi = Math.max(
+                    parseFloat((agiModRatio * requirements.modifierTotal).toFixed(2)),
+                    requirements.minPerModifier
+                );
+                
+                // Calculate int to make the total exact
+                unit.modifiers.int = parseFloat(
+                    (requirements.modifierTotal - unit.modifiers.str - unit.modifiers.agi).toFixed(2)
+                );
+                
+                // Ensure int meets minimum
+                if (unit.modifiers.int < requirements.minPerModifier) {
+                    unit.modifiers.int = requirements.minPerModifier;
+                    // Recalculate to maintain total
+                    const excess = (unit.modifiers.str + unit.modifiers.agi + unit.modifiers.int) - requirements.modifierTotal;
+                    if (unit.modifiers.str > requirements.minPerModifier) {
+                        unit.modifiers.str = Math.max(
+                            parseFloat((unit.modifiers.str - excess).toFixed(2)),
+                            requirements.minPerModifier
+                        );
+                    }
+                }
+            }
+            
+            // Fix non-attribute initial values
+            const currentNonAttrPoints = calculateNonAttributePoints(unit.initial);
+            if (currentNonAttrPoints > 0 && requirements.attributePoints > 0) {
+                const scale = requirements.attributePoints / currentNonAttrPoints;
+                
+                // Scale each non-attribute value
+                if (unit.initial.hp > 0) unit.initial.hp = Math.round(unit.initial.hp * scale);
+                if (unit.initial.hpRegen > 0) unit.initial.hpRegen = parseFloat((unit.initial.hpRegen * scale).toFixed(2));
+                if (unit.initial.attack > 0) unit.initial.attack = Math.round(unit.initial.attack * scale);
+                if (unit.initial.attackSpeed > 0) unit.initial.attackSpeed = parseFloat((unit.initial.attackSpeed * scale).toFixed(2));
+                if (unit.initial.armor > 0) unit.initial.armor = parseFloat((unit.initial.armor * scale).toFixed(2));
+                if (unit.initial.resist > 0) unit.initial.resist = Math.round(unit.initial.resist * scale);
+            }
+            
+            // Fix bonus modifiers
+            const currentBonusPoints = calculateBonusModifierPoints(unit.modifiers);
+            const targetBonusPoints = requirements.bonusPoints;
+            
+            if (currentBonusPoints > 0 && targetBonusPoints > 0) {
+                const scale = targetBonusPoints / currentBonusPoints;
+                
+                // Calculate current bonuses
+                const hpBonus = unit.modifiers.hp - baselineModifiers.hp;
+                const attackBonus = unit.modifiers.attack - baselineModifiers.attack;
+                const armorBonus = unit.modifiers.armor - baselineModifiers.armor;
+                const resistBonus = unit.modifiers.resist - baselineModifiers.resist;
+                
+                // Scale and add back baseline
+                unit.modifiers.hp = parseFloat((baselineModifiers.hp + hpBonus * scale).toFixed(2));
+                unit.modifiers.attack = parseFloat((baselineModifiers.attack + attackBonus * scale).toFixed(2));
+                unit.modifiers.armor = parseFloat((baselineModifiers.armor + armorBonus * scale).toFixed(2));
+                unit.modifiers.resist = parseFloat((baselineModifiers.resist + resistBonus * scale).toFixed(3)); // 3 decimals for resist
+            }
+            
+            // Preserve the tier for heroes
+            if (dataType === 'heroes' && unit.tier !== undefined) {
+                unit.tier = expectedTier;
+            }
+            
+            return unit;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,559 @@
+TEVE - Twilight's Forever
+
+-Description
+Turn based strategy game. This plays more like an idler but you can play it yourself if you'd like to. It's strongly based on the pve aspects in summoners war but will not be like mobile games with cash grabs and that kind of thing. It's going to be strictly gameplayer and hunting items and gear and building a party. The game is strongly party based. I want 5 characters on your team, going against up to 5 on the enemy side per wave. The game is progression based per character. You start as a villager and once you reach level 40 you can promote classes. The progression will be detailed below. Abilities will be straight forward and easy to follow. I want the ui to be clean and show only what you need but you can always hover for additional info. The game should be playable on mobile landscape and is meant for a 1920x1080 resolution display and screen ratio. Portrait is not allowed.
+
+-Battling
+This is the important part. I really need the battling to look and feel good. I want the ui to show the battle cleanly. I have a battlescene.png attached that will show what it should look like. The party selected will onset against waves of enemies depending on the dungeon they are going against. It could be anywhere from 10 to 50 waves. The battle starts with all players being full hp and 0 action (action bar dictates who attacks next). You will see your full party on screen in the lower left hand corner. When the action bar is filled up, if it is an enemy they will use their strongest ability that is not on cooldown. Once it is the turn for one of your party members, the game stops and waits for you. This is turn based. You will have the abilities for your current active party member shown in the bottom right of the screen. First ability is never on cooldown. It is always available. Other moves could be passives that are always in affect. They could have cooldowns which means you have to use other ablities x number of times until it is off cooldown again. When you select an ability, it shows a green arrow above units it is usable on. Some abilities like a heal will only be usable on allies. When you make your move the action bars proceed again until it is someones turn. The ui will have a small toggle in the lower left hand corner that allows you to have the ai autoplay for you. The ai will use your party in the same logic as it does the enemies. It will select the most powerful move you have available at all times. You can also toggle to manual mode to play yourself. There should be a log in the top left that shows all actions by both parties. Who used an ability on who and for what amount. Did someone die? They are out of the game and get no actions and cannot be targeted again until the dungeon is completed.
+
+-Main Menu
+Main menu should have several options. Heroes, Dungeons, Stash.
+
+--Heroes
+Heroes tab should show all your heroes portrait at the bottom of the screen in a horizontal row sorted by highest tier class and then level to the left. Seleting a portrait will show they at the top majority of the page. The character UI panel. Attached is an image called HeroOverviewScreen.png that shows what I'm talking about.
+
+Portrait of the hero on the left, Stats panel on the right with a vertical tab selection to view different details on this hero. Vertical tab selection should have options for Info (default), Skill, Promote, Gear, and Log. The attached HeroOverviewScreen.png shows an example of the Info tab.
+
+Info tab:
+Name of Class
+Name of hero
+(Class tier in stars)
+
+
+Lvl ###
+Exp bar ### / ####
+
+HP  ### +###
+Armor ### +###
+Resist ### +###
+STR ### +###
+AGI ### +###
+INT ### +###
+
+Abilities/Skills tab:
+Displays skills in a horizontal display. Clicking a skill will show details about that skill. Skills are earned by promoting to new class tiers. Tier 0 is a villager. They have two abilities. All abilities will have a flat amount of value and then scale off of stats. So a archer might have a basic arrow shot that does (classtier * 25) + (agi * 1.2) damage. A swordsman might have a stab attack that does (classtier * 100) + (.5 str) damage. A priest could heal for 10% max hp + (classtier * 2%) + (int) health. Tier 0 is a villager with two abilities. After that you can promote. Tier 1 classes have two level 1 abilities. Tier 2 classes level up the previous abilities, so they have the same class 1 abilities but now level 2. The third tier class unlocks another ability and all abilities level 3. The fourth tier unlocks all abilities level 4. At level 400 the fourth tier can now do a special promote called an awaken. This unlocks an 4th ability which is a passive ability level 5 and all abilities hit level 5. When I click a skill in the skill tab I should be able to view a description of that skill. I will include a lot of this in there.
+
+Promote tab:
+This will show your current class tier and your next tier available. So for instance for a swordsman they will see at level 200 they can promote into a knight. If they hit 200 this tab should glow and when they click promote they will have to confirm it with the purchase of x amount of gold.
+
+Gear tab:
+The final tab is the gear tab. This tab shows the currently equipped items for this hero. Six equipped items detailed below. Hovering an item should give its name, its level, and what stats it gives.
+
+Trinket / Head
+Weapon / Chest
+Offhand / Legs
+
+These should be formatted in a grid like so:
+
+  Trinket  |    Head
+ [      ]  |  [      ]
+-----------|-----------
+  Weapon   |   Chest
+ [      ]  |  [      ]
+-----------|-----------
+  Offhand  |    Legs
+ [      ]  |  [      ]
+
+
+To the right of this should be the shared stash of that class rather than the portrait. So if we pull up a Dark Arch Templar's Character UI Panel, underneath it should show the shared stash of the Templar class. Which includes Templar, Arch Templar, Dark Templar, Dark Arch Templar, High Templar, Grand Templar.
+
+Log:
+This is simply an activity log. Certain events will be recorded per hero like receiving loot, leveling up, promoting, dying, etc.
+
+--Dungeons
+Clicking dungeons on the main menu should bring you to a world map view. The panels and the full menu disappears. The dungeon tiers are represented by regions on the map. I'll represent them as o's right now. The o's should be numbered. 0 for easy, 1 for hard, etc. Clicking one will bring up a list of dungeons you can fight in. It will show a compact list but shows more info when you click.
+
+o    o                 o
+
+  o           o      o
+        o
+    o             o
+           o
+     o              o
+
+
+Clicking orb '0' would show:
+
+-Easy - Items no requirements
+Satyrs - Satyr Instigator (Easy 1) (Lv 0)
+Icy Highland - Frostfang (Easy 2) (Lv 25)
+Forgotten Crypt - Stitch (Easy 3) (Lv 50)
+
+Additional info on clicking Forgotten Crypt, panel expands to show:
+
+3 - Forgotten Crypt
+Level: 50
+Boss: Stitch
+Items: no requirements
+Enter dungeon (button)
+
+When you click the enter dungeon button, you get a compact list of your heroes. You may select 5 heroes to enter. When your party beats a dungeon they roll for loot, and go again. Anybody who died will be revived to full hp before the next dungeon starts. This will repeat until the player exits or until the party wipes. If your full team dies you get one more try. After two wipes in a row meaning every member of your party has died it will automatically begin the dungeon one tier down so from forgotten crypt to icy highland instead.
+
+-Items-
+Items drop from dungeons and can have up to 4 stat rolls. The first stat is guaranteed, with a quality roll (1–5) granting 20–100% of the stat. Each additional stat is rolled in order, with a 35% chance to appear. If a stat is added, it also rolls quality (1–5) for 20–100% of its value.
+Head, Chest, Legs, Trinket, Weapon, Offhand are the 6 gear types.
+        "cloth_armor": {
+            "id": "cloth_armor",
+            "name": "Cloth Armor",
+            "slot": "chest",
+            "level": 5,
+            "roll1": "armor",
+            "value1": 10,
+            "roll2": "int",
+            "value2": "5",
+            "roll3": "resist",
+            "value3": "5",
+            "roll4": "allstats",
+            "value4": 5,
+            "sellcost": 50
+        },
+
+This item if rolled the 35% additional roll successfully twice, would have +armor, +int, and +resist. We would roll a 1-5 roll for quality on each value. So a 2/5, 3/5, 5/5 rolls cloth armor would be +4 armor, +3 int, +5 resist for a total item quality of 66.6% rounded up to 67%. Every perfect quality roll adds a star to an item. So this item would have one star. An item with 4/5, 4/5, 4/5, 5/5 would be one star. Four star items make the stars red.
+
+-Refining items
+Item refinement is done by right clicking an item and click refine. The cost is ((item level + (item level * quality%)) * 500). The refinement process takes an item that has 2 rolls, and rolls 1-5 on the 3rd roll. Or if you have a 4 roll item, it raises your lowest quality roll to a 5/5. You can only refine an item once.
+
+-Stash
+Each Class 1 category shares a stash. When clicking the stash tab it should show a compact list of all the stashes. 3x3 grid list of the class icon and then the class name.
+[] Villager [] Acolyte [] Archer
+[] Druid [] Initiate [] Swordsman
+[] Templar [] Thief [] Witch Hunter
+
+Once you click one you will see the stash. Items can be withdrawn from the inventory and placed in the stash whenever. So a Champion and an Avenger and a swordsman can all share gear, but cannot share with a Hierophant or a templar, or anyone else. These will be named after their first class name. Villagers cannot access any stashes at all. Items can be viewed, sold, and equipped from the stash ui. So the shared stash of the Templar class would include Templar, Arch Templar, Dark Templar, Dark Arch Templar, High Templar, Grand Templar. In the stash if you click an item you have the option to equip it, sell it, or blacksmith it. If you blacksmith it costs more money depending on the level of the item, but it adds one additional roll to the item for a high cost. If your item is already purple, it will add cdr roll to the item and make it golden.
+
+-Villagers
+You start with 3 villagers. Two male, one female. Gaining more hasn't been decided how yet.
+
+-Levels
+Start at level 1. 500 is max level. Promotions are below
+Villager -> Class 1 requires level 50.
+Class 1 -> Class 2 requires level 100.
+Class 2 -> Class 3 requires level 200.
+Class 3 -> Class 4 requires level 300.
+Class 4 -> Class 4 Awakened requires level 400.
+
+Villagers start with a star, every class tier up you get another star, and a final star when awakened for 6 total.
+
+Scaling should be a mix of linear and parabolic. Getting to level 450 is the same exp as getting to level 500.
+
+-Exp
+You gain exp for each enemy wave defeated if you are a live upon completing that wave. Additional exp reward upon dungeon completion if alive.
+
+# STAT SYSTEM
+## 1. INITIAL STATS (Level 1 Base Values)
+Points to distribute by tier:
+Tier 0: 12 pts (min 3/stat)    Tier 3: 36 pts (min 6/stat)
+Tier 1: 16 pts (min 4/stat)    Tier 4: 48 pts (min 8/stat)
+Tier 2: 24 pts (min 5/stat)    Tier 5+: 48 + tier*2 (min tier+3 per stat)
+Attribute costs: 1 point = 1 STR/AGI/INT
+
+Non-attribute costs (max 50% in any stat) - (Tier 1 gets 16 points for attributes, and an additional 16 points for non attributes, point pools are separate):
+- 1 point = 10 HP | 0.67 Regen | 1 Attack | 0.67 Speed | 1.33 Armor | 2 Resist
+
+## 2. MODIFIERS (Per-Level Scaling)
+### Attributes (Required totals):
+Tier 0: 3.0 (min 1.0/stat)     Tier 3: 9.0 (min 2.0/stat)
+Tier 1: 4.0 (min 1.25/stat)    Tier 4: 12.0 (min 2.5/stat)
+Tier 2: 6.0 (min 1.5/stat)     Tier 5+: 12.0 + tier/2 (min tier/2 per stat)
+
+### Non-Attributes:
+BASELINE (all classes get):
+- modHP: 2.5
+- modAttack: 0.1
+- modArmor: 0.01
+- modResist: 0.005
+
+BONUS POINTS by tier: 20/24/28/32/36 (tier 5+: 36 + tier/2)
+- 1 point = 0.1 modHP | 0.02 modAttack | 0.05 modArmor | 0.025 modResist
+
+## 3. FINAL STAT FORMULAS
+STR/AGI/INT = initial + (level × modifier)
+HP = initial + (STR × modHP)
+Attack = initial + (mainstat × modAttack)
+Armor = initial + (modArmor × level) + (0.05 × STR) + (0.01 × AGI) + gear
+Resist = initial + (modResist × level) + (0.05 × INT) + gear
+
+Physical DR = 0.9 × Armor / (Armor + 500)
+Magic DR = 0.3 × Resist / (Resist + 1000)
+HP Regen = initial + (STR × 0.01)
+Action Speed = initial + (100 + 100 × (AGI / (AGI + 1000)))
+
+## 4. ENEMY STATS
+Enemy tier = dungeon tier + 1 (bosses +2)
+Example: Level 0-50 dungeon = tier 1 enemies, tier 2 bosses
+
+These stats are further increased by items.
+
+-Action bar
+Each unit begins combat with an action bar value of 0. During every cycle, each unit gains a certain amount of action bar units based on their Agility stat. When a unit's action bar reaches or exceeds 10,000 units, it becomes eligible to act. If multiple units cross this threshold within the same cycle, the one with the highest total action bar value goes first. After a unit acts, 10,000 units are subtracted from its action bar, and if it still has more than 10,000 remaining, it may act again within the same cycle if no other units have a higher value. This continues until no units have at least 10,000 units remaining. At that point, the next cycle begins and all units gain additional action bar units according to their Agi. This system ensures that faster units act more frequently, but in a dynamic, fair order that reflects their accumulated speed.
+
+Class paths:
+Acolyte -> Cleric -> Priest (Male) / Priestess (Female) -> Hierophant
+Acolyte -> Cleric -> Patriarch (Male) / Matriarch (Female) -> Prophet (Male) / Prophetess (Female)
+Archer -> Ranger -> Marksman -> Sniper
+Archer -> Ranger -> Tracker -> Monster Hunter
+Druid -> Arch Druid -> Shapeshifter -> Runemaster
+Druid -> Arch Druid -> Shaman -> Summoner
+Initiate -> Mage -> Wizard (Male) / Witch (Female) -> White Wizard (Male) / White Witch (Female)
+Initiate -> Mage -> Sage -> Arch Sage
+Swordsman -> Knight -> Imperial Knight -> Champion
+Swordsman -> Knight -> Crusader -> Avenger
+Templar -> Arch Templar -> Dark Templar -> Dark Arch Templar
+Templar -> Arch Templar -> High Templar -> Grand Templar
+Thief -> Rogue -> Assassin -> Phantom Assassin
+Thief -> Rogue -> Stalker -> Master Stalker
+Witch Hunter -> Slayer -> Inquisitor -> Grand Inquisitor
+Witch Hunter -> Slayer -> Witcher -> Professional Witcher
+
+Class 4s:
+Hierophant (Male)
+Hierophant (Female)
+Prophet (Male)
+Prophetess (Female)
+Sniper (Male)
+Sniper (Female)
+Monster Hunter (Male)
+Monster Hunter (Female)
+Runemaster (Male)
+Runemaster (Female)
+Summoner (Male)
+Summoner (Female)
+White Wizard (Male)
+White Witch (Female)
+Arch Sage (Male)
+Arch Sage (Female)
+Champion (Male)
+Champion (Female)
+Avenger (Male)
+Avenger (Female)
+Dark Arch Templar (Male)
+Dark Arch Templar (Female)
+Grand Templar (Male)
+Grand Templar (Female)
+Phantom Assassin (Male)
+Phantom Assassin (Female)
+Master Stalker (Male)
+Master Stalker (Female)
+Grand Inquisitor (Male)
+Grand Inquisitor (Female)
+Professional Witcher (Male)
+Professional Witcher (Female)
+
+-Abilities
+Villager has 2 abilities: punch and fury for male, punch and throw rock for female.
+Class 1 gains 2 new abilities at level 1.
+Class 2 keeps the same 2 abilities from Class 1 at level 2.
+Class 3 keeps the Class 1 and 2 abilities, and gains a third at level 3.
+Class 4 keeps all previous abilities at level 4.
+Class 4 (level 400+ and awakened) gains a 4th ability (passive) and upgrades all existing abilities to level 5.
+
+The Class 1 ability has no cooldown. Others may be passive or use a cooldown (defined in spells.json).
+
+Passives are always active, e.g., “1 in 5 chance to double damage” or “reduce all damage by 50%.”
+
+-Buffs/Debuffs
+Abilities can have multiple affects. These are called buffs or debuffs. For instance the villager has a buff he applies to himself in the fury ability. He speeds himself up. While this affect is active, it should be displayed above the unit's healthbar as an icon with a small number in the bottom right of that icon. Debuffs work the same way, but are negative.
+
+--Buffs (#0099ff)
+Increase Attack: +50% attack damage
+Increase Speed: +33% action bar progress
+Increase Defense: +25% damage reduction, and -25% damage taken
+Immune: cannot gain debuffs
+Shield: attacks reduce shield hp before unit hp
+Frost Armor: +25% damage reduction, and any attackers get +1 reduce speed debuff
+
+--Debuffs (#ff3333)
+Reduce Attack: -50% attack damage
+Reduce Speed: -33% action bar progress
+Reduce Defense: -25% damage reduction, and +25% damage taken
+Blight: no health regen, not valid healing target
+Bleed: deals 5% max hp damage on turn start
+Stun: turn ends on turn start
+Taunt: forces skill 1 attack on unit that cast taunt
+Silence: forces skill 1 attack on random enemy
+Mark: +25% damage from all sources, cannot gain buffs, and cannot evade.
+
+Dungeons:
+-Easy
+Satyrs Glade – Satyr Instigator (Easy 1) (Lv 0)
+Murkin Wetlands – Murkin Chieftain (Easy 2) (Lv 25)
+Icy Highland – Frostfang (Easy 3) (Lv 50)
+
+-Medium
+Sorrowshade Hollow – Banshee Queen (Medium 1) (Lv 75)
+Forgotten Crypt – Stitch (Medium 2) (Lv 100)
+Bandit Den – Bandit Lord (Medium 3) (Lv 125)
+
+-Hard
+Gold Mine – Goblin King (Hard 1) (Lv 150)
+Centaur Cliffs – Centaur Bloodhorn (Hard 2) (Lv 175)
+Orc Warlands – Orc Shaman (Hard 3) (Lv 200)
+
+-Forsaken
+Snapdragon Swamp – Owlkin King (Forsaken 1) (Lv 225)
+Lizardman Volcano – Lizardman Trickster (Forsaken 2) (Lv 250)
+Puzzle Sanctuary – Lich Queen (Forsaken 3) (Lv 275)
+
+-Nightmare
+Bloodleaf Depths – Elven Wolfrider (Nightmare 1) (Lv 300)
+Naga Ruins – Naga Ranger (Nightmare 2) (Lv 325)
+Forgotten Sewers – Devourer (Nightmare 3) (Lv 350)
+
+-Hell
+Oblivion – Hades (Hell 1) (Lv 375)
+Abyssal Labyrinth – Mindreaver (Hell 2) (Lv 400)
+Scorching Crater – Flame Revenant (Hell 3) (Lv 425)
+
+-Impossible
+Tristam Plague – Plaguebound Archbishop (Impossible 1) (Lv 450)
+City of Illusions – Mirage (Impossible 2) (Lv 475)
+Dragon Fortress – Ancient Hydra (Impossible 3) (Lv 500)
+
+-Mythical
+Marine Fortress – Pugs (Mythical 1) (Lv 500)
+Astral Nexus – Voidcaller Seraphim (Mythical 2) (Lv 500)
+Temple of Time – Chronomancer Veyra (Mythical 3) (Lv 500)
+
+-Divine
+Celestial Garden – Elysian Watcher (Divine 1) (Lv 500)
+Throne of Storms – Sovereign (Divine 2) (Lv 500)
+Heart of the World – Worldshaper (Divine 3) (Lv 500)
+
+-Ascended
+Starlight Citadel – Cosmic Archon (Ascended 1) (Lv 500)
+Origin Core – Primeval Entity (Ascended 2) (Lv 500)
+Final Aetherium – Eternal Singularity (Ascended 3) (Lv 500)
+
+-Transcendent – Items Class 4 and level 500 required
+Rite of Passage – All dungeons in a row without stopping (Transcendent) (Lv 1000)
+
+-Twilight
+
+===========================
+OFFENSIVE DPS & PUNISHERS
+===========================
+
+Dark Arch Templar (Male/Female)
+  Role           : High DPS punisher
+  Male Passive   : Applies Bleed to debuffed targets
+  Female Passive : Applies Blight to debuffed targets
+
+White Wizard / White Witch
+  Role           : Cleanse + magical DPS hybrid
+  Male Passive   : Bonus damage vs debuffed or slowed targets
+  Female Passive : Extends cleanse duration or reduces cooldowns
+
+Sniper (Male/Female)
+  Role           : Single-target burst DPS
+  Male Passive   : Bonus crit damage to low-HP targets
+  Female Passive : Ignores a portion of Shield or Armor
+
+Monster Hunter (Male/Female)
+  Role           : AOE sustained DPS
+  Male Passive   : Bonus damage to debuffed enemies
+  Female Passive : Applies Bleed with basic attacks
+
+Professional Witcher (Male/Female)
+  Role           : Anti-magic DPS + buff strip
+  Male Passive   : Bonus damage per debuff on target
+  Female Passive : Removes one buff on critical hit
+
+===========================
+TANKS & DEFENSIVE ROLES
+===========================
+
+Champion (Male/Female)
+  Role           : Anti-physical tank with crowd control
+  Male Passive   : Chance to stun attacker when hit
+  Female Passive : Applies Slow or Taunt on counterattack
+
+Avenger (Male/Female)
+  Role           : Anti-physical retaliatory tank
+  Male Passive   : Reflects part of physical damage taken
+  Female Passive : Gains turn meter when damaged
+
+Runemaster (Male/Female)
+  Role           : Anti-mage tank
+  Male Passive   : Reduces incoming magic damage
+  Female Passive : Chance to Silence magic attackers
+
+Master Stalker (Male/Female)
+  Role           : Evade-based tank with anti-heal
+  Male Passive   : Increased dodge chance vs bleeding enemies
+  Female Passive : Applies Blight when evading attacks
+
+===========================
+HEALERS & SUPPORTS
+===========================
+
+Hierophant (Male/Female)
+  Role           : Buff-based healer
+  Male Passive   : Allies gain a 1-turn shield when buffed
+  Female Passive : Buffed allies gain small health regeneration
+
+Prophet / Prophetess
+  Role           : Primary healer with team-wide Immune
+  Male Passive   : Allies gain small turn meter boost when healed
+  Female Passive : Immune buff lasts +1 turn
+
+Summoner (Male/Female)
+  Role           : Small heals, turn meter boost, AOE debuffer
+  Male Passive   : Allies gain +5% extra turn meter
+  Female Passive : AOE debuff applies one extra random debuff
+
+===========================
+CONTROL, DEBUFF, UTILITY
+===========================
+
+Grand Templar (Male/Female)
+  Role           : Spellcasting support with CC
+  Male Passive   : Skills have a chance to Stun
+  Female Passive : Applies Slow on basic attacks
+
+Arch Sage (Male/Female)
+  Role           : Crowd control specialist
+  Male Passive   : Reduces turn meter of debuffed enemies
+  Female Passive : Debuffs last +1 turn
+
+Grand Inquisitor (Male/Female)
+  Role           : All-rounder with buff steal + buff strip utility
+  Male Passive   : 10% chance to steal a buff when attacking
+  Female Passive : Gains turn meter when removing a buff
+
+Phantom Assassin (Male/Female)
+  Role           : Critical strike assassin
+  Male Passive   : Chance to reset a cooldown on kill
+  Female Passive : Increased crit chance vs taunted enemies
+
+Witch Hunter / Slayer
+  Role           : Buff strip + DPS utility
+  Male Passive   : Bonus damage vs buffed enemies
+  Female Passive : Removes one buff from enemies on skill use
+
+===========================
+Spell Concepts
+===========================
+
+Base spells are obtained by class 1 and 2 (swordsman/knight). 3rd spell is gained after class split, so imperial knight and crusader have same 2 base spells + a different 3rd spell. 4th spell is a passive gained from awakening and is unique based on class + gender.
+
+ACOLYTE FAMILY (Healer/Support)
+Base Spells (Acolyte/Cleric)
+1. Holy Smite: Magic damage + heal lowest hp ally.
+2. Divine Light: Heal target ally + remove 1 debuff (4 turn CD).
+
+Priest/Priestess → Hierophant
+3. Sanctuary: All allies gain Increase Defense + convert debuffs to Increase Attack for two turns (6 turn CD)
+4. Male Passive: Allies gain 20% shield when receiving any buff.
+4. Female Passive: Allies with buffs regenerate 5% HP per turn.
+
+Patriarch/Matriarch → Prophet/Prophetess
+3. Mass Heal: Heal all allies (6 turn CD)
+4. Male Passive: Overhealing creates shield up to 25% max HP
+4. Female Passive: Overhealing applies Immune buff for 1 turn duration.
+
+ARCHER FAMILY (Physical Ranged DPS)
+Base Spells (Archer/Ranger)
+1. Aimed Shot: High damage + ignore 25% armor and break shields.
+2. Hunter's Mark: Apply Mark and blight debuff (5 turn CD)
+
+Marksman → Sniper
+3. Double Shot: Fire twice, first shot applies Reduce Defense debuff for 1 turn, second shot hits random enemy and applies bleed debuff for 1 turn. (6 turn CD)
+4. Male Passive: Deal 150% damage to enemies below 30% HP
+4. Female Passive: Killing an enemy grants Increase Speed buff for 2 turns.
+
+Tracker → Monster Hunter
+3. Rain of Arrows: AOE damage + damage per debuff on enemies.
+4. Male Passive: Aimed Shot applies Bleed for 1 turn.
+4. Female Passive: Gain 5% action bar per debuff on Aimed Shot target.
+
+DRUID FAMILY (Hybrid Tank/Support)
+Base Spells (Druid/Arch Druid)
+1. Natures Blessing: Damage enemy + 10% action bar to lowest hp ally.
+2. Barkskin: Target Ally gains Increase Defense buff, 5% hp heal, and 5% max hp shield.
+
+Shapeshifter → Runemaster
+3. Primal Roar: AOE damage + apply Reduce Attack debuff for 2 turns to all enemies (6 turn CD)
+4. Male Passive: Primal Roar taunts all enemies for 1 turn.
+4. Female Passive: When taking magical damage, retaliate with ability 1 without using action bar
+
+Shaman → Summoner
+3. Nature's Balance: If targeting allies, remove all debuffs, healing a small amount. If targeting enemies, remove all buffs, dealing a small amount of damage. Full team aoe.
+4. Male Passive: Natures Blessing lowers action bar of lowest hp enemy by 5%.
+4. Female Passive: Natures blessing heals lowest hp ally for 5% hp.
+
+INITIATE FAMILY (Magical DPS)
+Base Spells (Initiate/Mage)
+1. Arcane Missiles: 1 hit to target + 1 hit to each enemy with a debuff.
+2. Frost Armor: Applies Frost Armor buff for 2 turns that reduces damage by 25%, and any attackers get reduce speed (4 turn CD)
+
+Wizard/Witch → White Wizard/White Witch
+3. Helping Hand: Remove all debuffs from target + fill target action bar to 100% (5 turn CD)
+4. Male Passive: Allies cleansed of debuffs gain Increase Attack buff for 1 turn
+4. Female Passive: When cleansing debuffs, ally gains Increase Speed buff for 1 turn
+
+Sage → Arch Sage
+3. Twilights Promise: Consumes 10% action bar from all allies and this turn. Next turn unleashes Twilights End. (8 turn CD)
+3. Twilights End: (tooltip for twilights promise should explain both parts of the spell, this spell doesn't need to be displayed on the action bar). The second part of Twilights Promise, casts the turn after Twilights Promise if not stunned, taunted, silence, or dead. Massive AOE magical damage + reduce all enemies action bar by 50%.
+4. Male Passive: When receiving a debuff, also grants Increase Attack buff.
+4. Female Passive: When receiving a debuff, also grants Increase Speed buff.
+
+SWORDSMAN FAMILY (Physical Tank/DPS)
+Base Spells (Swordsman/Knight)
+1. Blade Strike: Physical attack + 150% damage if target is bleeding
+2. Shield Bash: Taunt target for 1 turn + gain shield (4 turn CD)
+
+Imperial Knight → Champion
+3. Rally Banner: Taunt all enemies + all allies gain Increase Attack for 1 turn and increase attack bar instantly 30% (7 turn CD)
+4. Male Passive: When hit by physical or magical attack, 20% chance to stun attacker.
+4. Female Passive: Start battle with Shield equal to 20% max HP, regenerates every 4 turns.
+
+Crusader → Avenger
+3. Blood Pact: Taunt all enemies + apply 2 bleed stacks to self, apply 2 bleed stacks to all taunted enemies. (5 turn CD)
+4. Male Passive: When attacked by a taunted unit, that unit receives blight debuff.
+4. Female Passive: Gain 15% action bar when taking damage.
+
+TEMPLAR FAMILY (Hybrid DPS/Support)
+Base Spells (Templar/Arch Templar)
+1. Psi Strike: If enemy is at or above 30% action bar, deal physical damage and drain 5% action bar. If enemy is below 30% action bar, deal pure damage.
+2. Psychic Mark: Apply Mark and Reduce Speed debuff on target (5 turn CD)
+
+Dark Templar → Dark Arch Templar
+3. Void Strike: Hit enemy with Psi Strike per the number of debuffs on target. (6 turn CD)
+4. Male Passive: Killing an enemy with debuffs will distribute those debuffs randomly to the enemy team.
+4. Female Passive: Psychic Mark also applies Blight debuff.
+
+High Templar → Grand Templar
+3. Psi Shift: Steal all action bar progress from target, dealing magic damage and setting target to 25% action bar (7 turn CD)
+4. Male Passive: All abilities have a 20% chance to stun.
+4. Female Passive: Psi Shift sets target to 0% action bar.
+
+THIEF FAMILY (Assassin/Disruption)
+Base Spells (Thief/Rogue)
+1. Cheap Shot: 1 random debuff stack you have is placed on the target instead.
+2. Cripple: Applies Reduce Speed, Reduce Attack, and bleed for 2 turns. (4 turn CD)
+
+Assassin → Phantom Assassin
+3. Assassinate: Pure damage if enemy is below 30% HP and has a debuff. (7 turn CD)
+4. Male Passive: If Assassinate kills target, refill action bar to 75%.
+4. Female Passive: Cheap Shot will deal pure damage if enemy is below 50% HP
+
+Stalker → Master Stalker
+3. Shadowstep: Apply Taunt, Mark, and one bleed debuff to target.
+4. Male Passive: 10% chance to dodge pure damage, 20% magical, 30% physical. Cheap Shot now adds bleed.
+4. Female Passive: 10% chance to dodge pure damage, 20% physical, 30% magical. Cheap Shot now adds bleed.
+
+WITCH HUNTER FAMILY (Anti-Magic/Utility)
+Base Spells (Witch Hunter/Slayer)
+1. Silver Bolt: Physical damage + remove 1 buff from enemy.
+2. Purifying Flame: Aoe damage, deals more damage per buff on enemy. (4 turn CD)
+
+Inquisitor → Grand Inquisitor
+3. Steal Magic: All buffs from enemy placed on random allies. Reduce Defense placed for 2 turns on any enemy without a buff. (7 turn CD)
+4. Male Passive: Silver Bolt deals pure damage if there is no buff to remove.
+4. Female Passive: Silver Bolt removes 2 buffs on attack instead of 1.
+
+Witcher → Professional Witcher
+3. Hex: Silence debuff on enemy for 2 turns.
+4. Male Passive: Silver Bolt deals pure damage to enemies that are silenced.
+4. Female Passive: Silver Bolt against silenced enemies cannot be evaded.
+

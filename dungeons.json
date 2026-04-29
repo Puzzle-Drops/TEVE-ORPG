@@ -1,0 +1,1444 @@
+{
+  "tiers": {
+    "Easy": {
+      "tier": 0,
+      "id": "easy"
+    },
+    "Medium": {
+      "tier": 1,
+      "id": "medium"
+    },
+    "Hard": {
+      "tier": 2,
+      "id": "hard"
+    },
+    "Forsaken": {
+      "tier": 3,
+      "id": "forsaken"
+    },
+    "Nightmare": {
+      "tier": 4,
+      "id": "nightmare"
+    },
+    "Hell": {
+      "tier": 5,
+      "id": "hell"
+    },
+    "Impossible": {
+      "tier": 6,
+      "id": "impossible"
+    },
+    "Mythical": {
+      "tier": 7,
+      "id": "mythical"
+    },
+    "Divine": {
+      "tier": 8,
+      "id": "divine"
+    },
+    "Ascended": {
+      "tier": 9,
+      "id": "ascended"
+    },
+    "Transcendent": {
+      "tier": 10,
+      "id": "transcendent"
+    },
+    "Twilight": {
+      "tier": 11,
+      "id": "twilight"
+    }
+  },
+  "dungeons": {
+    "satyrs_glade": {
+      "id": "satyrs_glade",
+      "name": "Satyrs Glade",
+      "boss": "Satyr Instigator",
+      "tier": "Easy",
+      "subtitle": "Easy 1",
+      "level": 0,
+      "waves": [
+        {
+          "enemies": [
+            { "id": "satyr_youth", "level": 1 },
+            { "id": "satyr_youth", "level": 1 },
+            { "id": "satyr_youth", "level": 1 }
+          ]
+        },
+        {
+          "enemies": [
+            { "id": "aggressive_satyr", "level": 2 },
+            { "id": "satyr_youth", "level": 1 },
+            { "id": "satyr_youth", "level": 1 }
+          ]
+        },
+        {
+          "enemies": [
+            { "id": "satyr_instigator", "level": 5 },
+            { "id": "aggressive_satyr", "level": 3 },
+            { "id": "aggressive_satyr", "level": 3 },
+            { "id": "satyr_youth", "level": 1 },
+            { "id": "satyr_youth", "level": 1 }
+          ]
+        }
+      ],
+      "rewards": {
+        "gold": 350,
+        "exp": 1000,
+        "items": ["glade_horncap", "glade_hidewrap", "glade_stepbinds", "glade_fangblade", "glade_wicker_guard", "glade_focus", "glade_shadowfang"]
+      }
+    },
+    "murkin_wetlands": {
+      "id": "murkin_wetlands",
+      "name": "Murkin Wetlands",
+      "boss": "Murkin Chieftain",
+      "tier": "Easy",
+      "subtitle": "Easy 2",
+      "level": 25,
+      "waves": [
+        {
+          "enemies": [
+            { "id": "murkin_warrior", "level": 11 },
+            { "id": "murkin_brawler", "level": 14 },
+            { "id": "murkin_initiate", "level": 12 }
+          ]
+        },
+        {
+          "enemies": [
+            { "id": "murkin_elder", "level": 15 },
+            { "id": "murkin_warrior", "level": 12 },
+            { "id": "murkin_initiate", "level": 12 }
+          ]
+        },
+        {
+          "enemies": [
+            { "id": "murkin_brawler", "level": 15 },
+            { "id": "murkin_initiate", "level": 13 },
+            { "id": "murkin_warrior", "level": 13 }
+          ]
+        },
+        {
+          "enemies": [
+            { "id": "murkin_elder", "level": 16 },
+            { "id": "murkin_elder", "level": 16 },
+            { "id": "murkin_initiate", "level": 14 },
+            { "id": "murkin_warrior", "level": 14 },
+            { "id": "murkin_warrior", "level": 14 }
+          ]
+        },
+        {
+          "enemies": [
+            { "id": "murkin_chieftain", "level": 25 },
+            { "id": "murkin_elder", "level": 20 },
+            { "id": "murkin_elder", "level": 20 },
+            { "id": "murkin_initiate", "level": 17 },
+            { "id": "murkin_warrior", "level": 17 }
+          ]
+        }
+      ],
+      "rewards": {
+        "gold": 800,
+        "exp": 2200,
+        "items": ["wetland_miretooth", "wetland_soddenwrap", "wetland_fenstompers", "wetland_blightmaul", "wetland_brackenguard", "wetland_mirecharm", "wetland_murkspire"]
+      }
+    },
+    "icy_highland": {
+      "id": "icy_highland",
+      "name": "Icy Highland",
+      "boss": "Grizzly Ice Bear",
+      "tier": "Easy",
+      "subtitle": "Easy 3",
+      "level": 50,
+      "waves": [
+        {
+          "enemies": [
+            { "id": "frost_wolf", "level": 35 },
+            { "id": "ice_troll", "level": 35 },
+            { "id": "ice_troll", "level": 35 }
+          ]
+        },
+        {
+          "enemies": [
+            { "id": "water_elemental", "level": 38 },
+            { "id": "water_elemental", "level": 38 },
+            { "id": "ice_troll", "level": 36 }
+          ]
+        },
+        {
+          "enemies": [
+            { "id": "ice_troll_king", "level": 45 },
+            { "id": "ice_troll", "level": 38 },
+            { "id": "ice_troll", "level": 38 },
+            { "id": "water_elemental", "level": 38 },
+            { "id": "water_elemental", "level": 38 }
+          ]
+        },
+        {
+          "enemies": [
+            { "id": "frostfang", "level": 45 },
+            { "id": "frost_wolf", "level": 40 },
+            { "id": "frost_wolf", "level": 40 },
+            { "id": "water_elemental", "level": 38 },
+            { "id": "water_elemental", "level": 38 }
+          ]
+        },
+        {
+          "enemies": [
+            { "id": "grizzly_ice_bear", "level": 50 },
+            { "id": "ice_bear", "level": 45 },
+            { "id": "frost_wolf", "level": 45 },
+            { "id": "water_elemental", "level": 42 },
+            { "id": "ice_troll", "level": 41 }
+          ]
+        }
+      ],
+      "rewards": {
+        "gold": 2400,
+        "exp": 4400,
+        "items": ["icy_wolfhood", "icy_mauler_plate", "icy_tundrastride", "icy_howler", "icy_fangguard", "icy_shardcore", "icy_frostfang"]
+      }
+    },
+    "sorrowshade_hollow": {
+    "id": "sorrowshade_hollow",
+    "name": "Sorrowshade Hollow",
+    "boss": "Banshee Queen",
+    "tier": "Medium",
+    "subtitle": "Medium 1",
+    "level": 75,
+    "waves": [
+        {
+            "enemies": [
+                { "id": "wailing_banshee", "level": 55 },
+                { "id": "corrupted_ent", "level": 58 },
+                { "id": "toxic_sludge", "level": 60 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "shadow_wisp", "level": 62 },
+                { "id": "wailing_banshee", "level": 63 },
+                { "id": "corrupted_ent", "level": 65 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "banshee_matriarch", "level": 75 },
+                { "id": "wailing_banshee", "level": 68 },
+                { "id": "toxic_sludge", "level": 68 },
+                { "id": "twisted_treant", "level": 70 },
+                { "id": "shadow_wisp", "level": 66 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "twisted_treant", "level": 72 },
+                { "id": "twisted_treant", "level": 73 },
+                { "id": "toxic_sludge", "level": 71 },
+                { "id": "corrupted_ent", "level": 74 },
+                { "id": "wailing_banshee", "level": 70 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "banshee_queen", "level": 75 },
+                { "id": "wailing_banshee", "level": 74 },
+                { "id": "twisted_treant", "level": 74 },
+                { "id": "shadow_wisp", "level": 72 },
+                { "id": "toxic_sludge", "level": 73 }
+            ]
+        }
+    ],
+    "rewards": {
+        "gold": 4800,
+        "exp": 11500,
+        "items": ["hollow_wailcrown", "hollow_shroudmail", "hollow_gloomsteps", "hollow_whisperstaff", "hollow_sorrowshield", "hollow_tearstone", "hollow_banshee_edge"]
+    }
+},
+"forgotten_crypt": {
+    "id": "forgotten_crypt",
+    "name": "Forgotten Crypt",
+    "boss": "The Stitched Horror",
+    "tier": "Medium",
+    "subtitle": "Medium 2",
+    "level": 100,
+    "waves": [
+        {
+            "enemies": [
+                { "id": "undead_swordsman", "level": 80 },
+                { "id": "undead_archer", "level": 82 },
+                { "id": "undead_mage", "level": 85 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "necromancer", "level": 88 },
+                { "id": "undead_swordsman", "level": 86 },
+                { "id": "vampire", "level": 90 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "death_knight", "level": 100 },
+                { "id": "necromancer", "level": 93 },
+                { "id": "vampire", "level": 94 },
+                { "id": "undead_archer", "level": 91 },
+                { "id": "undead_mage", "level": 92 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "vampire", "level": 97 },
+                { "id": "vampire", "level": 98 },
+                { "id": "necromancer", "level": 96 },
+                { "id": "undead_swordsman", "level": 95 },
+                { "id": "undead_archer", "level": 96 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "stitched_horror", "level": 100 },
+                { "id": "necromancer", "level": 99 },
+                { "id": "necromancer", "level": 98 },
+                { "id": "vampire", "level": 99 },
+                { "id": "undead_mage", "level": 97 }
+            ]
+        }
+    ],
+    "rewards": {
+        "gold": 9600,
+        "exp": 23000,
+        "items": ["crypt_bonecrown", "crypt_stitchplate", "crypt_tombwalkers", "crypt_bonecleaver", "crypt_graveguard", "crypt_phylactery", "crypt_stitchblade"]
+    }
+},
+"bandit_den": {
+    "id": "bandit_den",
+    "name": "Bandit Den",
+    "boss": "Bandit Lord",
+    "tier": "Medium",
+    "subtitle": "Medium 3",
+    "level": 125,
+    "waves": [
+        {
+            "enemies": [
+                { "id": "bandit_thug", "level": 105 },
+                { "id": "bandit_cutthroat", "level": 108 },
+                { "id": "bandit_archer", "level": 110 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "bandit_enforcer", "level": 113 },
+                { "id": "bandit_assassin", "level": 115 },
+                { "id": "bandit_thug", "level": 112 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "bandit_captain", "level": 125 },
+                { "id": "bandit_enforcer", "level": 118 },
+                { "id": "bandit_assassin", "level": 119 },
+                { "id": "bandit_cutthroat", "level": 117 },
+                { "id": "bandit_archer", "level": 116 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "bandit_assassin", "level": 122 },
+                { "id": "bandit_assassin", "level": 123 },
+                { "id": "bandit_enforcer", "level": 121 },
+                { "id": "bandit_cutthroat", "level": 120 },
+                { "id": "bandit_archer", "level": 121 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "bandit_lord", "level": 125 },
+                { "id": "bandit_enforcer", "level": 124 },
+                { "id": "bandit_assassin", "level": 124 },
+                { "id": "bandit_enforcer", "level": 123 },
+                { "id": "bandit_cutthroat", "level": 122 }
+            ]
+        }
+    ],
+    "rewards": {
+        "gold": 19200,
+        "exp": 46000,
+        "items": ["bandit_shadowhood", "bandit_leathercoat", "bandit_prowlpants", "bandit_dagger", "bandit_parryguard", "bandit_lockpick", "bandit_shadowdagger"]
+    }
+},
+"gold_mine": {
+    "id": "gold_mine",
+    "name": "Gold Mine",
+    "boss": "Goblin Mining Mech",
+    "tier": "Hard",
+    "subtitle": "Hard 1",
+    "level": 150,
+    "waves": [
+        {
+            "enemies": [
+                { "id": "goblin_tinkerer", "level": 130 },
+                { "id": "goblin_grenadier", "level": 130 },
+                { "id": "goblin_mechanic", "level": 130 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "goblin_grenadier", "level": 135 },
+                { "id": "goblin_grenadier", "level": 135 },
+                { "id": "goblin_tinkerer", "level": 133 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "goblin_demolitionist", "level": 150 },
+                { "id": "goblin_mechanic", "level": 140 },
+                { "id": "goblin_mechanic", "level": 140 },
+                { "id": "goblin_grenadier", "level": 138 },
+                { "id": "goblin_tinkerer", "level": 138 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "goblin_grenadier", "level": 145 },
+                { "id": "goblin_grenadier", "level": 145 },
+                { "id": "goblin_tinkerer", "level": 143 },
+                { "id": "goblin_tinkerer", "level": 143 },
+                { "id": "goblin_mechanic", "level": 142 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "goblin_mining_mech", "level": 150 },
+                { "id": "goblin_tinkerer", "level": 148 },
+                { "id": "goblin_mechanic", "level": 148 },
+                { "id": "goblin_grenadier", "level": 146 },
+                { "id": "goblin_grenadier", "level": 146 }
+            ]
+        }
+    ],
+    "rewards": {
+        "gold": 38400,
+        "exp": 92000,
+        "items": ["gold_greedhelm", "gold_vaultplate", "gold_minerstrides", "gold_pickaxe", "gold_coinshield", "gold_nugget", "gold_kingsbane"]
+    }
+},
+"tribal_cliffs": {
+    "id": "tribal_cliffs",
+    "name": "Tribal Cliffs",
+    "boss": "Tribal Chieftain",
+    "tier": "Hard",
+    "subtitle": "Hard 2",
+    "level": 175,
+    "waves": [
+        {
+            "enemies": [
+                { "id": "tribal_scout", "level": 155 },
+                { "id": "tribal_warrior", "level": 155 },
+                { "id": "tribal_mystic", "level": 155 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "tribal_warrior", "level": 160 },
+                { "id": "tribal_warrior", "level": 160 },
+                { "id": "tribal_scout", "level": 158 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "tribal_warchief", "level": 175 },
+                { "id": "tribal_warrior", "level": 165 },
+                { "id": "tribal_mystic", "level": 165 },
+                { "id": "tribal_scout", "level": 163 },
+                { "id": "tribal_scout", "level": 163 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "tribal_warrior", "level": 170 },
+                { "id": "tribal_warrior", "level": 170 },
+                { "id": "tribal_mystic", "level": 168 },
+                { "id": "tribal_mystic", "level": 168 },
+                { "id": "tribal_scout", "level": 167 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "tribal_chieftain", "level": 175 },
+                { "id": "tribal_warrior", "level": 173 },
+                { "id": "tribal_warrior", "level": 173 },
+                { "id": "tribal_mystic", "level": 171 },
+                { "id": "tribal_scout", "level": 171 }
+            ]
+        }
+    ],
+    "rewards": {
+        "gold": 76800,
+        "exp": 184000,
+        "items": ["cliff_warhelm", "cliff_stampmail", "cliff_hoofguards", "cliff_lance", "cliff_tribeguard", "cliff_warhorn", "cliff_bloodspear"]
+    }
+},
+"orc_warlands": {
+    "id": "orc_warlands",
+    "name": "Orc Warlands",
+    "boss": "Orc Blademaster",
+    "tier": "Hard",
+    "subtitle": "Hard 3",
+    "level": 200,
+    "waves": [
+        {
+            "enemies": [
+                { "id": "orc_grunt", "level": 180 },
+                { "id": "orc_berserker", "level": 180 },
+                { "id": "orc_bloodshaman", "level": 180 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "orc_berserker", "level": 185 },
+                { "id": "orc_berserker", "level": 185 },
+                { "id": "orc_grunt", "level": 183 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "orc_warlord", "level": 200 },
+                { "id": "orc_berserker", "level": 190 },
+                { "id": "orc_bloodshaman", "level": 190 },
+                { "id": "orc_grunt", "level": 188 },
+                { "id": "orc_grunt", "level": 188 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "orc_berserker", "level": 195 },
+                { "id": "orc_berserker", "level": 195 },
+                { "id": "orc_bloodshaman", "level": 193 },
+                { "id": "orc_bloodshaman", "level": 193 },
+                { "id": "orc_grunt", "level": 192 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "orc_blademaster", "level": 200 },
+                { "id": "orc_bloodshaman", "level": 198 },
+                { "id": "orc_berserker", "level": 198 },
+                { "id": "orc_bloodshaman", "level": 196 },
+                { "id": "orc_grunt", "level": 196 }
+            ]
+        }
+    ],
+    "rewards": {
+        "gold": 153600,
+        "exp": 368000,
+        "items": ["orc_skullcap", "orc_warplate", "orc_battlegrieves", "orc_cleaver", "orc_bulwark", "orc_totem", "orc_doomhammer"]
+    }
+},
+"snapdragon_swamp": {
+    "id": "snapdragon_swamp",
+    "name": "Snapdragon Swamp",
+    "boss": "Owlkin King",
+    "tier": "Forsaken",
+    "subtitle": "Forsaken 1",
+    "level": 225,
+    "waves": [
+        {
+            "enemies": [
+                { "id": "snapdragon_spitter", "level": 205 },
+                { "id": "ogre_bruiser", "level": 208 },
+                { "id": "ogre_witch", "level": 210 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "swamp_lurker", "level": 212 },
+                { "id": "snapdragon_spitter", "level": 214 },
+                { "id": "ogre_bruiser", "level": 215 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "bog_beast", "level": 225 },
+                { "id": "ogre_witch", "level": 218 },
+                { "id": "swamp_lurker", "level": 219 },
+                { "id": "snapdragon_spitter", "level": 220 },
+                { "id": "ogre_bruiser", "level": 220 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "swamp_lurker", "level": 222 },
+                { "id": "ogre_witch", "level": 223 },
+                { "id": "ogre_witch", "level": 223 },
+                { "id": "snapdragon_spitter", "level": 224 },
+                { "id": "ogre_bruiser", "level": 224 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "owlkin_king", "level": 225 },
+                { "id": "ogre_bruiser", "level": 224 },
+                { "id": "ogre_witch", "level": 225 },
+                { "id": "swamp_lurker", "level": 225 },
+                { "id": "snapdragon_spitter", "level": 225 }
+            ]
+        }
+    ],
+    "rewards": {
+        "gold": 307200,
+        "exp": 736000,
+        "items": ["swamp_wisdomcrest", "swamp_featherrobe", "swamp_talonsteps", "swamp_talonclaw", "swamp_wingguard", "swamp_moonstone", "swamp_kingstaff"]
+    }
+},
+"lizardman_volcano": {
+    "id": "lizardman_volcano",
+    "name": "Lizardman Volcano",
+    "boss": "Lizardman Trickster",
+    "tier": "Forsaken",
+    "subtitle": "Forsaken 2",
+    "level": 250,
+    "waves": [
+        {
+            "enemies": [
+                { "id": "lizardman_warrior", "level": 230 },
+                { "id": "lizardman_shaman", "level": 233 },
+                { "id": "owlkin_hunter", "level": 235 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "lava_elemental", "level": 237 },
+                { "id": "lizardman_warrior", "level": 239 },
+                { "id": "owlkin_hunter", "level": 240 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "owlkin_warchief", "level": 250 },
+                { "id": "lizardman_shaman", "level": 243 },
+                { "id": "lava_elemental", "level": 244 },
+                { "id": "lizardman_warrior", "level": 245 },
+                { "id": "owlkin_hunter", "level": 245 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "lava_elemental", "level": 247 },
+                { "id": "lava_elemental", "level": 248 },
+                { "id": "lizardman_shaman", "level": 248 },
+                { "id": "lizardman_warrior", "level": 249 },
+                { "id": "owlkin_hunter", "level": 249 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "lizardman_trickster", "level": 250 },
+                { "id": "owlkin_hunter", "level": 249 },
+                { "id": "lizardman_shaman", "level": 250 },
+                { "id": "lava_elemental", "level": 250 },
+                { "id": "lizardman_warrior", "level": 250 }
+            ]
+        }
+    ],
+    "rewards": {
+        "gold": 614400,
+        "exp": 1472000,
+        "items": ["lizardman_scalemask", "lizardman_moltenscale", "lizardman_lavasteps", "lizardman_firedagger", "lizardman_scaleshield", "lizardman_firegem", "lizardman_trickblade"]
+    }
+},
+"puzzle_sanctuary": {
+    "id": "puzzle_sanctuary",
+    "name": "Puzzle Sanctuary",
+    "boss": "Lich Queen",
+    "tier": "Forsaken",
+    "subtitle": "Forsaken 3",
+    "level": 275,
+    "waves": [
+        {
+            "enemies": [
+                { "id": "ice_revenant", "level": 255 },
+                { "id": "frost_specter", "level": 258 },
+                { "id": "frozen_gargoyle", "level": 260 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "soul_wraith", "level": 262 },
+                { "id": "ice_revenant", "level": 264 },
+                { "id": "frost_specter", "level": 265 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "crypt_king", "level": 275 },
+                { "id": "frozen_gargoyle", "level": 268 },
+                { "id": "soul_wraith", "level": 269 },
+                { "id": "ice_revenant", "level": 270 },
+                { "id": "frost_specter", "level": 270 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "soul_wraith", "level": 272 },
+                { "id": "soul_wraith", "level": 273 },
+                { "id": "frozen_gargoyle", "level": 273 },
+                { "id": "ice_revenant", "level": 274 },
+                { "id": "frost_specter", "level": 274 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "lich_queen", "level": 275 },
+                { "id": "frost_specter", "level": 274 },
+                { "id": "soul_wraith", "level": 275 },
+                { "id": "frozen_gargoyle", "level": 275 },
+                { "id": "ice_revenant", "level": 275 }
+            ]
+        }
+    ],
+    "rewards": {
+        "gold": 1228800,
+        "exp": 2944000,
+        "items": ["puzzle_lichcrown", "puzzle_cryptrobe", "puzzle_bonestrides", "puzzle_soulstaff", "puzzle_undeadward", "puzzle_phylactery", "puzzle_lichbane"]
+    }
+},
+"bloodleaf_depths": {
+    "id": "bloodleaf_depths",
+    "name": "Bloodleaf Depths",
+    "boss": "Elven Queen",
+    "tier": "Nightmare",
+    "subtitle": "Nightmare 1",
+    "level": 300,
+    "waves": [
+        {
+            "enemies": [
+                { "id": "elven_hunter", "level": 280 },
+                { "id": "swift_wolf", "level": 282 },
+                { "id": "elven_archer", "level": 285 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "shadow_assassin", "level": 288 },
+                { "id": "elven_hunter", "level": 290 },
+                { "id": "swift_wolf", "level": 292 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "elven_bladedancer", "level": 300 },
+                { "id": "elven_archer", "level": 294 },
+                { "id": "shadow_assassin", "level": 295 },
+                { "id": "swift_wolf", "level": 293 },
+                { "id": "elven_hunter", "level": 292 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "shadow_assassin", "level": 297 },
+                { "id": "shadow_assassin", "level": 298 },
+                { "id": "elven_archer", "level": 296 },
+                { "id": "swift_wolf", "level": 295 },
+                { "id": "swift_wolf", "level": 296 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "elven_queen", "level": 300 },
+                { "id": "elven_hunter", "level": 299 },
+                { "id": "shadow_assassin", "level": 299 },
+                { "id": "elven_archer", "level": 298 },
+                { "id": "swift_wolf", "level": 298 }
+            ]
+        }
+    ],
+    "rewards": {
+        "gold": 2457600,
+        "exp": 5888000,
+        "items": ["bloodleaf_wolfhelm", "bloodleaf_ridervest", "bloodleaf_swiftstrides", "bloodleaf_moonbow", "bloodleaf_natureguard", "bloodleaf_wolfcharm", "bloodleaf_wolfclaw"]
+    }
+},
+"naga_ruins": {
+    "id": "naga_ruins",
+    "name": "Naga Ruins",
+    "boss": "Naga Empress",
+    "tier": "Nightmare",
+    "subtitle": "Nightmare 2",
+    "level": 325,
+    "waves": [
+        {
+            "enemies": [
+                { "id": "naga_warrior", "level": 305 },
+                { "id": "naga_tidecaller", "level": 308 },
+                { "id": "naga_serpent_guard", "level": 310 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "naga_siren", "level": 313 },
+                { "id": "naga_warrior", "level": 315 },
+                { "id": "naga_tidecaller", "level": 317 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "naga_warlord", "level": 325 },
+                { "id": "naga_siren", "level": 318 },
+                { "id": "naga_serpent_guard", "level": 319 },
+                { "id": "naga_tidecaller", "level": 320 },
+                { "id": "naga_warrior", "level": 318 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "naga_siren", "level": 322 },
+                { "id": "naga_siren", "level": 323 },
+                { "id": "naga_serpent_guard", "level": 321 },
+                { "id": "naga_tidecaller", "level": 320 },
+                { "id": "naga_warrior", "level": 321 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "naga_empress", "level": 325 },
+                { "id": "naga_warrior", "level": 324 },
+                { "id": "naga_siren", "level": 324 },
+                { "id": "naga_serpent_guard", "level": 323 },
+                { "id": "naga_tidecaller", "level": 323 }
+            ]
+        }
+    ],
+    "rewards": {
+        "gold": 4915200,
+        "exp": 11776000,
+        "items": ["naga_tidalcrest", "naga_scalemail", "naga_coilguards", "naga_seabow", "naga_tidalshield", "naga_pearlcore", "naga_serpentfang"]
+    }
+},
+"forgotten_sewers": {
+    "id": "forgotten_sewers",
+    "name": "Forgotten Sewers",
+    "boss": "The Plague Master",
+    "tier": "Nightmare",
+    "subtitle": "Nightmare 3",
+    "level": 350,
+    "waves": [
+        {
+            "enemies": [
+                { "id": "plague_bearer", "level": 330 },
+                { "id": "corrosive_sludge", "level": 333 },
+                { "id": "corrupted_alchemist", "level": 335 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "sewer_lurker", "level": 338 },
+                { "id": "plague_bearer", "level": 340 },
+                { "id": "corrosive_sludge", "level": 342 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "putrid_abomination", "level": 350 },
+                { "id": "sewer_lurker", "level": 343 },
+                { "id": "corrupted_alchemist", "level": 344 },
+                { "id": "plague_bearer", "level": 345 },
+                { "id": "corrosive_sludge", "level": 343 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "sewer_lurker", "level": 347 },
+                { "id": "sewer_lurker", "level": 348 },
+                { "id": "corrupted_alchemist", "level": 346 },
+                { "id": "plague_bearer", "level": 346 },
+                { "id": "corrosive_sludge", "level": 345 }
+            ]
+        },
+        {
+            "enemies": [
+                { "id": "plague_master", "level": 350 },
+                { "id": "corrosive_sludge", "level": 349 },
+                { "id": "sewer_lurker", "level": 349 },
+                { "id": "corrupted_alchemist", "level": 348 },
+                { "id": "plague_bearer", "level": 348 }
+            ]
+        }
+    ],
+    "rewards": {
+        "gold": 9830400,
+        "exp": 23552000,
+        "items": ["sewer_plaguemask", "sewer_rotplate", "sewer_sludgeboots", "sewer_devourjaw", "sewer_corrodeshield", "sewer_toxicshard", "sewer_plaguebringer"]
+    }
+},
+"oblivion": {
+  "id": "oblivion",
+  "name": "Oblivion",
+  "boss": "Hades",
+  "tier": "Hell",
+  "subtitle": "Hell 1",
+  "level": 375,
+  "waves": [
+    {
+      "enemies": [
+        { "id": "imp_tormentor", "level": 355 },
+        { "id": "imp_tormentor", "level": 355 },
+        { "id": "hell_knight", "level": 355 },
+        { "id": "hell_knight", "level": 355 },
+        { "id": "succubus", "level": 355 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "pit_fiend", "level": 360 },
+        { "id": "succubus", "level": 360 },
+        { "id": "succubus", "level": 360 },
+        { "id": "imp_tormentor", "level": 358 },
+        { "id": "imp_tormentor", "level": 358 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "demon_lord", "level": 375 },
+        { "id": "hell_knight", "level": 365 },
+        { "id": "hell_knight", "level": 365 },
+        { "id": "pit_fiend", "level": 365 },
+        { "id": "succubus", "level": 363 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "pit_fiend", "level": 370 },
+        { "id": "pit_fiend", "level": 370 },
+        { "id": "succubus", "level": 368 },
+        { "id": "hell_knight", "level": 368 },
+        { "id": "hell_knight", "level": 368 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "hades", "level": 375 },
+        { "id": "pit_fiend", "level": 370 },
+        { "id": "succubus", "level": 370 },
+        { "id": "hell_knight", "level": 370 },
+        { "id": "imp_tormentor", "level": 370 }
+      ]
+    }
+  ],
+  "rewards": {
+    "gold": 19660800,
+    "exp": 47104000,
+    "items": ["oblivion_doomcrown", "oblivion_soulplate", "oblivion_hellstrides", "oblivion_soulreaper", "oblivion_styxguard", "oblivion_deathstone", "oblivion_hadesclaw"]
+  }
+},
+"abyssal_labyrinth": {
+  "id": "abyssal_labyrinth",
+  "name": "Abyssal Labyrinth",
+  "boss": "Mindreaver",
+  "tier": "Hell",
+  "subtitle": "Hell 2",
+  "level": 400,
+  "waves": [
+    {
+      "enemies": [
+        { "id": "mind_flayer", "level": 380 },
+        { "id": "mind_flayer", "level": 380 },
+        { "id": "void_walker", "level": 380 },
+        { "id": "void_walker", "level": 380 },
+        { "id": "aberration", "level": 380 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "illusionist", "level": 385 },
+        { "id": "mind_flayer", "level": 383 },
+        { "id": "mind_flayer", "level": 383 },
+        { "id": "void_walker", "level": 385 },
+        { "id": "void_walker", "level": 385 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "labyrinth_guardian", "level": 400 },
+        { "id": "aberration", "level": 390 },
+        { "id": "illusionist", "level": 390 },
+        { "id": "void_walker", "level": 388 },
+        { "id": "void_walker", "level": 388 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "aberration", "level": 395 },
+        { "id": "aberration", "level": 395 },
+        { "id": "illusionist", "level": 393 },
+        { "id": "illusionist", "level": 393 },
+        { "id": "mind_flayer", "level": 392 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "mindreaver", "level": 400 },
+        { "id": "aberration", "level": 395 },
+        { "id": "illusionist", "level": 395 },
+        { "id": "void_walker", "level": 395 },
+        { "id": "mind_flayer", "level": 395 }
+      ]
+    }
+  ],
+  "rewards": {
+    "gold": 39321600,
+    "exp": 94208000,
+    "items": ["labyrinth_mindhelm", "labyrinth_voidmail", "labyrinth_mazesteps", "labyrinth_mindrazor", "labyrinth_psychward", "labyrinth_mindgem", "labyrinth_voidripper"]
+  }
+},
+"scorching_crater": {
+  "id": "scorching_crater",
+  "name": "Scorching Crater",
+  "boss": "Flame Revenant",
+  "tier": "Hell",
+  "subtitle": "Hell 3",
+  "level": 425,
+  "waves": [
+    {
+      "enemies": [
+        { "id": "magma_elemental", "level": 405 },
+        { "id": "magma_elemental", "level": 405 },
+        { "id": "flame_dancer", "level": 405 },
+        { "id": "flame_dancer", "level": 405 },
+        { "id": "obsidian_golem", "level": 405 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "phoenix", "level": 410 },
+        { "id": "magma_elemental", "level": 408 },
+        { "id": "magma_elemental", "level": 408 },
+        { "id": "flame_dancer", "level": 410 },
+        { "id": "flame_dancer", "level": 410 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "inferno_lord", "level": 425 },
+        { "id": "obsidian_golem", "level": 415 },
+        { "id": "phoenix", "level": 415 },
+        { "id": "flame_dancer", "level": 413 },
+        { "id": "flame_dancer", "level": 413 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "obsidian_golem", "level": 420 },
+        { "id": "obsidian_golem", "level": 420 },
+        { "id": "phoenix", "level": 418 },
+        { "id": "magma_elemental", "level": 417 },
+        { "id": "magma_elemental", "level": 417 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "flame_revenant", "level": 425 },
+        { "id": "phoenix", "level": 420 },
+        { "id": "obsidian_golem", "level": 420 },
+        { "id": "magma_elemental", "level": 420 },
+        { "id": "flame_dancer", "level": 420 }
+      ]
+    }
+  ],
+  "rewards": {
+    "gold": 78643200,
+    "exp": 188416000,
+    "items": ["crater_blazecrown", "crater_magmaplate", "crater_emberstrides", "crater_infernostaff", "crater_pyroshield", "crater_phoenix_heart", "crater_phoenixwing"]
+  }
+},
+    "tristam_plague": {
+  "id": "tristam_plague",
+  "name": "Tristam Plague",
+  "boss": "Plaguebound Archbishop",
+  "tier": "Impossible",
+  "subtitle": "Impossible 1",
+  "level": 450,
+  "waves": [
+    {
+      "enemies": [
+        { "id": "infected_demon_dog", "level": 450 },
+        { "id": "infected_demon_dog", "level": 450 },
+        { "id": "infected_demon_dog", "level": 450 },
+        { "id": "rotting_defender", "level": 450 },
+        { "id": "plague_cultist", "level": 450 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "infected_demon_dog", "level": 450 },
+        { "id": "infected_assassin", "level": 450 },
+        { "id": "infected_assassin", "level": 450 },
+        { "id": "contagion_mage", "level": 450 },
+        { "id": "contagion_mage", "level": 450 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "blighted_horror", "level": 450 },
+        { "id": "contagion_mage", "level": 450 },
+        { "id": "rotting_defender", "level": 450 },
+        { "id": "plague_cultist", "level": 450 },
+        { "id": "infected_assassin", "level": 450 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "infected_demon_dog", "level": 450 },
+        { "id": "contagion_mage", "level": 450 },
+        { "id": "contagion_mage", "level": 450 },
+        { "id": "infected_assassin", "level": 450 },
+        { "id": "rotting_defender", "level": 450 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "plaguebound_archbishop", "level": 450 },
+        { "id": "infected_demon_dog", "level": 450 },
+        { "id": "rotting_defender", "level": 450 },
+        { "id": "contagion_mage", "level": 450 },
+        { "id": "plague_cultist", "level": 450 }
+      ]
+    }
+  ],
+  "rewards": {
+    "gold": 157286400,
+    "exp": 376832000,
+    "items": ["plague_miasmahood", "plague_blightrobes", "plague_rotwalkers", "plague_blightstaff", "plague_miasmaward", "plague_pestcore", "plague_pandemic"]
+  }
+},
+"city_of_illusions": {
+  "id": "city_of_illusions",
+  "name": "City of Illusions",
+  "boss": "Doppelganger",
+  "tier": "Impossible",
+  "subtitle": "Impossible 2",
+  "level": 475,
+  "waves": [
+    {
+      "enemies": [
+        { "id": "illusory_sentinel", "level": 455 },
+        { "id": "mirage_weaver", "level": 458 },
+        { "id": "mirage_weaver", "level": 458 },
+        { "id": "phantom_trickster", "level": 460 },
+        { "id": "phantom_trickster", "level": 460 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "illusory_sentinel", "level": 465 },
+        { "id": "dream_eater", "level": 462 },
+        { "id": "reflection_assassin", "level": 464 },
+        { "id": "mirage_weaver", "level": 458 },
+        { "id": "phantom_trickster", "level": 458 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "shell_guardian", "level": 475 },
+        { "id": "mirage_weaver", "level": 468 },
+        { "id": "phantom_trickster", "level": 468 },
+        { "id": "dream_eater", "level": 466 },
+        { "id": "illusory_sentinel", "level": 466 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "reflection_assassin", "level": 473 },
+        { "id": "reflection_assassin", "level": 473 },
+        { "id": "dream_eater", "level": 471 },
+        { "id": "mirage_weaver", "level": 470 },
+        { "id": "phantom_trickster", "level": 470 }
+      ]
+    },
+    {
+      "enemies": [
+        { "id": "doppelganger", "level": 475 },
+        { "id": "reflection_assassin", "level": 474 },
+        { "id": "dream_eater", "level": 474 },
+        { "id": "mirage_weaver", "level": 473 },
+        { "id": "illusory_sentinel", "level": 473 }
+      ]
+    }
+  ],
+  "rewards": {
+    "gold": 314572800,
+    "exp": 753664000,
+    "items": ["illusion_miragecrown", "illusion_shimmermail", "illusion_deceivers", "illusion_phantomblade", "illusion_mirrorshield", "illusion_prism", "illusion_realityshard"]
+  }
+},
+"dragon_fortress": {
+      "id": "dragon_fortress",
+      "name": "Dragon Fortress",
+      "boss": "Ancient Hydra",
+      "tier": "Impossible",
+      "subtitle": "Impossible 3",
+      "level": 500,
+      "waves": [
+        {
+          "enemies": [
+            { "id": "storm_dragon", "level": 500 },
+            { "id": "wyvern", "level": 485 },
+            { "id": "wyvern", "level": 485 },
+            { "id": "dragon_hatchling", "level": 480 },
+            { "id": "dragon_hatchling", "level": 480 }
+          ]
+        },
+        {
+          "enemies": [
+            { "id": "shadow_dragon", "level": 500 },
+            { "id": "dragon_hatchling", "level": 488 },
+            { "id": "dragon_hatchling", "level": 488 },
+            { "id": "dragon_hatchling", "level": 485 },
+            { "id": "wyvern", "level": 490 }
+          ]
+        },
+        {
+          "enemies": [
+            { "id": "blaze_dragon", "level": 500 },
+            { "id": "wyvern", "level": 492 },
+            { "id": "wyvern", "level": 492 },
+            { "id": "wyvern", "level": 490 },
+            { "id": "dragon_hatchling", "level": 495 }
+          ]
+        },
+        {
+          "enemies": [
+            { "id": "winter_dragon", "level": 500 },
+            { "id": "dragon_hatchling", "level": 495 },
+            { "id": "dragon_hatchling", "level": 495 },
+            { "id": "wyvern", "level": 498 },
+            { "id": "wyvern", "level": 498 }
+          ]
+        },
+        {
+          "enemies": [
+            { "id": "ancient_hydra", "level": 500 },
+            { "id": "storm_dragon", "level": 500 },
+            { "id": "shadow_dragon", "level": 500 },
+            { "id": "blaze_dragon", "level": 500 },
+            { "id": "winter_dragon", "level": 500 }
+          ]
+        }
+      ],
+      "rewards": {
+        "gold": 629145600,
+        "exp": 1507328000,
+        "items": ["dragon_hydracrown", "dragon_scalefortress", "dragon_wyrmstrides", "dragon_fangblade", "dragon_scalebulwark", "dragon_heartstone", "dragon_hydrafang"]
+      }
+    },
+    "marine_fortress": {
+      "id": "marine_fortress",
+      "name": "Marine Fortress",
+      "boss": "Pugs",
+      "tier": "Mythical",
+      "subtitle": "Mythical 1",
+      "level": 500,
+      "waves": [
+        {
+          "enemies": [
+            { "id": "pugs", "level": 500 }
+          ]
+        }
+      ],
+      "rewards": {
+        "gold": 1258291200,
+        "exp": 3014656000,
+        "items": []
+      }
+    },
+    "astral_nexus": {
+      "id": "astral_nexus",
+      "name": "Astral Nexus",
+      "boss": "Voidcaller Seraphim",
+      "tier": "Mythical",
+      "subtitle": "Mythical 2",
+      "level": 500,
+      "waves": [
+        {
+          "enemies": [
+            { "id": "voidcaller_seraphim", "level": 500 }
+          ]
+        }
+      ],
+      "rewards": {
+        "gold": 2516582400,
+        "exp": 6029312000,
+        "items": []
+      }
+    },
+    "temple_of_time": {
+      "id": "temple_of_time",
+      "name": "Temple of Time",
+      "boss": "Chronomancer Veyra",
+      "tier": "Mythical",
+      "subtitle": "Mythical 3",
+      "level": 500,
+      "waves": [
+        {
+          "enemies": [
+            { "id": "chronomancer_veyra", "level": 500 }
+          ]
+        }
+      ],
+      "rewards": {
+        "gold": 5033164800,
+        "exp": 12058624000,
+        "items": []
+      }
+    },
+    "celestial_garden": {
+      "id": "celestial_garden",
+      "name": "Celestial Garden",
+      "boss": "Elysian Watcher",
+      "tier": "Divine",
+      "subtitle": "Divine 1",
+      "level": 500,
+      "waves": [
+        {
+          "enemies": [
+            { "id": "elysian_watcher", "level": 500 }
+          ]
+        }
+      ],
+      "rewards": {
+        "gold": 10066329600,
+        "exp": 24117248000,
+        "items": []
+      }
+    },
+    "throne_of_storms": {
+      "id": "throne_of_storms",
+      "name": "Throne of Storms",
+      "boss": "Sovereign",
+      "tier": "Divine",
+      "subtitle": "Divine 2",
+      "level": 500,
+      "waves": [
+        {
+          "enemies": [
+            { "id": "sovereign", "level": 500 }
+          ]
+        }
+      ],
+      "rewards": {
+        "gold": 20132659200,
+        "exp": 48234496000,
+        "items": []
+      }
+    },
+    "heart_of_the_world": {
+      "id": "heart_of_the_world",
+      "name": "Heart of the World",
+      "boss": "Worldshaper",
+      "tier": "Divine",
+      "subtitle": "Divine 3",
+      "level": 500,
+      "waves": [
+        {
+          "enemies": [
+            { "id": "worldshaper", "level": 500 }
+          ]
+        }
+      ],
+      "rewards": {
+        "gold": 40265318400,
+        "exp": 96468992000,
+        "items": []
+      }
+    },
+    "starlight_citadel": {
+      "id": "starlight_citadel",
+      "name": "Starlight Citadel",
+      "boss": "Cosmic Archon",
+      "tier": "Ascended",
+      "subtitle": "Ascended 1",
+      "level": 500,
+      "waves": [
+        {
+          "enemies": [
+            { "id": "cosmic_archon", "level": 500 }
+          ]
+        }
+      ],
+      "rewards": {
+        "gold": 80530636800,
+        "exp": 192937984000,
+        "items": []
+      }
+    },
+    "origin_core": {
+      "id": "origin_core",
+      "name": "Origin Core",
+      "boss": "Primeval Entity",
+      "tier": "Ascended",
+      "subtitle": "Ascended 2",
+      "level": 500,
+      "waves": [
+        {
+          "enemies": [
+            { "id": "primeval_entity", "level": 500 }
+          ]
+        }
+      ],
+      "rewards": {
+        "gold": 161061273600,
+        "exp": 385875968000,
+        "items": []
+      }
+    },
+    "final_aetherium": {
+      "id": "final_aetherium",
+      "name": "Final Aetherium",
+      "boss": "Eternal Singularity",
+      "tier": "Ascended",
+      "subtitle": "Ascended 3",
+      "level": 500,
+      "waves": [
+        {
+          "enemies": [
+            { "id": "eternal_singularity", "level": 500 }
+          ]
+        }
+      ],
+      "rewards": {
+        "gold": 322122547200,
+        "exp": 771751936000,
+        "items": []
+      }
+    },
+    "rite_of_passage": {
+      "id": "rite_of_passage",
+      "name": "Rite of Passage",
+      "boss": "All Bosses",
+      "tier": "Transcendent",
+      "subtitle": "All dungeons in a row",
+      "level": 1000,
+      "special": "gauntlet",
+      "waves": [],
+      "rewards": {
+        "gold": 2147483647,
+        "exp": 1073741824,
+        "items": []
+      }
+    },
+    "twilights_eve": {
+      "id": "twilights_eve",
+      "name": "Twilights Eve",
+      "boss": "All Bosses",
+      "tier": "Twilight",
+      "subtitle": "All dungeons in a row",
+      "level": 1000,
+      "special": "gauntlet",
+      "waves": [],
+      "rewards": {
+        "gold": 2147483647,
+        "exp": 1073741824,
+        "items": []
+      }
+    }
+  }
+}

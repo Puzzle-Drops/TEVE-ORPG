@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEVE - Twilight's Forever</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loadingScreen">
+    <div class="loadingContent">
+        <div class="loadingTitle">TEVE</div>
+        <div class="loadingSubtitle">Twilight's Forever</div>
+        <div class="loadingBarContainer">
+            <div class="loadingBar">
+                <div class="loadingFill"></div>
+            </div>
+            <div class="loadingText">Initializing...</div>
+        </div>
+        <div class="loadingError" style="display: none;">
+            <p>Failed to load game resources.</p>
+            <p>Please refresh the page to try again.</p>
+        </div>
+    </div>
+</div>
+
+    <!-- Scale Wrapper for fixed 1920x1080 rendering -->
+    <div id="scaleWrapper">
+
+	<!-- Developer Console -->
+<div id="devConsole" style="display: none;">
+    <div class="devConsoleHeader">
+        <span>Developer Console</span>
+        <button class="devConsoleClose" onclick="game.uiManager.toggleDevConsole()">×</button>
+    </div>
+    <div class="devConsoleOutput" id="devConsoleOutput"></div>
+    <div class="devConsoleInputWrapper">
+        <span class="devConsolePrompt">></span>
+        <input type="text" class="devConsoleInput" id="devConsoleInput" placeholder="Type command..." />
+    </div>
+</div>
+        <div id="gameContainer" style="display: none;">
+        
+            <!-- Splash Screen -->
+<div id="splashScreen">
+    <div class="gameTitle">TEVE</div>
+    <div class="splashText">Press any button to continue</div>
+</div>
+
+<!-- Main Menu -->
+<div id="mainMenuScreen">
+    <div class="gameTitleSmall">TEVE</div>
+    <div class="worldMap" id="worldMap">
+    </div>
+
+    <!-- Trail System Canvas -->
+    <canvas id="progressionTrailCanvas"></canvas>
+
+    <!-- Menu Navigation Buttons -->
+    <div class="menuNavigation">
+
+        <!-- Stashes Button (top middle) -->
+<div class="menuNavButton stashesButton">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showStash()">
+        <div class="dungeonTierStarsStatic icon">📦</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">New Lights</div>
+            <div class="dungeonTierLevel"></div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/stashes_button.png" 
+         alt="City of New Lights" 
+         class="menuNavImage"
+         onclick="game.uiManager.showStash()"
+         onerror="this.style.display='none'">
+</div>
+
+        <!-- Arena Button (center) -->
+<div class="menuNavButton arenaButton">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showArena()">
+        <div class="dungeonTierStarsStatic icon">⚔️</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">Arena</div>
+            <div class="dungeonTierLevel"></div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/arena_button.png" 
+         alt="Arena" 
+         class="menuNavImage"
+         onclick="game.uiManager.showArena()"
+         onerror="this.style.display='none'">
+</div>
+        
+        <!-- Heroes Button (bottom middle) -->
+<div class="menuNavButton heroesButton">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showHeroes()">
+        <div class="dungeonTierStarsStatic icon">👥</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">Celestia</div>
+            <div class="dungeonTierLevel"></div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/heroes_button.png" 
+         alt="Heroes" 
+         class="menuNavImage"
+         onclick="game.uiManager.showHeroes()"
+         onerror="this.style.display='none'">
+</div>
+	    
+<!-- Save/Load Button -->
+<div class="menuNavButton saveLoadButton" style="position: absolute; top: 10px; right: 10px;">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showSaveLoad()">
+        <div class="dungeonTierStarsStatic icon">💾</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName"></div>
+            <div class="dungeonTierLevel"></div>
+        </div>
+    </button>
+</div>
+
+	<!-- Dungeon Map Orbs -->
+<!-- Easy -->
+<div class="menuNavButton dungeonOrb0" data-tier="0">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showDungeonBladeScreen('Easy')">
+        <div class="dungeonTierStarsStatic normal">★</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">Easy</div>
+            <div class="dungeonTierLevel">0-50</div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/easy_button.png" 
+         alt="Easy" 
+         class="menuNavImage"
+         onclick="game.uiManager.showDungeonBladeScreen('Easy')"
+         onerror="this.style.display='none'">
+</div>
+
+<!-- Medium -->
+<div class="menuNavButton dungeonOrb1" data-tier="1">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showDungeonBladeScreen('Medium')">
+        <div class="dungeonTierStarsStatic normal">★★</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">Medium</div>
+            <div class="dungeonTierLevel">75-125</div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/medium_button.png" 
+         alt="Medium" 
+         class="menuNavImage"
+         onclick="game.uiManager.showDungeonBladeScreen('Medium')"
+         onerror="this.style.display='none'">
+</div>
+
+<!-- Hard -->
+<div class="menuNavButton dungeonOrb2" data-tier="2">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showDungeonBladeScreen('Hard')">
+        <div class="dungeonTierStarsStatic normal">★★★</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">Hard</div>
+            <div class="dungeonTierLevel">150-200</div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/hard_button.png" 
+         alt="Hard" 
+         class="menuNavImage"
+         onclick="game.uiManager.showDungeonBladeScreen('Hard')"
+         onerror="this.style.display='none'">
+</div>
+
+<!-- Forsaken -->
+<div class="menuNavButton dungeonOrb3" data-tier="3">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showDungeonBladeScreen('Forsaken')">
+        <div class="dungeonTierStarsStatic normal">★★★★</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">Forsaken</div>
+            <div class="dungeonTierLevel">225-275</div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/forsaken_button.png" 
+         alt="Forsaken" 
+         class="menuNavImage"
+         onclick="game.uiManager.showDungeonBladeScreen('Forsaken')"
+         onerror="this.style.display='none'">
+</div>
+
+<!-- Nightmare -->
+<div class="menuNavButton dungeonOrb4" data-tier="4">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showDungeonBladeScreen('Nightmare')">
+        <div class="dungeonTierStarsStatic purple">★★★★★</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">Nightmare</div>
+            <div class="dungeonTierLevel">300-350</div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/nightmare_button.png" 
+         alt="Nightmare" 
+         class="menuNavImage"
+         onclick="game.uiManager.showDungeonBladeScreen('Nightmare')"
+         onerror="this.style.display='none'">
+</div>
+
+<!-- Hell -->
+<div class="menuNavButton dungeonOrb5" data-tier="5">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showDungeonBladeScreen('Hell')">
+        <div class="dungeonTierStarsStatic purple">★★★★★★</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">Hell</div>
+            <div class="dungeonTierLevel">375-425</div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/hell_button.png" 
+         alt="Hell" 
+         class="menuNavImage"
+         onclick="game.uiManager.showDungeonBladeScreen('Hell')"
+         onerror="this.style.display='none'">
+</div>
+
+<!-- Impossible -->
+<div class="menuNavButton dungeonOrb6" data-tier="6">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showDungeonBladeScreen('Impossible')">
+        <div class="dungeonTierStarsStatic purple">★★★★★★★</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">Impossible</div>
+            <div class="dungeonTierLevel">450-500</div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/impossible_button.png" 
+         alt="Impossible" 
+         class="menuNavImage"
+         onclick="game.uiManager.showDungeonBladeScreen('Impossible')"
+         onerror="this.style.display='none'">
+</div>
+
+<!-- Mythical -->
+<div class="menuNavButton dungeonOrb7" data-tier="7">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showDungeonBladeScreen('Mythical')">
+        <div class="dungeonTierStarsStatic red">★★★★★★★★</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">Mythical</div>
+            <div class="dungeonTierLevel">500</div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/mythical_button.png" 
+         alt="Mythical" 
+         class="menuNavImage"
+         onclick="game.uiManager.showDungeonBladeScreen('Mythical')"
+         onerror="this.style.display='none'">
+</div>
+
+<!-- Divine -->
+<div class="menuNavButton dungeonOrb8" data-tier="8">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showDungeonBladeScreen('Divine')">
+        <div class="dungeonTierStarsStatic red">★★★★★★★★</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">Divine</div>
+            <div class="dungeonTierLevel">500</div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/divine_button.png" 
+         alt="Divine" 
+         class="menuNavImage"
+         onclick="game.uiManager.showDungeonBladeScreen('Divine')"
+         onerror="this.style.display='none'">
+</div>
+
+<!-- Ascended -->
+<div class="menuNavButton dungeonOrb9" data-tier="9">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showDungeonBladeScreen('Ascended')">
+        <div class="dungeonTierStarsStatic red">★★★★★★★★</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">Ascended</div>
+            <div class="dungeonTierLevel">500</div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/ascended_button.png" 
+         alt="Ascended" 
+         class="menuNavImage"
+         onclick="game.uiManager.showDungeonBladeScreen('Ascended')"
+         onerror="this.style.display='none'">
+</div>
+
+<!-- Transcendent -->
+<div class="menuNavButton dungeonOrb10" data-tier="10">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showDungeonBladeScreen('Transcendent')">
+        <div class="dungeonTierStarsStatic red">★★★★★★★★</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">Transcendent</div>
+            <div class="dungeonTierLevel">500</div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/transcendent_button.png" 
+         alt="Transcendent" 
+         class="menuNavImage"
+         onclick="game.uiManager.showDungeonBladeScreen('Transcendent')"
+         onerror="this.style.display='none'">
+</div>
+
+<!-- Twilight -->
+<div class="menuNavButton dungeonOrb11" data-tier="11">
+    <button class="menuNavPlaceholder" onclick="game.uiManager.showDungeonBladeScreen('Twilight')">
+        <div class="dungeonTierStarsStatic red">★★★★★★★★★★</div>
+        <div class="dungeonTierContent">
+            <div class="dungeonTierName">Twilight</div>
+            <div class="dungeonTierLevel">1000</div>
+        </div>
+    </button>
+    <img src="https://puzzle-drops.github.io/TEVE/img/menu/twilight_button.png" 
+         alt="Twilight" 
+         class="menuNavImage"
+         onclick="game.uiManager.showDungeonBladeScreen('Twilight')"
+         onerror="this.style.display='none'">
+</div>
+
+	    
+    </div>
+    
+</div>
+
+<!-- Dungeon Blade Select Screen -->
+<div id="dungeonSelectScreen" class="dungeonSelectScreen">
+    <div class="dungeonBladesContainer">
+        <div class="dungeonBlade" id="dungeonBlade1" data-index="0">
+            <div class="bladeBackdrop"></div>
+            <div class="bladeContent">
+                <div class="bladeDungeonName"></div>
+                <div class="bladeDungeonLevel"></div>
+                <div class="bladeDungeonStars"></div>
+            </div>
+        </div>
+        <div class="dungeonBlade" id="dungeonBlade2" data-index="1">
+            <div class="bladeBackdrop"></div>
+            <div class="bladeContent">
+                <div class="bladeDungeonName"></div>
+                <div class="bladeDungeonLevel"></div>
+                <div class="bladeDungeonStars"></div>
+            </div>
+        </div>
+        <div class="dungeonBlade" id="dungeonBlade3" data-index="2">
+            <div class="bladeBackdrop"></div>
+            <div class="bladeContent">
+                <div class="bladeDungeonName"></div>
+                <div class="bladeDungeonLevel"></div>
+                <div class="bladeDungeonStars"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Battle Scene -->
+<div id="battleScene">
+    <div class="battleField">
+	    <div class="battleFieldBackground"></div>
+                <!-- Party Units -->
+                <div class="unitSlot party1" id="party1">
+                    <div class="healthBar">
+                        <div class="healthFill" style="width: 100%"></div>
+                        <div class="healthText">100/100</div>
+                    </div>
+	            <div class="unit">P1</div>
+                    <div class="unitShadow"></div>
+                </div>
+                <div class="unitSlot party2" id="party2">
+                    <div class="unit">P2</div>
+                    <div class="healthBar">
+                        <div class="healthFill" style="width: 100%"></div>
+                        <div class="healthText">100/100</div>
+                    </div>
+                    <div class="unitShadow"></div>
+                </div>
+                <div class="unitSlot party3" id="party3">
+                    <div class="unit">P3</div>
+                    <div class="healthBar">
+                        <div class="healthFill" style="width: 100%"></div>
+                        <div class="healthText">100/100</div>
+                    </div>
+                    <div class="unitShadow"></div>
+                </div>
+                <div class="unitSlot party4" id="party4">
+                    <div class="unit">P4</div>
+                    <div class="healthBar">
+                        <div class="healthFill" style="width: 100%"></div>
+                        <div class="healthText">100/100</div>
+                    </div>
+                    <div class="unitShadow"></div>
+                </div>
+                <div class="unitSlot party5" id="party5">
+                    <div class="unit">P5</div>
+                    <div class="healthBar">
+                        <div class="healthFill" style="width: 100%"></div>
+                        <div class="healthText">100/100</div>
+                    </div>
+                    <div class="unitShadow"></div>
+                </div>
+
+                <!-- Enemy Units -->
+                <div class="unitSlot enemy1" id="enemy1">
+                    <div class="unit">E1</div>
+                    <div class="healthBar">
+                        <div class="healthFill" style="width: 100%"></div>
+                        <div class="healthText">67/67</div>
+                    </div>
+                    <div class="unitShadow"></div>
+                </div>
+                <div class="unitSlot enemy2" id="enemy2" style="display: none;">
+                    <div class="unit">E2</div>
+                    <div class="healthBar">
+                        <div class="healthFill" style="width: 100%"></div>
+                        <div class="healthText">50/50</div>
+                    </div>
+                    <div class="unitShadow"></div>
+                </div>
+                <div class="unitSlot enemy3" id="enemy3" style="display: none;">
+                    <div class="unit">E3</div>
+                    <div class="healthBar">
+                        <div class="healthFill" style="width: 100%"></div>
+                        <div class="healthText">50/50</div>
+                    </div>
+                    <div class="unitShadow"></div>
+                </div>
+                <div class="unitSlot enemy4" id="enemy4" style="display: none;">
+                    <div class="unit">E4</div>
+                    <div class="healthBar">
+                        <div class="healthFill" style="width: 100%"></div>
+                        <div class="healthText">50/50</div>
+                    </div>
+                    <div class="unitShadow"></div>
+                </div>
+                <div class="unitSlot enemy5" id="enemy5" style="display: none;">
+                    <div class="unit">E5</div>
+                    <div class="healthBar">
+                        <div class="healthFill" style="width: 100%"></div>
+                        <div class="healthText">50/50</div>
+                    </div>
+                    <div class="unitShadow"></div>
+                </div>
+            </div>
+
+<div class="battleLog" id="battleLog">
+    Battle started!<br>
+</div>
+<div class="autoToggleContainer">
+    <label style="color: #b0e0f0;">
+        <input type="checkbox" id="autoModeToggle" onchange="game.toggleAutoBattleInBattle(this.checked)">
+        Auto Battle
+    </label>
+    <label style="color: #b0e0f0; margin-left: 20px;">
+        <input type="checkbox" id="autoReplayToggle" onchange="game.toggleAutoReplay(this.checked)">
+        Auto Replay
+    </label>
+</div>
+
+<div class="battleUI">
+    <div class="abilityPanel" id="abilityPanel">
+    </div>
+</div>
+            <button class="exitBattleButton" onclick="game.exitBattle()">Exit Battle</button>
+        </div>
+
+        <!-- Heroes Screen -->
+        <div id="heroesScreen">
+            <div class="heroPanel">
+                <div class="heroPortrait" id="heroPortrait">
+                    <img src="" alt="Hero" style="display: none;">
+                </div>
+                <div class="heroStats">
+                    <div class="heroTabs">
+                        <button class="tabButton active" onclick="game.uiManager.showHeroTab('info')">Info</button>
+                        <button class="tabButton" onclick="game.uiManager.showHeroTab('gear')">Gear</button>
+                        <button class="tabButton" onclick="game.uiManager.showHeroTab('skills')">Skills</button>
+                        <button class="tabButton" onclick="game.uiManager.showHeroTab('promote')">Promote</button>
+                        <button class="tabButton" onclick="game.uiManager.showHeroTab('log')">Log</button>
+                    </div>
+                    <div class="tabContent" id="heroContent">
+                        <!-- Content will be dynamically generated -->
+                    </div>
+                </div>
+            </div>
+            <div class="heroList" id="heroList">
+                <!-- Hero thumbnails will be dynamically generated -->
+            </div>
+            <button class="backButton" onclick="game.uiManager.showMainMenu()">Back</button>
+        </div>
+
+        <!-- Stash Screen -->
+<div id="stashScreen">
+    <h1 class="stashTitle">City of New Lights</h1>
+    <div class="stashContainer">
+        <!-- Left NPC Button -->
+        <button class="npcButton npcButtonLeft" onclick="game.handleNPCClick('arnold')">
+            <img src="https://puzzle-drops.github.io/TEVE/img/npc/arnold_city_1.png" alt="Arnold" />
+        </button>
+        
+        <!-- Center Content Wrapper -->
+        <div class="stashCenterContent">
+            <!-- Stash Grid -->
+            <div class="stashGrid" id="stashList">
+                <!-- Stash grid will be dynamically generated -->
+            </div>
+            
+            <!-- Collection Log Button -->
+            <button class="collectionLogButton" onclick="game.uiManager.showCollectionLog()">
+                <span style="font-size: 24px; margin-right: 10px;">📖</span>
+                Collection Log
+            </button>
+        </div>
+        
+        <!-- Right NPC Button -->
+        <button class="npcButton npcButtonRight" onclick="game.handleNPCClick('squeaky')">
+            <img src="https://puzzle-drops.github.io/TEVE/img/npc/squeaky_city_1.png" alt="Squeaky" />
+        </button>
+    </div>
+    <button class="backButton" onclick="game.uiManager.showMainMenu()">Back</button>
+</div>
+
+        <!-- Party Select Screen -->
+        <div id="partySelectScreen">
+	    <div class="partySelectBattlefield"></div>
+            <div class="partySelectContainer">
+                <div class="partySelectHeader">
+                    <div class="dungeonTitle" id="dungeonName">Satyrs</div>
+                </div>
+                <div class="battlePreview">
+    <!-- Records Section (NEW) -->
+    <div style="display: flex; flex-direction: column; align-items: center; margin-right: 40px">
+        <div class="rewardsLabel">
+            <span class="rewardsLabelText">Records</span>
+        </div>
+        <div class="rewardsContent" id="recordsContent">
+            <div class="rewardStats">
+                <div class="rewardStat">
+                    <span class="recordIcon">⏱️</span>
+                    <span id="dungeonBestTime">--:--</span>
+                </div>
+                <div class="rewardStat">
+                    <span class="recordIcon">🏆</span>
+                    <span id="dungeonCompletions">0</span>
+                </div>
+                <div class="rewardStat">
+                    <span class="recordIcon">📖</span>
+                    <span id="dungeonCollectionPercent">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <div class="partyLabel">
+            <span class="partyLabelText">My Party</span>
+        </div>
+        <div class="partyFormation" id="partyFormation">
+            <div class="partySlot" data-slot="0">
+                <div class="slotPlaceholder">⬡</div>
+            </div>
+            <div class="partySlot" data-slot="1">
+                <div class="slotPlaceholder">⬡</div>
+            </div>
+            <div class="partySlot" data-slot="2">
+                <div class="slotPlaceholder">⬡</div>
+            </div>
+            <div class="partySlot" data-slot="3">
+                <div class="slotPlaceholder">⬡</div>
+            </div>
+            <div class="partySlot" data-slot="4">
+                <div class="slotPlaceholder">⬡</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="vsText">VS</div>
+    
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <div id="waveNavigation" class="waveNavigation">
+            <button class="waveArrow" onclick="game.uiManager.navigateWave('prev')">←</button>
+            <span class="waveText">Wave 1/1</span>
+            <button class="waveArrow" onclick="game.uiManager.navigateWave('next')">→</button>
+        </div>
+        <div class="enemyFormation" id="enemyFormation">
+            <div class="enemySlot" data-slot="0">
+                <div class="slotPlaceholder">⬡</div>
+            </div>
+            <div class="enemySlot" data-slot="1">
+                <div class="slotPlaceholder">⬡</div>
+            </div>
+            <div class="enemySlot" data-slot="2">
+                <div class="slotPlaceholder">⬡</div>
+            </div>
+            <div class="enemySlot" data-slot="3">
+                <div class="slotPlaceholder">⬡</div>
+            </div>
+            <div class="enemySlot" data-slot="4">
+                <div class="slotPlaceholder">⬡</div>
+            </div>
+        </div>
+    </div>
+        
+<div style="display: flex; flex-direction: column; align-items: center; margin-left: 40px">
+        <div class="rewardsLabel">
+            <span class="rewardsLabelText">Rewards</span>
+        </div>
+        <div class="rewardsContent" id="rewardsContent">
+            <div class="rewardStats">
+                <div class="rewardStat">
+                    <span class="goldIcon">💰</span>
+                    <span id="dungeonGoldReward">0</span>
+                </div>
+                <div class="rewardStat">
+                    <span class="expIcon">✨</span>
+                    <span id="dungeonExpReward">0 EXP</span>
+                </div>
+            </div>
+            <div class="rewardItemsGrid" id="rewardItemsGrid">
+                <!-- Items will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of battlePreview -->
+
+		    
+                
+                <div class="heroSelectArea">
+                    <div class="heroSelectList" id="heroSelectList">
+                        <!-- Hero thumbnails will be generated here -->
+                    </div>
+                    <div class="actionButtons">
+    <!-- Autosell Button -->
+<div class="autosellButtonContainer" id="autosellButtonContainer" style="display: none;">
+    <button class="autosellButton" onclick="game.uiManager.showAutosellSettings()">
+        <span class="autosellText">Autosell</span>
+        <label class="autosellToggle" onclick="event.stopPropagation()">
+            <input type="checkbox" id="autosellToggleSwitch" 
+                   onchange="game.autosell.enabled = this.checked; game.autosell.saveSettings()">
+            <span class="toggleSlider"></span>
+        </label>
+        <span class="autosellPresetText" id="autosellPresetText">Basic preset</span>
+    </button>
+</div>
+    
+    <div class="autoTogglesPartySelect">
+        <label style="color: #b0e0f0; font-weight: bold;">
+            <input type="checkbox" id="autoBattleToggle" onchange="game.toggleAutoBattle(this.checked)">
+            Auto Battle
+        </label>
+        <label style="color: #b0e0f0; font-weight: bold;">
+            <input type="checkbox" id="autoReplayToggleParty" onchange="game.toggleAutoReplay(this.checked)">
+            Auto Replay
+        </label>
+    </div>
+                        <button class="startBattleBtn" id="startBattleBtn" disabled onclick="game.startBattle()">
+                            ⚔️ Start
+                        </button>
+                        <button class="cancelBtn" onclick="game.closePartySelect()">
+                            Cancel
+                        </button>
+                    </div>
+		</div>
+            </div>
+        </div>
+
+        <!-- Hero Info Popup -->
+        <div id="heroInfoPopup" class="heroInfoPopup">
+            <div class="heroInfoHeader">
+                <div class="heroInfoTitle" id="popupHeroName">Hero Name</div>
+                <button class="closeInfoBtn" onclick="game.uiManager.closeHeroInfo()">×</button>
+            </div>
+            <div class="heroInfoContent">
+                <div class="heroInfoStats">
+                    <div id="popupStats"></div>
+                    <div class="abilityList">
+                        <div id="popupAbilities"></div>
+                    </div>
+                </div>
+                <div class="heroInfoGear">
+                    <div id="popupGear"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Battle Results Popup -->
+        <div id="battleResultsPopup" class="battleResultsPopup">
+            <div class="resultsHeader">
+                <div class="resultsTitle" id="resultsTitle">Victory!</div>
+                <div class="dungeonInfo" id="dungeonInfo">Defeated Satyrs in 02:45</div>
+            </div>
+            
+            <div class="heroResultsSection">
+    <div class="heroResultsGrid" id="heroResultsGrid">
+        <!-- Hero results will be generated here -->
+    </div>
+</div>
+            <div class="battleResultsButtons">
+    <button class="replayBtn" onclick="game.replayBattle()">Replay</button>
+    <button class="mapBtn" onclick="game.returnToMap()">Continue</button>
+</div>
+        </div>
+
+	    <!-- Arena Results Popup -->
+<div id="arenaResultsPopup" class="arenaResultsPopup">
+    <div class="arenaResultsHeader">
+        <div class="arenaResultsTitle">Arena Results</div>
+        <div class="arenaMatchInfo" id="arenaMatchInfo">Spar Mode - Time: 00:00</div>
+    </div>
+    <div class="arenaStatsContainer">
+        <div class="arenaTeamStats" id="playerTeamStats">
+            <h3>Your Team</h3>
+            <!-- Stats grid here -->
+        </div>
+        <div class="arenaTeamStats" id="enemyTeamStats">
+            <h3>Enemy Team</h3>
+            <!-- Stats grid here -->
+        </div>
+    </div>
+    <div class="arenaResultsButtons">
+        <button class="rematchBtn" onclick="game.rematchArena()">Rematch</button>
+        <button class="continueBtn" onclick="game.continueFromArena()">Continue</button>
+    </div>
+</div>
+        
+        <!-- Individual Stash Screen -->
+        <div id="individualStashScreen" class="individualStashScreen">
+            <div class="stashHeader">
+                <h2 id="stashFamilyName">Acolyte Stash</h2>
+                <div class="stashGold">
+                    <span class="goldIcon">💰</span>
+                    <span id="stashGoldAmount">0</span>
+                </div>
+            </div>
+            <div class="stashInventory" id="stashInventory">
+                <!-- Items will be displayed here -->
+            </div>
+            <button class="backButton" onclick="game.uiManager.showStash()">Back</button>
+        </div>
+    
+<!-- Arena Screen -->
+<div id="arenaScreen" class="arenaScreen">
+    <h1 class="arenaTitle">Arena</h1>
+    <div class="arenaContainer">
+        <!-- Left NPC Button (Bob) -->
+        <button class="npcButton npcButtonLeft" onclick="game.handleNPCClick('bob')">
+            <img src="https://puzzle-drops.github.io/TEVE/img/npc/bob_colo_1.png" alt="Bob" />
+        </button>
+        
+        <!-- Center Content -->
+        <div class="arenaCenterContent">
+            <div class="arenaModeButtons">
+                <button class="arenaModeButton" onclick="console.log('PvP not implemented yet')">
+                    <span class="arenaModeTitle">PvP</span>
+                    <span class="arenaModeSubtitle">Challenge other players</span>
+                </button>
+                <button class="arenaModeButton" onclick="game.arena.enterSparMode()">
+                    <span class="arenaModeTitle">Spar</span>
+                    <span class="arenaModeSubtitle">Practice against AI teams</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <button class="backButton" onclick="game.uiManager.showMainMenu()">Back</button>
+</div>
+
+<!-- Save/Load Screen -->
+<div id="saveLoadScreen" class="saveLoadScreen">
+    <h1 class="saveLoadTitle">Save / Load Game</h1>
+    
+    <div class="saveSlotContainer">
+    <div id="saveSlot1" class="saveSlot">
+        <div class="slotNumber">
+            <div>Slot 1</div>
+            <span class="defaultIndicator" style="display: none;">[Default]</span>
+        </div>
+        <div class="slotInfo">
+            <div class="slotEmpty">Empty</div>
+        </div>
+        <div class="slotActions">
+            <button class="saveButton" onclick="saveManager.saveToSlot(1)">Save</button>
+            <button class="loadButton" onclick="saveManager.loadFromSlot(1)" disabled>Load</button>
+            <button class="deleteButton" onclick="game.uiManager.deleteSaveSlot(1)" disabled>Delete</button>
+            <button class="exportButton" onclick="saveManager.exportSave(1)" disabled>Export</button>
+            <button class="defaultButton" onclick="game.uiManager.toggleDefaultSlot(1)" disabled>Set Default</button>
+        </div>
+    </div>
+    
+    <div id="saveSlot2" class="saveSlot">
+        <div class="slotNumber">
+            <div>Slot 2</div>
+            <span class="defaultIndicator" style="display: none;">[Default]</span>
+        </div>
+        <div class="slotInfo">
+            <div class="slotEmpty">Empty</div>
+        </div>
+        <div class="slotActions">
+            <button class="saveButton" onclick="saveManager.saveToSlot(2)">Save</button>
+            <button class="loadButton" onclick="saveManager.loadFromSlot(2)" disabled>Load</button>
+            <button class="deleteButton" onclick="game.uiManager.deleteSaveSlot(2)" disabled>Delete</button>
+            <button class="exportButton" onclick="saveManager.exportSave(2)" disabled>Export</button>
+            <button class="defaultButton" onclick="game.uiManager.toggleDefaultSlot(2)" disabled>Set Default</button>
+        </div>
+    </div>
+    
+    <div id="saveSlot3" class="saveSlot">
+        <div class="slotNumber">
+            <div>Slot 3</div>
+            <span class="defaultIndicator" style="display: none;">[Default]</span>
+        </div>
+        <div class="slotInfo">
+            <div class="slotEmpty">Empty</div>
+        </div>
+        <div class="slotActions">
+            <button class="saveButton" onclick="saveManager.saveToSlot(3)">Save</button>
+            <button class="loadButton" onclick="saveManager.loadFromSlot(3)" disabled>Load</button>
+            <button class="deleteButton" onclick="game.uiManager.deleteSaveSlot(3)" disabled>Delete</button>
+            <button class="exportButton" onclick="saveManager.exportSave(3)" disabled>Export</button>
+            <button class="defaultButton" onclick="game.uiManager.toggleDefaultSlot(3)" disabled>Set Default</button>
+        </div>
+    </div>
+</div>
+    
+    <div class="saveLoadActions">
+    <label class="importLabel">
+        Import Save: 
+        <input type="file" id="importSaveFile" accept=".sav" onchange="game.uiManager.handleImportSave(event)">
+    </label>
+</div>
+    
+    <button class="backButton" onclick="game.uiManager.showMainMenu()">Back</button>
+</div>
+
+<!-- Save Notification -->
+<div id="saveNotification" class="saveNotification"></div>
+	    
+<!-- Collection Log Screen -->
+<div id="collectionLogScreen" class="collectionLogScreen">
+    <div class="collectionHeader">
+        <h1>Collection Log</h1>
+        <div class="collectionProgress">
+            <div class="collectionProgressText" id="collectionProgressText">0/0 collected</div>
+            <div class="collectionProgressBar">
+                <div class="collectionProgressFill" id="collectionProgressFill"></div>
+                <div class="collectionProgressPercent" id="collectionProgressPercent">0%</div>
+            </div>
+        </div>
+    </div>
+    <div class="collectionContentWrapper">
+        <div class="tierSidebar" id="tierSidebar">
+            <!-- Tier buttons will be generated here -->
+        </div>
+        <div class="collectionContent" id="collectionContent">
+            <!-- Dungeon collections will be generated here -->
+        </div>
+    </div>
+    <button class="backButton" onclick="game.uiManager.showStash()">Back</button>
+</div>
+
+</div><!-- End of gameContainer -->
+
+    <!-- Blur Overlay -->
+    <div id="refinementOverlay" class="refinementOverlay"></div>
+
+<!-- Item Refinement Popup -->
+<div id="itemRefinementPopup" class="itemRefinementPopup">
+    <div class="refinementHeader">
+        <div class="refinementTitle">Refine Item</div>
+        <div class="refinementCost">
+            <span class="goldIcon">💰</span>
+            <span id="refinementGoldCost">0</span>
+        </div>
+    </div>
+    
+    <div class="refinementContent">
+        <div class="refinementColumns" id="refinementColumns">
+            <div class="refinementColumn">
+                <div class="refinementColumnLabel">Current Item</div>
+                <div class="refinementItemDisplay" id="currentItemDisplay"></div>
+            </div>
+            
+            <div class="refinementArrow" id="refinementArrow">→</div>
+            
+            <div class="refinementColumn" id="previewColumn">
+                <div class="refinementColumnLabel">After Refinement</div>
+                <div class="refinementItemDisplay" id="previewItemDisplay"></div>
+                <div class="refinementExplanation" id="refinementExplanation"></div>
+            </div>
+        </div>
+        
+        <div class="refinementResult" id="refinementResult" style="display: none;">
+            <div class="refinementColumnLabel" id="refinementResultLabel">Current Item</div>
+            <div class="refinementItemDisplay" id="refinedItemDisplay"></div>
+            <div class="refinedItemSlot" id="refinedItemSlot"></div>
+        </div>
+    </div>
+    
+    <div class="refinementButtons" id="refinementButtons">
+        <button class="refinementButton refineBtn" onclick="game.confirmRefinement()">Refine Item</button>
+        <button class="refinementButton cancelBtn" onclick="game.cancelRefinement()">Cancel</button>
+    </div>
+    
+    <div class="refinementButtons" id="refinementCloseButton" style="display: none;">
+        <button class="refinementButton closeBtn" onclick="game.uiManager.closeRefinementPopup()">Close</button>
+    </div>
+</div>
+
+<!-- NPC Dialogue System -->
+<div id="npcDialogueOverlay" class="npcDialogueOverlay" style="display: none;">
+    <div class="npcDialogueContainer">
+        <div class="npcPortrait">
+            <img id="npcPortraitImage" src="" alt="NPC">
+        </div>
+        <div class="npcDialogueBox">
+            <div class="npcDialogueText" id="npcDialogueText"></div>
+            <div class="npcDialogueContinue" id="npcDialogueContinue" style="display: none;">Click to continue...</div>
+        </div>
+    </div>
+</div>
+
+
+</div>
+	
+<!-- Collection Complete Popup -->
+<div id="collectionCompletePopup" class="collectionCompletePopup">
+    <div class="collectionCompleteContent">
+        <div class="collectionCompleteTitle">Collection log slot completed!</div>
+        <div class="collectionCompleteItem" id="collectionCompleteItem">
+            <!-- Item will be shown here -->
+        </div>
+        <div class="collectionCompleteInfo" id="collectionCompleteInfo">
+            <!-- Hero info and timestamp -->
+        </div>
+    </div>
+</div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="confirmModal">
+        <div class="confirmContent">
+            <div class="confirmText" id="confirmText"></div>
+            <div class="confirmCost" id="confirmCost"></div>
+            <div class="confirmButtons">
+                <button class="confirmBtn confirmYes" onclick="game.confirmPromotion()">Yes</button>
+                <button class="confirmBtn confirmNo" onclick="game.uiManager.cancelPromotion()">No</button>
+            </div>
+        </div>
+    </div>
+
+<!-- Sell Confirmation Modal -->
+<div id="sellConfirmModal" class="confirmModal">
+    <div class="confirmContent">
+        <div class="confirmText" id="sellConfirmText"></div>
+        <div class="confirmCost" id="sellConfirmDetails"></div>
+        <div class="confirmButtons">
+            <button class="confirmBtn confirmYes" onclick="game.confirmSell()">Yes</button>
+            <button class="confirmBtn confirmNo" onclick="game.cancelSell()">No</button>
+        </div>
+    </div>
+</div>
+	
+    </div><!-- End of scaleWrapper -->
+	
+<!-- Load only the loading manager initially -->
+<script src="loadingManager.js"></script>
+<script src="scalingSystem.js"></script>
+<script>
+	
+    // Global managers
+    let spellManager;
+    let unitData;
+    let dungeonData;
+    let itemData;
+    let arenaData;
+
+    // Initialize game after loading data
+window.addEventListener('DOMContentLoaded', async () => {
+    const loadSuccess = await loadGameData();
+    
+    if (loadSuccess) {
+        // Initialize dev console after scripts are loaded
+        window.devConsole = new DevConsole();
+        
+        // Create game instance
+        window.game = new Game();
+
+        // Initialize save manager
+saveManager.init(game);
+
+// Try to auto-load default save (will always set a default slot)
+const autoLoaded = saveManager.autoLoadDefaultSave();
+
+// If we auto-loaded, show notification
+if (autoLoaded) {
+    // The notification is already handled in loadFromSlot
+    console.log('Successfully auto-loaded save');
+} else {
+    // No save was loaded, but we now have a default slot set
+    console.log(`Ready for new game in slot ${saveManager.currentSlot}`);
+}
+
+// Always show splash screen, whether auto-loaded or not
+const splashHandler = (e) => {
+    if (game.currentScreen === 'splashScreen') {
+        e.preventDefault();
+        document.removeEventListener('keydown', splashHandler);
+        document.removeEventListener('click', splashHandler);
+        game.uiManager.showMainMenu();
+    }
+};
+
+// Show splash screen on start
+setTimeout(() => {
+    game.uiManager.showSplashScreen();
+    document.addEventListener('keydown', splashHandler);
+    document.addEventListener('click', splashHandler);
+}, 100);
+            
+        }
+        
+        // Add global escape key handler
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                // Close hero info popup if open
+                const heroInfoPopup = document.getElementById('heroInfoPopup');
+                if (heroInfoPopup && heroInfoPopup.style.display === 'block') {
+                    game.uiManager.closeHeroInfo();
+                    e.preventDefault();
+                    return;
+                }
+
+                // Close item context menu if open
+                const contextMenu = document.getElementById('itemContextMenu');
+                if (contextMenu) {
+                    game.uiManager.closeItemContextMenu();
+                    e.preventDefault();
+                    return;
+                }
+                
+                // Close confirmation modal if open
+                const confirmModal = document.getElementById('confirmModal');
+                if (confirmModal && confirmModal.style.display === 'flex') {
+                    game.uiManager.cancelPromotion();
+                    e.preventDefault();
+                    return;
+                }
+
+// Close refinement popup if open
+const refinementPopup = document.getElementById('itemRefinementPopup');
+if (refinementPopup && refinementPopup.style.display === 'block') {
+    game.uiManager.closeRefinementPopup();
+    e.preventDefault();
+    return;
+}
+
+// Close sell confirmation modal if open
+const sellConfirmModal = document.getElementById('sellConfirmModal');
+if (sellConfirmModal && sellConfirmModal.style.display === 'flex') {
+    game.cancelSell();
+    e.preventDefault();
+    return;
+}
+
+// Close autosell settings overlay if open
+const autosellOverlay = document.getElementById('autosellOverlay');
+if (autosellOverlay) {
+    game.uiManager.closeAutosellSettings();
+    e.preventDefault();
+    return;
+}
+
+                // Close collection complete popup if open
+                const collectionPopup = document.getElementById('collectionCompletePopup');
+                if (collectionPopup && collectionPopup.style.display === 'block') {
+                    collectionPopup.style.display = 'none';
+                    // Remove the click handler
+                    if (collectionPopup._closeHandler) {
+                        collectionPopup.removeEventListener('click', collectionPopup._closeHandler);
+                        collectionPopup._closeHandler = null;
+                    }
+                    // Show next popup if any
+                    game.uiManager.showNextCollectionPopup();
+                    e.preventDefault();
+                    return;
+                }
+		    
+// Close unit details popup if open
+const unitDetailsPopup = document.getElementById('unitDetailsPopup');
+if (unitDetailsPopup) {
+    unitDetailsPopup.remove();
+    e.preventDefault();
+    return;
+}
+		    
+		    // Close bestiary if open
+const bestiaryOverlay = document.getElementById('bestiaryOverlay');
+if (bestiaryOverlay) {
+    game.tutorial.closeBestiary();
+    e.preventDefault();
+    return;
+}
+
+		    // Close wiki if open
+const wikiOverlay = document.getElementById('wikiOverlay');
+if (wikiOverlay) {
+    game.tutorial.closeWiki();
+    e.preventDefault();
+    return;
+}
+		    
+                // Clear targeting in battle if active
+                if (game.currentBattle && game.currentBattle.targetingState) {
+                    game.currentBattle.clearTargeting();
+                    e.preventDefault();
+                    return;
+                }
+                
+// Navigate between screens based on current screen
+switch(game.currentScreen) {
+    case 'mainMenuScreen':
+        game.uiManager.showSplashScreen();
+        // Re-add the splash screen event handlers
+        const splashHandler = (e) => {
+            if (game.currentScreen === 'splashScreen') {
+                e.preventDefault();
+                document.removeEventListener('keydown', splashHandler);
+                document.removeEventListener('click', splashHandler);
+                game.uiManager.showMainMenu();
+            }
+        };
+        document.addEventListener('keydown', splashHandler);
+        document.addEventListener('click', splashHandler);
+        e.preventDefault();
+        break;
+    case 'dungeonSelectScreen':
+        game.uiManager.closeDungeonSelect();
+        e.preventDefault();
+        break;
+    case 'individualStashScreen':
+        game.uiManager.showStash();
+        e.preventDefault();
+        break;
+    case 'partySelectScreen':
+        game.closePartySelect();
+        e.preventDefault();
+        break;
+    case 'stashScreen':
+        game.uiManager.showMainMenu();
+        e.preventDefault();
+        break;
+    case 'heroesScreen':
+        game.uiManager.showMainMenu();
+        e.preventDefault();
+        break;
+    case 'collectionLogScreen':
+        game.uiManager.showStash();
+        e.preventDefault();
+        break;
+    case 'arenaScreen':
+        game.uiManager.showMainMenu();
+        e.preventDefault();
+        break;
+    case 'saveLoadScreen':
+        game.uiManager.showMainMenu();
+        e.preventDefault();
+        break;
+}
+            }
+        });
+
+	    // Add this after the escape key handler
+document.addEventListener('keydown', (e) => {
+    // Ctrl+S or Cmd+S for quick save
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        
+        // Only allow saving if not in battle and game is initialized
+        if (game && game.currentScreen !== 'battleScene' && saveManager.currentSlot) {
+            saveManager.saveToSlot(saveManager.currentSlot);
+        } else if (game && !saveManager.currentSlot) {
+            // If no current slot, go to save screen
+            game.uiManager.showSaveLoad();
+        }
+    }
+});
+        
+        // Global Alt key handler for both item and ability tooltips
+        let altKeyPressed = false;
+        let currentHoveredAbility = null;
+        let currentHoveredUnit = null;
+        let currentHoveredSource = null; // 'battle' or 'popup'
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Alt' && !altKeyPressed) {
+                e.preventDefault(); // Prevent default Alt key behavior
+                altKeyPressed = true;
+                
+                // Update item tooltip if visible
+                const itemTooltip = document.getElementById('itemTooltipDiv');
+                if (itemTooltip && itemTooltip.style.display === 'block' && itemTooltip._currentItem) {
+                    if (itemTooltip._isComparison && itemTooltip._equippedItem) {
+    // Rebuild comparison tooltip with max values
+    let tooltipHTML = '<div style="display: flex; gap: 20px;">';
+    tooltipHTML += '<div style="flex: 1;">';
+    tooltipHTML += '<div style="text-align: center; color: #6a9aaa; margin-bottom: 10px; font-size: 14px;">New Item</div>';
+    
+    // Get new item tooltip with comparison indicators
+    let newItemTooltip = itemTooltip._currentItem.getTooltip(true);
+    newItemTooltip = game.uiManager.addComparisonIndicators(newItemTooltip, itemTooltip._currentItem, itemTooltip._equippedItem);
+    tooltipHTML += newItemTooltip;
+    
+    tooltipHTML += '</div>';
+    tooltipHTML += '<div style="width: 1px; background: #2a6a8a; margin: 0 10px;"></div>';
+    tooltipHTML += '<div style="flex: 1;">';
+    tooltipHTML += '<div style="text-align: center; color: #6a9aaa; margin-bottom: 10px; font-size: 14px;">Currently Equipped</div>';
+    tooltipHTML += itemTooltip._equippedItem.getTooltip(true);
+    tooltipHTML += '</div>';
+    tooltipHTML += '</div>';
+    itemTooltip.innerHTML = tooltipHTML;
+} else {
+                        itemTooltip.innerHTML = itemTooltip._currentItem.getTooltip(true);
+                    }
+                }
+                
+                // Update ability tooltip if visible
+                const abilityTooltip = document.getElementById('abilityTooltip');
+                if (abilityTooltip && abilityTooltip.style.display === 'block' && currentHoveredAbility && currentHoveredUnit) {
+                    let unit = currentHoveredUnit;
+                    // If it's from battle, get the source unit for proper calculations
+                    if (currentHoveredSource === 'battle' && currentHoveredUnit.source) {
+                        unit = currentHoveredUnit.source;
+                    }
+                    const tooltipHtml = game.uiManager.formatAbilityTooltip(currentHoveredAbility, currentHoveredAbility.level, unit, true);
+                    abilityTooltip.innerHTML = tooltipHtml;
+                }
+                
+                // Update skill description if on skills tab
+                if (game.currentScreen === 'heroesScreen' && game.uiManager.currentTab === 'skills' && game.uiManager.currentSkillIndex !== undefined) {
+                    const hero = game.heroes[game.uiManager.selectedHero];
+                    const skill = hero.abilities[game.uiManager.currentSkillIndex];
+                    const desc = document.getElementById('skillDescription');
+                    if (desc && skill) {
+                        desc.innerHTML = game.uiManager.formatAbilityTooltip(skill, skill.level, hero, true);
+                    }
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'Alt' && altKeyPressed) {
+                altKeyPressed = false;
+                
+                // Update item tooltip without max values
+                const itemTooltip = document.getElementById('itemTooltipDiv');
+                if (itemTooltip && itemTooltip.style.display === 'block' && itemTooltip._currentItem) {
+                    if (itemTooltip._isComparison && itemTooltip._equippedItem) {
+    // Rebuild comparison tooltip without max values
+    let tooltipHTML = '<div style="display: flex; gap: 20px;">';
+    tooltipHTML += '<div style="flex: 1;">';
+    tooltipHTML += '<div style="text-align: center; color: #6a9aaa; margin-bottom: 10px; font-size: 14px;">New Item</div>';
+    
+    // Get new item tooltip with comparison indicators
+    let newItemTooltip = itemTooltip._currentItem.getTooltip(false);
+    newItemTooltip = game.uiManager.addComparisonIndicators(newItemTooltip, itemTooltip._currentItem, itemTooltip._equippedItem);
+    tooltipHTML += newItemTooltip;
+    
+    tooltipHTML += '</div>';
+    tooltipHTML += '<div style="width: 1px; background: #2a6a8a; margin: 0 10px;"></div>';
+    tooltipHTML += '<div style="flex: 1;">';
+    tooltipHTML += '<div style="text-align: center; color: #6a9aaa; margin-bottom: 10px; font-size: 14px;">Currently Equipped</div>';
+    tooltipHTML += itemTooltip._equippedItem.getTooltip(false);
+    tooltipHTML += '</div>';
+    tooltipHTML += '</div>';
+    itemTooltip.innerHTML = tooltipHTML;
+} else {
+                        itemTooltip.innerHTML = itemTooltip._currentItem.getTooltip(false);
+                    }
+                }
+                
+                // Update ability tooltip without formula
+                const abilityTooltip = document.getElementById('abilityTooltip');
+                if (abilityTooltip && abilityTooltip.style.display === 'block' && currentHoveredAbility && currentHoveredUnit) {
+                    let unit = currentHoveredUnit;
+                    // If it's from battle, get the source unit for proper calculations
+                    if (currentHoveredSource === 'battle' && currentHoveredUnit.source) {
+                        unit = currentHoveredUnit.source;
+                    }
+                    const tooltipHtml = game.uiManager.formatAbilityTooltip(currentHoveredAbility, currentHoveredAbility.level, unit, false);
+                    abilityTooltip.innerHTML = tooltipHtml;
+                }
+                
+                // Update skill description if on skills tab
+if (game.currentScreen === 'heroesScreen' && game.uiManager.currentTab === 'skills' && game.uiManager.currentSkillIndex !== undefined) {
+    const hero = game.heroes[game.uiManager.selectedHero];
+    const skill = hero.abilities[game.uiManager.currentSkillIndex];
+    const desc = document.getElementById('skillDescription');
+    if (desc && skill) {
+        desc.innerHTML = game.uiManager.formatAbilityTooltip(skill, skill.level, hero, false);
+    }
+}
+            }
+        });
+
+        // Store references when hovering abilities for Alt key updates
+        document.addEventListener('mouseover', (e) => {
+            // Check if hovering over an ability in battle panel
+            const battleAbility = e.target.closest('#abilityPanel .ability');
+            if (battleAbility && game.currentBattle && game.currentBattle.currentUnit) {
+                const unit = game.currentBattle.currentUnit;
+                const abilityIndex = Array.from(battleAbility.parentNode.children).indexOf(battleAbility);
+                const ability = unit.abilities.filter(a => !a.passive)[abilityIndex];
+                if (ability) {
+                    currentHoveredAbility = ability;
+                    currentHoveredUnit = unit;
+                    currentHoveredSource = 'battle';
+                }
+                return;
+            }
+            
+            // Check if hovering over ability in unit popup
+            const popupAbility = e.target.closest('.abilityIconSmall');
+            if (popupAbility) {
+                const abilityIndex = parseInt(popupAbility.getAttribute('data-ability-index'));
+                const heroType = popupAbility.getAttribute('data-hero-type');
+                
+                // Get the hero/enemy from the popup
+                const popupTitle = document.getElementById('popupHeroName').textContent;
+                let unit = null;
+                
+                if (heroType === 'hero') {
+                    // Extract hero name from popup title (format: "Lv.X ClassName ♂/♀ | HeroName")
+                    const namePart = popupTitle.split('|')[1];
+                    if (namePart) {
+                        const heroName = namePart.trim();
+                        unit = game.heroes.find(h => h.name === heroName);
+                    }
+                    
+                    // If not found by name, try to find by the context of which screen we're on
+                    if (!unit && (game.currentScreen === 'heroesScreen' || game.currentScreen === 'partySelectScreen')) {
+                        // Check if the popup is showing for a specific hero we just clicked
+                        const popup = document.getElementById('heroInfoPopup');
+                        if (popup && popup._currentHero) {
+                            unit = popup._currentHero;
+                        }
+                    }
+                } else if (heroType === 'enemy') {
+                    // For enemies, check if we're in battle or party select
+                    if (game.currentBattle) {
+                        // Find enemy in current battle
+                        const allUnits = [...game.currentBattle.party, ...game.currentBattle.enemies];
+                        const battleUnit = allUnits.find(u => popupTitle.includes(u.name));
+                        if (battleUnit && battleUnit.source) {
+                            unit = battleUnit.source;
+                        }
+                    } else if (game.dungeonWaves) {
+                        // In party select, find enemy in preview waves
+                        const enemyName = popupTitle.split('Lv.')[1]?.split(' ').slice(1).join(' ').trim();
+                        if (enemyName) {
+                            // Find enemy in current preview wave
+                            const currentWaveEnemies = game.dungeonWaves[game.uiManager.currentPreviewWave];
+                            unit = currentWaveEnemies.find(e => e.name === enemyName);
+                        }
+                    }
+                }
+                
+                if (unit && unit.abilities && unit.abilities[abilityIndex]) {
+                    currentHoveredAbility = unit.abilities[abilityIndex];
+                    currentHoveredUnit = unit;
+                    currentHoveredSource = 'popup';
+                }
+            }
+        });
+
+        // Clear references when not hovering
+        document.addEventListener('mouseout', (e) => {
+            const battleAbility = e.target.closest('#abilityPanel .ability');
+            const popupAbility = e.target.closest('.abilityIconSmall');
+            
+            if ((battleAbility && !battleAbility.contains(e.relatedTarget)) ||
+                (popupAbility && !popupAbility.contains(e.relatedTarget))) {
+                currentHoveredAbility = null;
+                currentHoveredUnit = null;
+                currentHoveredSource = null;
+            }
+        });
+
+	    // Add resize handler for trail canvas
+window.addEventListener('resize', () => {
+    if (game && game.uiManager) {
+        game.uiManager.resizeTrailCanvas();
+    }
+});
+
+	    
+        // Disable right-click context menu globally
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
+    });
+
+	
+	
+</script>
+</body>
+</html>

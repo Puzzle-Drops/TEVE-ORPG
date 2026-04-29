@@ -1,0 +1,5620 @@
+{
+"punch": {
+    "id": "punch",
+    "name": "Punch",
+    "description": "Basic attack dealing [{base} + {attack}] physical damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [1, 10, 25, 40, 80],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0]
+    },
+    "target": "enemy",
+    "logicKey": "punchLogic"
+},
+"fury": {
+    "id": "fury",
+    "name": "Fury",
+    "description": "Gain Increased Speed for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_increase_speed"],
+    "duration": [3, 3, 3, 4, 4],
+    "target": "self",
+    "logicKey": "furyLogic"
+},
+"throw_rock": {
+    "id": "throw_rock",
+    "name": "Throw Rock",
+    "description": "Throw a rock dealing [{base} + {attack} + {int}] physical damage and stunning for {stunDuration} turn(s)",
+    "cooldown": [7, 7, 6, 6, 5],
+    "effects": ["physical", "debuff_stun"],
+    "scaling": {
+        "base": [5, 10, 20, 35, 50],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.25, 0.4, 0.55, 0.7, 0.85]
+    },
+    "stunDuration": [1, 1, 1, 1, 2],
+    "target": "enemy",
+    "logicKey": "throwRockLogic"
+},
+"holy_smite": {
+    "id": "holy_smite",
+    "name": "Holy Smite",
+    "description": "Deal [{base} + {attack} + {int}] magic damage to enemy and heal lowest HP ally for {healPercent} of damage dealt",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "heal"],
+    "scaling": {
+        "base": [15, 50, 100, 200, 350],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.6, 0.65, 0.7, 0.75, 0.8]
+    },
+    "healPercent": [0.3, 0.35, 0.4, 0.45, 0.5],
+    "target": "enemy",
+    "logicKey": "holySmiteLogic"
+},
+"divine_light": {
+    "id": "divine_light",
+    "name": "Divine Light",
+    "description": "Heal target ally for [{base} + {attack} + {int}] HP and remove up to 3 debuffs. If ally is at full HP, grants shield for half the heal amount and Immune for 1 turn",
+    "cooldown": [4, 3, 3, 3, 2],
+    "effects": ["heal", "cleanse", "shield", "buff_immune"],
+    "scaling": {
+        "base": [25, 100, 200, 400, 700],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.8, 0.85, 0.9, 0.95, 1.0]
+    },
+    "target": "ally",
+    "logicKey": "divineLightLogic"
+},
+"sanctuary": {
+    "id": "sanctuary",
+    "name": "Sanctuary",
+    "description": "All allies gain Increase Defense and Increase Attack for {duration} turns and cleanse one random debuff",
+    "cooldown": [6, 5, 4, 4, 3],
+    "effects": ["aoe", "buff_increase_defense", "buff_increase_attack", "cleanse"],
+    "duration": [2, 2, 2, 3, 3],
+    "target": "all_allies",
+    "logicKey": "sanctuaryLogic"
+},
+"mass_heal": {
+    "id": "mass_heal",
+    "name": "Mass Heal",
+    "description": "Heal all allies for [{base} + {attack} + {int}] HP and grant Immune for 2 turns",
+    "cooldown": [6, 5, 5, 5, 4],
+    "effects": ["aoe", "heal", "buff_immune"],
+    "scaling": {
+        "base": [20, 200, 400, 800, 1400],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.7, 0.75, 0.8, 0.85, 0.9]
+    },
+    "target": "all_allies",
+    "logicKey": "massHealLogic"
+},
+"hierophant_male_passive": {
+    "id": "hierophant_male_passive",
+    "name": "Divine Retribution",
+    "description": "Divine Light causes healing target to attack random enemy",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "retributionChance": 1.0,
+    "target": "self",
+    "logicKey": "hierophantMalePassiveLogic"
+},
+"hierophant_female_passive": {
+    "id": "hierophant_female_passive",
+    "name": "Sanctuary Momentum",
+    "description": "Sanctuary increases all allies' action bar by {actionBarGrant}",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "actionBarGrant": 0.2,
+    "target": "self",
+    "logicKey": "hierophantFemalePassiveLogic"
+},
+"prophet_male_passive": {
+    "id": "prophet_male_passive",
+    "name": "Divine Spillover",
+    "description": "Overhealing spreads to the next lowest HP ally ({spilloverPercent} effectiveness)",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "spilloverPercent": 0.5,
+    "target": "self",
+    "logicKey": "prophetMalePassiveLogic"
+},
+"prophetess_female_passive": {
+    "id": "prophetess_female_passive",
+    "name": "Mass Momentum",
+    "description": "When casting Mass Heal, {actionBarChance} chance to gain {actionBarGain} action bar",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "actionBarChance": 0.5,
+    "actionBarGain": 1.0,
+    "target": "self",
+    "logicKey": "prophetessFemalePassiveLogic"
+},
+"aimed_shot": {
+    "id": "aimed_shot",
+    "name": "Aimed Shot",
+    "description": "High damage shot dealing [{base} + {attack} + {agi}] physical damage, ignores 25% armor and breaks shields",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "shield_break"],
+    "scaling": {
+        "base": [20, 75, 150, 300, 525],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.4, 0.42, 0.44, 0.46, 0.48]
+    },
+    "armorPierce": 0.25,
+    "target": "enemy",
+    "logicKey": "aimedShotLogic"
+},
+"hunters_mark": {
+    "id": "hunters_mark",
+    "name": "Hunter's Mark",
+    "description": "Apply Mark and Blight debuff to target for {duration} turns",
+    "cooldown": [5, 4, 3, 3, 2],
+    "effects": ["debuff_mark", "debuff_blight"],
+    "duration": [2, 2, 2, 2, 3],
+    "target": "enemy",
+    "logicKey": "huntersMarkLogic"
+},
+"double_shot": {
+    "id": "double_shot",
+    "name": "Double Shot",
+    "description": "Fire twice: first shot applies Reduce Defense, second shot hits random enemy and applies Bleed",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["physical", "debuff_reduce_defense", "debuff_bleed"],
+    "scaling": {
+        "base": [10, 60, 120, 240, 420],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.35, 0.37, 0.39, 0.41, 0.43]
+    },
+    "debuffDuration": [1, 1, 1, 2, 2],
+    "target": "enemy",
+    "logicKey": "doubleShotLogic"
+},
+"rain_of_arrows": {
+    "id": "rain_of_arrows",
+    "name": "Rain of Arrows",
+    "description": "AOE damage dealing [{base} + {attack} + {agi}] + {debuffBonus} per debuff on enemies",
+    "cooldown": [6, 5, 5, 4, 4],
+    "effects": ["aoe", "physical"],
+    "scaling": {
+        "base": [8, 30, 60, 120, 210],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.3, 0.32, 0.34, 0.36, 0.38]
+    },
+    "debuffBonus": [20, 40, 80, 160, 320],
+    "target": "all_enemies",
+    "logicKey": "rainOfArrowsLogic"
+},
+"sniper_male_passive": {
+    "id": "sniper_male_passive",
+    "name": "Executioner",
+    "description": "Deal 150% damage to enemies below 30% HP",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "damageBonus": 1.5,
+    "hpThreshold": 0.3,
+    "target": "self",
+    "logicKey": "sniperMalePassiveLogic"
+},
+"sniper_female_passive": {
+    "id": "sniper_female_passive",
+    "name": "Kill Rush",
+    "description": "Killing an enemy grants Increase Speed buff for 2 turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "speedDuration": 2,
+    "target": "self",
+    "logicKey": "sniperFemalePassiveLogic"
+},
+"monster_hunter_male_passive": {
+    "id": "monster_hunter_male_passive",
+    "name": "Bleeding Shot",
+    "description": "Aimed Shot applies Bleed for 1 turn",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "bleedDuration": 1,
+    "target": "self",
+    "logicKey": "monsterHunterMalePassiveLogic"
+},
+"monster_hunter_female_passive": {
+    "id": "monster_hunter_female_passive",
+    "name": "Exploit Weakness",
+    "description": "Gain 5% action bar per debuff on Aimed Shot target",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "actionBarPerDebuff": 0.05,
+    "target": "self",
+    "logicKey": "monsterHunterFemalePassiveLogic"
+},
+"natures_blessing": {
+    "id": "natures_blessing",
+    "name": "Nature's Blessing",
+    "description": "Deal [{base} + {attack} + {int}] magic damage to enemy and grant 10% action bar to lowest HP ally",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "support"],
+    "scaling": {
+        "base": [10, 60, 120, 240, 420],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.6, 0.63, 0.66, 0.69, 0.72]
+    },
+    "actionBarGrant": [0.1, 0.1, 0.1, 0.1, 0.1],
+    "target": "enemy",
+    "logicKey": "naturesBlessingLogic"
+},
+"barkskin": {
+    "id": "barkskin",
+    "name": "Barkskin",
+    "description": "Target ally gains Increase Defense for {duration} turns, heals {healPercent}% HP, and gains {shieldPercent}% max HP shield",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["buff_increase_defense", "heal", "buff_shield"],
+    "duration": [1, 2, 2, 2, 3],
+    "healPercent": [0.12, 0.14, 0.16, 0.18, 0.20],
+    "shieldPercent": [0.06, 0.07, 0.08, 0.09, 0.10],
+    "target": "ally",
+    "logicKey": "barkskinLogic"
+},
+"primal_roar": {
+    "id": "primal_roar",
+    "name": "Primal Roar",
+    "description": "AOE damage dealing [{base} + {attack} + {str}] physical damage and apply Reduce Attack for {duration} turns",
+    "cooldown": [6, 6, 5, 5, 4],
+    "effects": ["aoe", "physical", "debuff_reduce_attack"],
+    "scaling": {
+        "base": [12, 40, 80, 200, 400],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.15, 0.17, 0.19, 0.21, 0.23]
+    },
+    "duration": [1, 1, 2, 2, 3],
+    "target": "all_enemies",
+    "logicKey": "primalRoarLogic"
+},
+"natures_balance": {
+    "id": "natures_balance",
+    "name": "Nature's Balance",
+    "description": "Remove all debuffs from allies and heal {healAmount}, while removing all buffs from enemies and dealing [{base} + {attack} + {int}] damage",
+    "cooldown": [6, 6, 5, 5, 4],
+    "effects": ["aoe", "cleanse", "dispel"],
+    "healAmount": [10, 50, 100, 200, 350],
+    "scaling": {
+        "base": [10, 50, 100, 200, 350],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.4, 0.42, 0.44, 0.46, 0.48]
+    },
+    "target": "all",
+    "logicKey": "naturesBalanceLogic"
+},
+"runemaster_male_passive": {
+    "id": "runemaster_male_passive",
+    "name": "Intimidating Roar",
+    "description": "Primal Roar taunts all enemies for 1 turn",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "tauntDuration": 1,
+    "target": "self",
+    "logicKey": "runemasterMalePassiveLogic"
+},
+"runemaster_female_passive": {
+    "id": "runemaster_female_passive",
+    "name": "Nature's Revenge",
+    "description": "When taking magical damage, retaliate with Nature's Blessing without using action bar",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "target": "self",
+    "logicKey": "runemasterFemalePassiveLogic"
+},
+"summoner_male_passive": {
+    "id": "summoner_male_passive",
+    "name": "Draining Blessing",
+    "description": "Nature's Blessing lowers action bar of lowest HP enemy by 5%",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "actionBarDrain": 0.05,
+    "target": "self",
+    "logicKey": "summonerMalePassiveLogic"
+},
+"summoner_female_passive": {
+    "id": "summoner_female_passive",
+    "name": "Healing Blessing",
+    "description": "Nature's Blessing heals lowest HP ally for {healPercent} HP",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "healPercent": 0.05,
+    "target": "self",
+    "logicKey": "summonerFemalePassiveLogic"
+},
+"arcane_missiles": {
+    "id": "arcane_missiles",
+    "name": "Arcane Missiles",
+    "description": "Hit target for [{base} + {attack} + {int}] magic damage, plus 1 hit to each debuffed enemy",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical"],
+    "scaling": {
+        "base": [18, 40, 80, 160, 320],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.7, 0.72, 0.74, 0.76, 0.78]
+    },
+    "target": "enemy",
+    "logicKey": "arcaneMissilesLogic"
+},
+"frost_armor": {
+    "id": "frost_armor",
+    "name": "Frost Armor",
+    "description": "Apply Frost Armor buff for {duration} turns (25% damage reduction, attackers are slowed)",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_frost_armor", "support"],
+    "duration": [2, 2, 2, 2, 3],
+    "target": "self",
+    "logicKey": "frostArmorLogic"
+},
+"helping_hand": {
+    "id": "helping_hand",
+    "name": "Helping Hand",
+    "description": "Remove all debuffs from target and fill their action bar to 100%",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["cleanse", "support"],
+    "target": "ally",
+    "logicKey": "helpingHandLogic"
+},
+"twilights_promise": {
+    "id": "twilights_promise",
+    "name": "Twilight's Promise",
+    "description": "Consume 10% action bar from all allies. Next turn unleash Twilight's End for massive AOE damage",
+    "cooldown": [8, 8, 7, 7, 6],
+    "effects": ["aoe", "support", "magical"],
+    "actionBarDrain": 0.1,
+    "target": "self",
+    "logicKey": "twilightsPromiseLogic"
+},
+"white_wizard_male_passive": {
+    "id": "white_wizard_male_passive",
+    "name": "Empowering Cleanse",
+    "description": "Helping hand gives target frost armor buff, if two or more debuffs removed, grants increase attack buff as well",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "buffDuration": 1,
+    "target": "self",
+    "logicKey": "whiteWizardMalePassiveLogic"
+},
+"white_witch_female_passive": {
+    "id": "white_witch_female_passive",
+    "name": "Hastening Cleanse",
+    "description": "Helping hand gives target frost armor buff, if two or more debuffs removed, grants increase speed buff as well",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "buffDuration": 1,
+    "target": "self",
+    "logicKey": "whiteWitchFemalePassiveLogic"
+},
+"arch_sage_male_passive": {
+    "id": "arch_sage_male_passive",
+    "name": "Offensive Adaptation",
+    "description": "When receiving a debuff, also gain Increase Attack buff",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "target": "self",
+    "logicKey": "archSageMalePassiveLogic"
+},
+"arch_sage_female_passive": {
+    "id": "arch_sage_female_passive",
+    "name": "Swift Adaptation",
+    "description": "When receiving a debuff, also gain Increase Speed buff",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "target": "self",
+    "logicKey": "archSageFemalePassiveLogic"
+},
+"blade_strike": {
+    "id": "blade_strike",
+    "name": "Blade Strike",
+    "description": "Physical attack dealing [{base} + {attack} + {str}] damage, {bleedBonus} damage if target is bleeding",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [10, 65, 130, 260, 455],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.2, 0.22, 0.24, 0.26, 0.28]
+    },
+    "bleedBonus": 1.5,
+    "target": "enemy",
+    "logicKey": "bladeStrikeLogic"
+},
+"shield_bash": {
+    "id": "shield_bash",
+    "name": "Shield Bash",
+    "description": "Taunt target for {tauntDuration} turn and gain {shieldAmount} shield",
+    "cooldown": [4, 4, 4, 4, 3],
+    "effects": ["debuff_taunt", "buff_shield"],
+    "tauntDuration": [1, 1, 1, 1, 1],
+    "shieldAmount": [25, 100, 200, 400, 700],
+    "target": "enemy",
+    "logicKey": "shieldBashLogic"
+},
+"rally_banner": {
+    "id": "rally_banner",
+    "name": "Rally Banner",
+    "description": "Taunt all enemies, allies gain Increase Attack for {duration} turn and {actionBarGrant} action bar",
+    "cooldown": [7, 7, 6, 5, 4],
+    "effects": ["aoe", "debuff_taunt", "buff_increase_attack", "support"],
+    "duration": [1, 1, 1, 1, 1],
+    "actionBarGrant": 0.3,
+    "target": "all",
+    "logicKey": "rallyBannerLogic"
+},
+"blood_pact": {
+    "id": "blood_pact",
+    "name": "Blood Pact",
+    "description": "Taunt all enemies, apply {bleedDuration} bleed stacks to self and all taunted enemies",
+    "cooldown": [7, 7, 6, 5, 4],
+    "effects": ["aoe", "debuff_taunt", "debuff_bleed"],
+    "bleedStacks": 2,
+    "bleedDuration": [1, 1, 2, 2, 3],
+    "target": "all",
+    "logicKey": "bloodPactLogic"
+},
+"champion_male_passive": {
+    "id": "champion_male_passive",
+    "name": "Stunning Counter",
+    "description": "When hit by physical or magical attack, 20% chance to stun attacker",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "stunChance": 0.2,
+    "stunDuration": 1,
+    "target": "self",
+    "logicKey": "championMalePassiveLogic"
+},
+"champion_female_passive": {
+    "id": "champion_female_passive",
+    "name": "Regenerating Shield",
+    "description": "Start battle with Shield equal to {shieldPercent} max HP, regenerates every {regenerateTurns} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "shieldPercent": 0.2,
+    "regenerateTurns": 4,
+    "target": "self",
+    "logicKey": "championFemalePassiveLogic"
+},
+"avenger_male_passive": {
+    "id": "avenger_male_passive",
+    "name": "Blighting Vengeance",
+    "description": "When attacked by a taunted unit, that unit receives Blight debuff for {blightDuration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "blightDuration": 2,
+    "target": "self",
+    "logicKey": "avengerMalePassiveLogic"
+},
+"avenger_female_passive": {
+    "id": "avenger_female_passive",
+    "name": "Reactive Speed",
+    "description": "Gain {actionBarGain} action bar when taking damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "actionBarGain": 0.15,
+    "target": "self",
+    "logicKey": "avengerFemalePassiveLogic"
+},
+"psi_strike": {
+    "id": "psi_strike",
+    "name": "Psi Strike",
+    "description": "If enemy ≥30% action bar: [{base} + {attack} + {int}] physical damage and drain {actionBarDrain} action bar. If <30%: pure damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [14, 55, 110, 220, 385],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.5, 0.52, 0.54, 0.56, 0.58]
+    },
+    "actionBarDrain": [0.05, 0.05, 0.05, 0.05, 0.05],
+    "actionBarThreshold": [0.3, 0.3, 0.3, 0.3, 0.3],
+    "target": "enemy",
+    "logicKey": "psiStrikeLogic"
+},
+"psychic_mark": {
+    "id": "psychic_mark",
+    "name": "Psychic Mark",
+    "description": "Apply Mark and Reduce Speed debuff to target for {duration} turns",
+    "cooldown": [5, 4, 4, 3, 3],
+    "effects": ["debuff_mark", "debuff_reduce_speed"],
+    "duration": [2, 2, 2, 2, 3],
+    "target": "enemy",
+    "logicKey": "psychicMarkLogic"
+},
+"void_strike": {
+    "id": "void_strike",
+    "name": "Void Strike",
+    "description": "Hit enemy with Psi Strike once per debuff on target",
+    "cooldown": [4, 3, 3, 2, 2],
+    "effects": ["physical"],
+    "target": "enemy",
+    "logicKey": "voidStrikeLogic"
+},
+"psi_shift": {
+    "id": "psi_shift",
+    "name": "Psi Shift",
+    "description": "Steal all action bar from target dealing [{base} + {attack} + {int}] magic damage, set target to 25% action bar",
+    "cooldown": [6, 5, 4, 4, 3],
+    "effects": ["magical", "support"],
+    "scaling": {
+        "base": [8, 75, 150, 300, 600],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.4, 0.42, 0.44, 0.46, 0.48]
+    },
+    "finalActionBarPercent": [0.25, 0.25, 0.25, 0.25, 0.25],
+    "target": "enemy",
+    "logicKey": "psiShiftLogic"
+},
+"dark_arch_templar_male_passive": {
+    "id": "dark_arch_templar_male_passive",
+    "name": "Spreading Decay",
+    "description": "Killing an enemy with debuffs distributes those debuffs randomly to the enemy team",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "target": "self",
+    "logicKey": "darkArchTemplarMalePassiveLogic"
+},
+"dark_arch_templar_female_passive": {
+    "id": "dark_arch_templar_female_passive",
+    "name": "Blighting Mark",
+    "description": "Psychic Mark also applies Blight debuff",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "target": "self",
+    "logicKey": "darkArchTemplarFemalePassiveLogic"
+},
+"grand_templar_male_passive": {
+    "id": "grand_templar_male_passive",
+    "name": "Stunning Mastery",
+    "description": "All abilities have a {stunChance} chance to stun",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "stunChance": 0.2,
+    "stunDuration": 1,
+    "target": "self",
+    "logicKey": "grandTemplarMalePassiveLogic"
+},
+"grand_templar_female_passive": {
+    "id": "grand_templar_female_passive",
+    "name": "Complete Drain",
+    "description": "Psi Shift sets target to 0% action bar",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "target": "self",
+    "logicKey": "grandTemplarFemalePassiveLogic"
+},
+"cheap_shot": {
+    "id": "cheap_shot",
+    "name": "Cheap Shot",
+    "description": "Transfer 1 random debuff from self to target, deal [{base} + {attack} + {agi}] physical damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [12, 45, 90, 180, 315],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.45, 0.47, 0.49, 0.51, 0.53]
+    },
+    "target": "enemy",
+    "logicKey": "cheapShotLogic"
+},
+"cripple": {
+    "id": "cripple",
+    "name": "Cripple",
+    "description": "Apply Reduce Speed, Reduce Attack, and Bleed for {duration} turns",
+    "cooldown": [5, 4, 4, 4, 3],
+    "effects": ["debuff_reduce_speed", "debuff_reduce_attack", "debuff_bleed"],
+    "duration": [2, 2, 2, 2, 3],
+    "target": "enemy",
+    "logicKey": "crippleLogic"
+},
+"assassinate": {
+    "id": "assassinate",
+    "name": "Assassinate",
+    "description": "Deal [{base} + {attack} + {agi}] pure damage if enemy is below {hpThreshold} HP and has a debuff",
+    "cooldown": [7, 7, 6, 6, 5],
+    "effects": ["pure"],
+    "scaling": {
+        "base": [50, 500, 1000, 2000, 3500],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.3, 0.32, 0.34, 0.36, 0.38]
+    },
+    "hpThreshold": 0.3,
+    "target": "enemy",
+    "logicKey": "assassinateLogic"
+},
+"shadowstep": {
+    "id": "shadowstep",
+    "name": "Shadowstep",
+    "description": "Apply Taunt, Mark, and Bleed to target for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["debuff_taunt", "debuff_mark", "debuff_bleed"],
+    "duration": [1, 1, 1, 1, 2],
+    "target": "enemy",
+    "logicKey": "shadowstepLogic"
+},
+"phantom_assassin_male_passive": {
+    "id": "phantom_assassin_male_passive",
+    "name": "Reset on Kill",
+    "description": "If Assassinate kills target, refill action bar to {actionBarRefill}",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "actionBarRefill": 0.75,
+    "target": "self",
+    "logicKey": "phantomAssassinMalePassiveLogic"
+},
+"phantom_assassin_female_passive": {
+    "id": "phantom_assassin_female_passive",
+    "name": "Lethal Opportunity",
+    "description": "Cheap Shot deals pure damage if enemy is below {hpThreshold} HP",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "hpThreshold": 0.5,
+    "target": "self",
+    "logicKey": "phantomAssassinFemalePassiveLogic"
+},
+"master_stalker_male_passive": {
+    "id": "master_stalker_male_passive",
+    "name": "Evasive Bleeder",
+    "description": "{dodgePure} dodge pure, {dodgeMagical} magical, {dodgePhysical} physical. Cheap Shot adds Bleed",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "dodgePure": 0.1,
+    "dodgeMagical": 0.2,
+    "dodgePhysical": 0.3,
+    "bleedDuration": 1,
+    "target": "self",
+    "logicKey": "masterStalkerMalePassiveLogic"
+},
+"master_stalker_female_passive": {
+    "id": "master_stalker_female_passive",
+    "name": "Mystical Evasion",
+    "description": "{dodgePure} dodge pure, {dodgePhysical} physical, {dodgeMagical} magical. Cheap Shot adds Bleed",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "dodgePure": 0.1,
+    "dodgePhysical": 0.2,
+    "dodgeMagical": 0.3,
+    "bleedDuration": 1,
+    "target": "self",
+    "logicKey": "masterStalkerFemalePassiveLogic"
+},
+"purge_slash": {
+    "id": "purge_slash",
+    "name": "Purge Slash",
+    "description": "Deal [{base} + {attack} + {agi}] physical damage and remove {buffsToRemove} buffs from enemy",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "dispel"],
+    "scaling": {
+        "base": [16, 60, 120, 240, 420],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.25, 0.27, 0.29, 0.31, 0.33]
+    },
+    "buffsToRemove": [1, 1, 1, 1, 2],
+    "target": "enemy",
+    "logicKey": "purgeSlashLogic"
+},
+"nullblade_cleave": {
+    "id": "nullblade_cleave",
+    "name": "Nullblade Cleave",
+    "description": "AOE damage dealing [{base} + {attack} + {int}] + {buffBonus} per buff on enemies",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "physical"],
+    "scaling": {
+        "base": [8, 30, 60, 120, 240],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.5, 0.52, 0.54, 0.56, 0.58]
+    },
+    "buffBonus": [20, 60, 120, 240, 480],
+    "target": "all_enemies",
+    "logicKey": "nullbladeCleaveLogic"
+},
+"steal_magic": {
+    "id": "steal_magic",
+    "name": "Steal Magic",
+    "description": "Transfer all buffs from enemy to random allies. Unbuffed enemies receive Reduce Defense for {duration} turns",
+    "cooldown": [6, 5, 5, 4, 4],
+    "effects": ["dispel", "debuff_reduce_defense"],
+    "duration": [1, 1, 2, 2, 3],
+    "target": "enemy",
+    "logicKey": "stealMagicLogic"
+},
+"hex": {
+    "id": "hex",
+    "name": "Hex",
+    "description": "Apply Silence debuff to enemy for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["debuff_silence"],
+    "duration": [2, 2, 2, 2, 3],
+    "target": "enemy",
+    "logicKey": "hexLogic"
+},
+"grand_inquisitor_male_passive": {
+    "id": "grand_inquisitor_male_passive",
+    "name": "Purifying Strike",
+    "description": "Purge Slash deals pure damage if there is no buff to remove",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "target": "self",
+    "logicKey": "grandInquisitorMalePassiveLogic"
+},
+"grand_inquisitor_female_passive": {
+    "id": "grand_inquisitor_female_passive",
+    "name": "Complete Purge",
+    "description": "Purge Slash removes all buffs from the target",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "target": "self",
+    "logicKey": "grandInquisitorFemalePassiveLogic"
+},
+"professional_witcher_male_passive": {
+    "id": "professional_witcher_male_passive",
+    "name": "Anti-Magic Strike",
+    "description": "Purge Slash deals pure damage to enemies that are silenced",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "target": "self",
+    "logicKey": "professionalWitcherMalePassiveLogic"
+},
+"professional_witcher_female_passive": {
+    "id": "professional_witcher_female_passive",
+    "name": "Unavoidable Strike",
+    "description": "Purge Slash against silenced enemies cannot be evaded",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "target": "self",
+    "logicKey": "professionalWitcherFemalePassiveLogic"
+},
+"slash": {
+    "id": "slash",
+    "name": "Slash",
+    "description": "Deals {percent} of target's max HP or {cap} damage, whichever is lower",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "target": "enemy",
+    "logicKey": "slashLogic",
+    "scaling": {
+        "type": "hpPercentMinCap",
+        "percent": [0.02, 0.03, 0.04, 0.05, 0.06],
+        "cap": [5, 30, 60, 120, 210]
+    }
+},
+"bite": {
+    "id": "bite",
+    "name": "Bite",
+    "description": "Deals {percent} of target's max HP or {floor} damage, whichever is higher",
+    "cooldown": [3, 3, 3, 2, 2],
+    "effects": ["physical"],
+    "target": "enemy",
+    "logicKey": "biteLogic",
+    "scaling": {
+        "type": "hpPercentMaxFloor",
+        "percent": [0.05, 0.08, 0.10, 0.12, 0.14],
+        "floor": [5, 40, 80, 160, 280]
+    }
+},
+"spear_thrust": {
+    "id": "spear_thrust",
+    "name": "Spear Thrust",
+    "description": "Thrust spear dealing [{base} + {attack} + {str}] physical damage with {bleedChance} chance to cause Bleed for {bleedDuration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_bleed"],
+    "scaling": {
+        "base": [8, 40, 80, 160, 280],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.15, 0.17, 0.19, 0.21, 0.23]
+    },
+    "bleedChance": [0.3, 0.35, 0.4, 0.45, 0.5],
+    "bleedDuration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "spearThrustLogic"
+},
+"defensive_formation": {
+    "id": "defensive_formation",
+    "name": "Defensive Formation",
+    "description": "Take a defensive stance, gaining Increase Defense for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["buff_increase_defense"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "self",
+    "logicKey": "defensiveFormationLogic"
+},
+"crushing_strike": {
+    "id": "crushing_strike",
+    "name": "Crushing Strike",
+    "description": "Heavy hammer strike dealing [{base} + {attack} + {str}] physical damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [12, 45, 90, 180, 315],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.18, 0.20, 0.22, 0.24, 0.26]
+    },
+    "target": "enemy",
+    "logicKey": "crushingStrikeLogic"
+},
+"armor_break": {
+    "id": "armor_break",
+    "name": "Armor Break",
+    "description": "Break enemy armor dealing [{base} + {attack} + {str}] physical damage and applying Reduce Defense for {debuffDuration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["physical", "debuff_reduce_defense"],
+    "scaling": {
+        "base": [8, 35, 70, 140, 245],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.15, 0.16, 0.17, 0.18, 0.19]
+    },
+    "debuffDuration": [3, 3, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "armorBreakLogic"
+},
+"crystal_shard": {
+    "id": "crystal_shard",
+    "name": "Crystal Shard",
+    "description": "Hurl a magical crystal dealing [{base} + {attack} + {int}] magical damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical"],
+    "scaling": {
+        "base": [14, 50, 100, 200, 350],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.55, 0.60, 0.65, 0.70, 0.75]
+    },
+    "target": "enemy",
+    "logicKey": "crystalShardLogic"
+},
+"protective_barrier": {
+    "id": "protective_barrier",
+    "name": "Protective Barrier",
+    "description": "Grant lowest HP ally a +{shieldAmount} HP Shield",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_shield"],
+    "shieldAmount": [20, 80, 160, 320, 560],
+    "target": "ally",
+    "logicKey": "protectiveBarrierLogic"
+},
+"staff_whack": {
+    "id": "staff_whack",
+    "name": "Staff Whack",
+    "description": "Basic staff attack dealing [{base} + {attack} + {str}] physical damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [6, 30, 60, 120, 210],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.15, 0.17, 0.19, 0.21, 0.23]
+    },
+    "target": "enemy",
+    "logicKey": "staffWhackLogic"
+},
+"ancient_protection": {
+    "id": "ancient_protection",
+    "name": "Ancient Protection",
+    "description": "{dodgeChance} chance to dodge physical attacks",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive", "evasion"],
+    "passive": true,
+    "dodgeChance": [0.4, 0.45, 0.5, 0.55, 0.6],
+    "target": "self",
+    "logicKey": "ancientProtectionLogic"
+},
+"ancestral_taunt": {
+    "id": "ancestral_taunt",
+    "name": "Ancestral Taunt",
+    "description": "Force all enemies to attack this unit for {tauntDuration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "debuff_taunt"],
+    "tauntDuration": [1, 1, 1, 1, 2],
+    "target": "all_enemies",
+    "logicKey": "ancestralTauntLogic"
+},
+"chieftains_hammer": {
+    "id": "chieftains_hammer",
+    "name": "Chieftain's Hammer",
+    "description": "Mighty hammer blow dealing [{base} + {attack} + {str}] physical damage with {stunChance} chance to Stun for {stunDuration} turn",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_stun"],
+    "scaling": {
+        "base": [60, 120, 240, 420, 600],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.20, 0.22, 0.24, 0.26, 0.28]
+    },
+    "stunChance": [0.15, 0.18, 0.21, 0.24, 0.27],
+    "stunDuration": [1, 1, 1, 1, 2],
+    "target": "enemy",
+    "logicKey": "chieftainsHammerLogic"
+},
+"war_cry": {
+    "id": "war_cry",
+    "name": "War Cry",
+    "description": "Rally allies with Increase Attack for {allyBuffDuration} turns and gain Increase Speed for {selfSpeedDuration} turn",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "buff_increase_attack", "buff_increase_speed"],
+    "allyBuffDuration": [2, 2, 3, 3, 4],
+    "selfSpeedDuration": [1, 1, 1, 2, 2],
+    "target": "all_allies",
+    "logicKey": "warCryLogic"
+},
+"axe_throw": {
+    "id": "axe_throw",
+    "name": "Axe Throw",
+    "description": "Throw an axe dealing [{base} + {attack} + {agi}] physical damage with {bleedChance} chance to cause Bleed for {bleedDuration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_bleed"],
+    "scaling": {
+        "base": [45, 90, 180, 315, 450],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.35, 0.38, 0.41, 0.44, 0.47]
+    },
+    "bleedChance": [0.4, 0.45, 0.5, 0.55, 0.6],
+    "bleedDuration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "axeThrowLogic"
+},
+"berserker_rage": {
+    "id": "berserker_rage",
+    "name": "Berserker Rage",
+    "description": "Enter a rage, gaining Increase Speed for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["buff_increase_speed"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "self",
+    "logicKey": "berserkerRageLogic"
+},
+"dual_axes": {
+    "id": "dual_axes",
+    "name": "Dual Axes",
+    "description": "Strike {hitCount} times with axes dealing [{base} + {attack} + {agi}] physical damage each, {bleedChance} bleed chance per hit for {bleedDuration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_bleed"],
+    "scaling": {
+        "base": [30, 60, 120, 210, 300],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.40, 0.42, 0.44, 0.46, 0.48]
+    },
+    "bleedChance": [0.5, 0.55, 0.6, 0.65, 0.7],
+    "bleedDuration": [3, 3, 3, 4, 4],
+    "hitCount": [2, 2, 2, 2, 3],
+    "target": "enemy",
+    "logicKey": "dualAxesLogic"
+},
+"rallying_cry": {
+    "id": "rallying_cry",
+    "name": "Rallying Cry",
+    "description": "Rally all allies with Increase Speed for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "buff_increase_speed"],
+    "duration": [3, 3, 3, 4, 4],
+    "target": "all_allies",
+    "logicKey": "rallyingCryLogic"
+},
+"frost_bolt": {
+    "id": "frost_bolt",
+    "name": "Frost Bolt",
+    "description": "Icy bolt dealing [{base} + {attack} + {int}] magical damage and draining {actionBarDrain} action bar",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "support"],
+    "scaling": {
+        "base": [55, 110, 220, 385, 550],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.55, 0.58, 0.61, 0.64, 0.67]
+    },
+    "actionBarDrain": [0.15, 0.18, 0.21, 0.24, 0.27],
+    "target": "enemy",
+    "logicKey": "frostBoltLogic"
+},
+"chilling_touch": {
+    "id": "chilling_touch",
+    "name": "Chilling Touch",
+    "description": "{slowChance} chance to apply Reduce Speed for {slowDuration} turns on damaging attacks",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive", "debuff_reduce_speed"],
+    "passive": true,
+    "slowChance": [0.3, 0.35, 0.4, 0.45, 0.5],
+    "slowDuration": [2, 2, 2, 3, 3],
+    "target": "self",
+    "logicKey": "chillingTouchLogic"
+},
+"savage_bite": {
+    "id": "savage_bite",
+    "name": "Savage Bite",
+    "description": "Vicious bite dealing [{base} + {attack} + {str}] physical damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [50, 100, 200, 350, 500],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.18, 0.20, 0.22, 0.24, 0.26]
+    },
+    "target": "enemy",
+    "logicKey": "savageBiteLogic"
+},
+"pack_fury": {
+    "id": "pack_fury",
+    "name": "Pack Fury",
+    "description": "Gain Increase Attack buff for {buffDuration} turns when taking damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive", "buff_increase_attack"],
+    "passive": true,
+    "buffDuration": [2, 2, 3, 3, 4],
+    "target": "self",
+    "logicKey": "packFuryLogic"
+},
+"chilling_howl": {
+    "id": "chilling_howl",
+    "name": "Chilling Howl",
+    "description": "Howl that applies Reduce Attack and Reduce Speed to all enemies for {debuffDuration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "debuff_reduce_attack", "debuff_reduce_speed"],
+    "debuffDuration": [3, 3, 3, 4, 4],
+    "target": "all_enemies",
+    "logicKey": "chillingHowlLogic"
+},
+"frost_breath": {
+    "id": "frost_breath",
+    "name": "Frost Breath",
+    "description": "Breathe frost on all enemies dealing [{base} + {attack} + {int}] magical damage and applying Reduce Speed for {slowDuration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "magical", "debuff_reduce_speed"],
+    "scaling": {
+        "base": [30, 100, 200, 350, 500],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.5, 0.52, 0.54, 0.56, 0.58]
+    },
+    "slowDuration": [2, 2, 3, 3, 4],
+    "target": "all_enemies",
+    "logicKey": "frostBreathLogic"
+},
+"crushing_blow": {
+    "id": "crushing_blow",
+    "name": "Crushing Blow",
+    "description": "Massive strike dealing [{base} + {attack} + {str}] physical damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [65, 130, 260, 455, 650],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.22, 0.24, 0.26, 0.28, 0.30]
+    },
+    "target": "enemy",
+    "logicKey": "crushingBlowLogic"
+},
+"thick_hide": {
+    "id": "thick_hide",
+    "name": "Thick Hide",
+    "description": "Take {damageReduction} less damage from all sources",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "damageReduction": [0.15, 0.18, 0.21, 0.24, 0.27],
+    "target": "self",
+    "logicKey": "thickHideLogic"
+},
+"maul": {
+    "id": "maul",
+    "name": "Maul",
+    "description": "Brutal maul dealing [{base} + {attack} + {str}] physical damage and causing Bleed for {bleedDuration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_bleed"],
+    "scaling": {
+        "base": [55, 110, 220, 385, 550],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.20, 0.22, 0.24, 0.26, 0.28]
+    },
+    "bleedDuration": [3, 3, 4, 4, 5],
+    "target": "enemy",
+    "logicKey": "maulLogic"
+},
+"rampage": {
+    "id": "rampage",
+    "name": "Rampage",
+    "description": "Go on a rampage, causing all enemies to Bleed for {bleedDuration} turns",
+    "cooldown": [6, 6, 5, 5, 4],
+    "effects": ["aoe", "debuff_bleed"],
+    "bleedDuration": [4, 4, 5, 5, 6],
+    "target": "all_enemies",
+    "logicKey": "rampageLogic"
+},
+"spirit_touch": {
+    "id": "spirit_touch",
+    "name": "Spirit Touch",
+    "description": "Ethereal touch dealing [{base} + {attack} + {int}] magical damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical"],
+    "scaling": {
+        "base": [20, 80, 160, 280, 400],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.6, 0.63, 0.66, 0.69, 0.72]
+    },
+    "target": "enemy",
+    "logicKey": "spiritTouchLogic"
+},
+"banshee_wail": {
+    "id": "banshee_wail",
+    "name": "Banshee Wail",
+    "description": "Terrifying wail dealing [{base} + {attack} + {int}] magical damage to all enemies with {silenceChance} chance to silence for {silenceDuration} turn",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "magical", "debuff_silence"],
+    "scaling": {
+        "base": [15, 60, 120, 210, 300],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.5, 0.52, 0.54, 0.56, 0.58]
+    },
+    "silenceChance": [0.3, 0.35, 0.4, 0.45, 0.5],
+    "silenceDuration": [1, 1, 1, 2, 2],
+    "target": "all_enemies",
+    "logicKey": "bansheeWailLogic"
+},
+"phase_shift": {
+    "id": "phase_shift",
+    "name": "Phase Shift",
+    "description": "Become ethereal, removing all debuffs and gaining Increase Speed for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["cleanse", "buff_increase_speed"],
+    "duration": [2, 2, 2, 3, 3],
+    "target": "self",
+    "logicKey": "phaseShiftLogic"
+},
+"root_slam": {
+    "id": "root_slam",
+    "name": "Root Slam",
+    "description": "Slam with roots dealing [{base} + {attack} + {str}] physical damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [25, 100, 200, 350, 500],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.2, 0.22, 0.24, 0.26, 0.28]
+    },
+    "target": "enemy",
+    "logicKey": "rootSlamLogic"
+},
+"entangling_roots": {
+    "id": "entangling_roots",
+    "name": "Entangling Roots",
+    "description": "Roots entangle target, applying Taunt and Reduce Speed for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["debuff_taunt", "debuff_reduce_speed"],
+    "duration": [2, 2, 2, 3, 3],
+    "target": "enemy",
+    "logicKey": "entanglingRootsLogic"
+},
+"sludge_bolt": {
+    "id": "sludge_bolt",
+    "name": "Sludge Bolt",
+    "description": "Toxic bolt dealing [{base} + {attack} + {int}] magical damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical"],
+    "scaling": {
+        "base": [18, 72, 144, 252, 360],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.55, 0.58, 0.61, 0.64, 0.67]
+    },
+    "target": "enemy",
+    "logicKey": "sludgeBoltLogic"
+},
+"toxic_pool": {
+    "id": "toxic_pool",
+    "name": "Toxic Pool",
+    "description": "Create toxic pool that applies Blight and Reduce Defense to all enemies for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "debuff_blight", "debuff_reduce_defense"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_enemies",
+    "logicKey": "toxicPoolLogic"
+},
+"corrosive_splash": {
+    "id": "corrosive_splash",
+    "name": "Corrosive Splash",
+    "description": "When attacked, apply Reduce Attack to attacker for {duration} turns (30% chance)",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive", "debuff_reduce_attack"],
+    "passive": true,
+    "procChance": [0.3, 0.35, 0.4, 0.45, 0.5],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "self",
+    "logicKey": "corrosiveSplashLogic"
+},
+"shadow_bolt": {
+    "id": "shadow_bolt",
+    "name": "Shadow Bolt",
+    "description": "Dark bolt dealing [{base} + {attack} + {int}] magical damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical"],
+    "scaling": {
+        "base": [16, 64, 128, 224, 320],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.65, 0.68, 0.71, 0.74, 0.77]
+    },
+    "target": "enemy",
+    "logicKey": "shadowBoltLogic"
+},
+"shadow_veil": {
+    "id": "shadow_veil",
+    "name": "Shadow Veil",
+    "description": "Grant ally Increase Speed for {duration} turns",
+    "cooldown": [3, 3, 3, 2, 2],
+    "effects": ["buff_increase_speed"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "ally",
+    "logicKey": "shadowVeilLogic"
+},
+"dark_blessing": {
+    "id": "dark_blessing",
+    "name": "Dark Blessing",
+    "description": "Grant ally Increase Attack for {duration} turns and remove 1 debuff",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["buff_increase_attack", "cleanse"],
+    "duration": [2, 2, 2, 3, 3],
+    "target": "ally",
+    "logicKey": "darkBlessingLogic"
+},
+"spectral_slash": {
+    "id": "spectral_slash",
+    "name": "Spectral Slash",
+    "description": "Ghostly slash dealing [{base} + {attack} + {int}] magical damage and draining {actionBarDrain} action bar",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "support"],
+    "scaling": {
+        "base": [30, 120, 240, 420, 600],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.7, 0.73, 0.76, 0.79, 0.82]
+    },
+    "actionBarDrain": [0.1, 0.12, 0.14, 0.16, 0.18],
+    "target": "enemy",
+    "logicKey": "spectralSlashLogic"
+},
+"death_shriek": {
+    "id": "death_shriek",
+    "name": "Death Shriek",
+    "description": "Devastating shriek dealing [{base} + {attack} + {int}] magical damage to all enemies and silencing for {silenceDuration} turn",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "magical", "debuff_silence"],
+    "scaling": {
+        "base": [25, 100, 200, 350, 500],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.6, 0.63, 0.66, 0.69, 0.72]
+    },
+    "silenceDuration": [1, 1, 1, 2, 2],
+    "target": "all_enemies",
+    "logicKey": "deathShriekLogic"
+},
+"mournful_presence": {
+    "id": "mournful_presence",
+    "name": "Mournful Presence",
+    "description": "All enemies lose {actionBarDrain} action bar and gain Reduce Speed for {duration} turns",
+    "cooldown": [6, 6, 5, 5, 4],
+    "effects": ["aoe", "support", "debuff_reduce_speed"],
+    "actionBarDrain": [0.2, 0.22, 0.24, 0.26, 0.28],
+    "duration": [2, 2, 2, 3, 3],
+    "target": "all_enemies",
+    "logicKey": "mournfulPresenceLogic"
+},
+"branch_whip": {
+    "id": "branch_whip",
+    "name": "Branch Whip",
+    "description": "Whip with branches dealing [{base} + {attack} + {str}] physical damage with {bleedChance} chance to cause Bleed",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_bleed"],
+    "scaling": {
+        "base": [28, 112, 224, 392, 560],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.22, 0.24, 0.26, 0.28, 0.30]
+    },
+    "bleedChance": [0.4, 0.45, 0.5, 0.55, 0.6],
+    "bleedDuration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "branchWhipLogic"
+},
+"natures_corruption": {
+    "id": "natures_corruption",
+    "name": "Nature's Corruption",
+    "description": "Convert all enemy buffs into random debuffs",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["dispel", "support"],
+    "target": "enemy",
+    "logicKey": "naturesCorruptionLogic"
+},
+"thorned_embrace": {
+    "id": "thorned_embrace",
+    "name": "Thorned Embrace",
+    "description": "Embrace target with thorns, applying Taunt for {tauntDuration} turns and 2 stacks of Bleed for {bleedDuration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["debuff_taunt", "debuff_bleed"],
+    "tauntDuration": [1, 1, 1, 2, 2],
+    "bleedDuration": [3, 3, 3, 4, 4],
+    "bleedStacks": 2,
+    "target": "enemy",
+    "logicKey": "thornedEmbraceLogic"
+},
+"phantom_strike": {
+    "id": "phantom_strike",
+    "name": "Phantom Strike",
+    "description": "Ghostly strike dealing [{base} + {attack} + {int}] magical damage, double damage if target is silenced",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical"],
+    "scaling": {
+        "base": [35, 140, 280, 490, 700],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.75, 0.78, 0.81, 0.84, 0.87]
+    },
+    "silencedMultiplier": 2.0,
+    "target": "enemy",
+    "logicKey": "phantomStrikeLogic"
+},
+"wailing_chorus": {
+    "id": "wailing_chorus",
+    "name": "Wailing Chorus",
+    "description": "Chorus of wails dealing [{base} + {attack} + {int}] magical damage to all enemies and applying Mark for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "magical", "debuff_mark"],
+    "scaling": {
+        "base": [30, 120, 240, 420, 600],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.65, 0.68, 0.71, 0.74, 0.77]
+    },
+    "duration": [3, 3, 4, 4, 5],
+    "target": "all_enemies",
+    "logicKey": "wailingChorusLogic"
+},
+"spiritual_drain": {
+    "id": "spiritual_drain",
+    "name": "Spiritual Drain",
+    "description": "Drain target's essence, stealing all buffs and action bar",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["dispel", "support"],
+    "target": "enemy",
+    "logicKey": "spiritualDrainLogic"
+},
+"queens_lament_passive": {
+    "id": "queens_lament_passive",
+    "name": "Queen's Lament",
+    "description": "When any unit dies, heal 10% HP and gain Increase Attack for 2 turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "healPercent": 0.1,
+    "buffDuration": 2,
+    "target": "self",
+    "logicKey": "queensLamentPassiveLogic"
+},
+"bone_strike": {
+    "id": "bone_strike",
+    "name": "Bone Strike",
+    "description": "Strike with bone weapon dealing [{base} + {attack} + {str}] physical damage, ignores shields",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "shield_break"],
+    "scaling": {
+        "base": [22, 88, 176, 308, 440],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.18, 0.20, 0.22, 0.24, 0.26]
+    },
+    "target": "enemy",
+    "logicKey": "boneStrikeLogic"
+},
+"necrotic_strike": {
+    "id": "necrotic_strike",
+    "name": "Necrotic Strike",
+    "description": "Decaying strike dealing [{base} + {attack} + {str}] physical damage and applying Blight for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["physical", "debuff_blight"],
+    "scaling": {
+        "base": [18, 72, 144, 252, 360],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.15, 0.17, 0.19, 0.21, 0.23]
+    },
+    "duration": [3, 3, 4, 4, 5],
+    "target": "enemy",
+    "logicKey": "necroticStrikeLogic"
+},
+"deaths_advance": {
+    "id": "deaths_advance",
+    "name": "Death's Advance",
+    "description": "Gain Increase Speed and Immune for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_increase_speed", "buff_immune"],
+    "duration": [1, 1, 1, 2, 2],
+    "target": "self",
+    "logicKey": "deathsAdvanceLogic"
+},
+"cursed_arrow": {
+    "id": "cursed_arrow",
+    "name": "Cursed Arrow",
+    "description": "Cursed shot dealing [{base} + {attack} + {agi}] physical damage with {markChance} chance to apply Mark for {markDuration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_mark"],
+    "scaling": {
+        "base": [20, 80, 160, 280, 400],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.4, 0.42, 0.44, 0.46, 0.48]
+    },
+    "markChance": [0.5, 0.55, 0.6, 0.65, 0.7],
+    "markDuration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "cursedArrowLogic"
+},
+"volley_of_decay": {
+    "id": "volley_of_decay",
+    "name": "Volley of Decay",
+    "description": "Rain of arrows hitting all enemies for [{base} + {attack} + {agi}] physical damage and applying Reduce Defense for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "physical", "debuff_reduce_defense"],
+    "scaling": {
+        "base": [15, 60, 120, 210, 300],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.35, 0.37, 0.39, 0.41, 0.43]
+    },
+    "duration": [2, 2, 2, 3, 3],
+    "target": "all_enemies",
+    "logicKey": "volleyOfDecayLogic"
+},
+"piercing_shot": {
+    "id": "piercing_shot",
+    "name": "Piercing Shot",
+    "description": "Piercing arrow dealing [{base} + {attack} + {agi}] physical damage and removing 1 buff",
+    "cooldown": [3, 3, 3, 2, 2],
+    "effects": ["physical", "dispel"],
+    "scaling": {
+        "base": [18, 72, 144, 252, 360],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.38, 0.40, 0.42, 0.44, 0.46]
+    },
+    "target": "enemy",
+    "logicKey": "piercingShotLogic"
+},
+"death_bolt": {
+    "id": "death_bolt",
+    "name": "Death Bolt",
+    "description": "Necrotic bolt dealing [{base} + {attack} + {int}] magical damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical"],
+    "scaling": {
+        "base": [24, 96, 192, 336, 480],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.7, 0.73, 0.76, 0.79, 0.82]
+    },
+    "target": "enemy",
+    "logicKey": "deathBoltLogic"
+},
+"dark_ritual": {
+    "id": "dark_ritual",
+    "name": "Dark Ritual",
+    "description": "Dark magic heals all allies for {healPercent} of their max HP",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "heal"],
+    "healPercent": [0.2, 0.22, 0.24, 0.26, 0.28],
+    "target": "all_allies",
+    "logicKey": "darkRitualLogic"
+},
+"corpse_shield": {
+    "id": "corpse_shield",
+    "name": "Corpse Shield",
+    "description": "Grant shields to {targetCount} lowest HP allies absorbing {shieldAmount} damage",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_shield"],
+    "targetCount": [2, 2, 2, 3, 3],
+    "shieldAmount": [30, 120, 240, 420, 600],
+    "target": "ally",
+    "logicKey": "corpseShieldLogic"
+},
+"drain_life": {
+    "id": "drain_life",
+    "name": "Drain Life",
+    "description": "Drain life dealing [{base} + {attack} + {int}] magical damage and healing self for {healPercent} of damage dealt",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "heal"],
+    "scaling": {
+        "base": [26, 104, 208, 364, 520],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.65, 0.68, 0.71, 0.74, 0.77]
+    },
+    "healPercent": [0.3, 0.32, 0.34, 0.36, 0.38],
+    "target": "enemy",
+    "logicKey": "drainLifeLogic"
+},
+"unholy_presence": {
+    "id": "unholy_presence",
+    "name": "Unholy Presence",
+    "description": "Dark aura grants all allies Increase Attack for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "buff_increase_attack"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_allies",
+    "logicKey": "unholyPresenceLogic"
+},
+"curse_of_weakness": {
+    "id": "curse_of_weakness",
+    "name": "Curse of Weakness",
+    "description": "Curse all enemies with Reduce Attack and Reduce Defense for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "debuff_reduce_attack", "debuff_reduce_defense"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_enemies",
+    "logicKey": "curseOfWeaknessLogic"
+},
+"blood_fang": {
+    "id": "blood_fang",
+    "name": "Blood Fang",
+    "description": "Vampiric bite dealing [{base} + {attack} + {agi}] physical damage and healing for {healPercent} of damage dealt",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "heal"],
+    "scaling": {
+        "base": [28, 112, 224, 392, 560],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.45, 0.48, 0.51, 0.54, 0.57]
+    },
+    "healPercent": [0.5, 0.52, 0.54, 0.56, 0.58],
+    "target": "enemy",
+    "logicKey": "bloodFangLogic"
+},
+"crimson_thirst": {
+    "id": "crimson_thirst",
+    "name": "Crimson Thirst",
+    "description": "Apply {bleedStacks} stacks of Bleed to target for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["debuff_bleed"],
+    "bleedStacks": [2, 2, 2, 3, 3],
+    "duration": [3, 3, 4, 4, 5],
+    "target": "enemy",
+    "logicKey": "crimsonThirstLogic"
+},
+"bat_form": {
+    "id": "bat_form",
+    "name": "Bat Form",
+    "description": "Transform into bat form, gaining Increase Speed and Frost Armor for {duration} turns",
+    "cooldown": [6, 6, 5, 5, 4],
+    "effects": ["buff_increase_speed", "buff_frost_armor"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "self",
+    "logicKey": "batFormLogic"
+},
+"frost_strike": {
+    "id": "frost_strike",
+    "name": "Frost Strike",
+    "description": "Icy strike dealing [{base} + {attack} + {str}] physical damage and applying Reduce Speed for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_reduce_speed"],
+    "scaling": {
+        "base": [32, 128, 256, 448, 640],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.25, 0.27, 0.29, 0.31, 0.33]
+    },
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "frostStrikeLogic"
+},
+"death_grip": {
+    "id": "death_grip",
+    "name": "Death Grip",
+    "description": "Dark magic taunts all enemies for {duration} turns",
+    "cooldown": [3, 3, 3, 2, 2],
+    "effects": ["aoe", "debuff_taunt"],
+    "duration": [1, 1, 1, 2, 2],
+    "target": "all_enemies",
+    "logicKey": "deathGripLogic"
+},
+"unholy_shield": {
+    "id": "unholy_shield",
+    "name": "Unholy Shield",
+    "description": "Grant self {shieldAmount} shield and Increase Defense for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_shield", "buff_increase_defense"],
+    "shieldAmount": [40, 160, 320, 560, 800],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "self",
+    "logicKey": "unholyShieldLogic"
+},
+"death_pact": {
+    "id": "death_pact",
+    "name": "Death Pact",
+    "description": "Sacrifice 20% current HP to grant all allies Increase Attack for {duration} turns",
+    "cooldown": [6, 6, 5, 5, 4],
+    "effects": ["aoe", "buff_increase_attack"],
+    "hpCost": 0.2,
+    "duration": [3, 3, 3, 4, 4],
+    "target": "all_allies",
+    "logicKey": "deathPactLogic"
+},
+"flesh_rend": {
+    "id": "flesh_rend",
+    "name": "Flesh Rend",
+    "description": "Rend flesh dealing [{base} + {attack} + {str}] physical damage, +50% damage vs bleeding targets",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [40, 160, 320, 560, 800],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.28, 0.30, 0.32, 0.34, 0.36]
+    },
+    "bleedBonus": 1.5,
+    "target": "enemy",
+    "logicKey": "fleshRendLogic"
+},
+"corpse_explosion": {
+    "id": "corpse_explosion",
+    "name": "Corpse Explosion",
+    "description": "Explode corpses dealing [{baseDamage} + {missingHpPercent} of missing HP] magical damage to all enemies based on their missing HP",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "magical"],
+    "missingHpPercent": [0.2, 0.25, 0.3, 0.35, 0.4],
+    "baseDamage": [50, 100, 150, 200, 250],
+    "target": "all_enemies",
+    "logicKey": "corpseExplosionLogic"
+},
+"unholy_frenzy": {
+    "id": "unholy_frenzy",
+    "name": "Unholy Frenzy",
+    "description": "Enter frenzy, gaining 2 stacks each of Increase Attack and Increase Speed for {duration} turns",
+    "cooldown": [6, 6, 5, 5, 4],
+    "effects": ["buff_increase_attack", "buff_increase_speed"],
+    "duration": [2, 2, 3, 3, 4],
+    "stackCount": 2,
+    "target": "self",
+    "logicKey": "unholyFrenzyLogic"
+},
+"patchwork_body_passive": {
+    "id": "patchwork_body_passive",
+    "name": "Patchwork Body",
+    "description": "Takes 25% less damage from all sources",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "damageReduction": 0.25,
+    "target": "self",
+    "logicKey": "patchworkBodyPassiveLogic"
+},
+"dirty_strike": {
+    "id": "dirty_strike",
+    "name": "Dirty Strike",
+    "description": "Underhanded strike dealing [{base} + {attack} + {str}] physical damage with {debuffChance} chance to apply Reduce Defense for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_reduce_defense"],
+    "scaling": {
+        "base": [24, 96, 192, 336, 480],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.2, 0.22, 0.24, 0.26, 0.28]
+    },
+    "debuffChance": [0.4, 0.45, 0.5, 0.55, 0.6],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "dirtyStrikeLogic"
+},
+"sucker_punch": {
+    "id": "sucker_punch",
+    "name": "Sucker Punch",
+    "description": "Cheap shot dealing [{base} + {attack} + {str}] physical damage with {stunChance} chance to Stun for {stunDuration} turn",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["physical", "debuff_stun"],
+    "scaling": {
+        "base": [20, 80, 160, 280, 400],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.18, 0.20, 0.22, 0.24, 0.26]
+    },
+    "stunChance": [0.3, 0.35, 0.4, 0.45, 0.5],
+    "stunDuration": [1, 1, 1, 1, 2],
+    "target": "enemy",
+    "logicKey": "suckerPunchLogic"
+},
+"serrated_blade": {
+    "id": "serrated_blade",
+    "name": "Serrated Blade",
+    "description": "Jagged strike dealing [{base} + {attack} + {agi}] physical damage and applying Bleed for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_bleed"],
+    "scaling": {
+        "base": [26, 104, 208, 364, 520],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.42, 0.44, 0.46, 0.48, 0.50]
+    },
+    "duration": [3, 3, 4, 4, 5],
+    "target": "enemy",
+    "logicKey": "serratedBladeLogic"
+},
+"lacerate": {
+    "id": "lacerate",
+    "name": "Lacerate",
+    "description": "Deep cuts apply {bleedStacks} stacks of Bleed for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["debuff_bleed"],
+    "bleedStacks": [3, 3, 3, 4, 4],
+    "duration": [3, 3, 4, 4, 5],
+    "target": "enemy",
+    "logicKey": "lacerateLogic"
+},
+"poison_arrow": {
+    "id": "poison_arrow",
+    "name": "Poison Arrow",
+    "description": "Poisoned shot dealing [{base} + {attack} + {agi}] physical damage with {blightChance} chance to apply Blight for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_blight"],
+    "scaling": {
+        "base": [22, 88, 176, 308, 440],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.38, 0.40, 0.42, 0.44, 0.46]
+    },
+    "blightChance": [0.4, 0.45, 0.5, 0.55, 0.6],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "poisonArrowLogic"
+},
+"suppressing_fire": {
+    "id": "suppressing_fire",
+    "name": "Suppressing Fire",
+    "description": "Barrage dealing [{base} + {attack} + {agi}] physical damage to all enemies and applying Reduce Speed for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "physical", "debuff_reduce_speed"],
+    "scaling": {
+        "base": [18, 72, 144, 252, 360],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.35, 0.37, 0.39, 0.41, 0.43]
+    },
+    "duration": [2, 2, 2, 3, 3],
+    "target": "all_enemies",
+    "logicKey": "suppressingFireLogic"
+},
+"heavy_strike": {
+    "id": "heavy_strike",
+    "name": "Heavy Strike",
+    "description": "Powerful blow dealing [{base} + {attack} + {str}] physical damage and applying Reduce Attack for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_reduce_attack"],
+    "scaling": {
+        "base": [30, 120, 240, 420, 600],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.24, 0.26, 0.28, 0.30, 0.32]
+    },
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "heavyStrikeLogic"
+},
+"intimidate": {
+    "id": "intimidate",
+    "name": "Intimidate",
+    "description": "Intimidating presence taunts all enemies for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "debuff_taunt"],
+    "duration": [1, 1, 1, 2, 2],
+    "target": "all_enemies",
+    "logicKey": "intimidateLogic"
+},
+"captains_strike": {
+    "id": "captains_strike",
+    "name": "Captain's Strike",
+    "description": "Commanding strike dealing [{base} + {attack} + {str}] physical damage, all allies gain {actionBarGrant} action bar",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "support"],
+    "scaling": {
+        "base": [35, 140, 280, 490, 700],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.26, 0.28, 0.30, 0.32, 0.34]
+    },
+    "actionBarGrant": [0.1, 0.11, 0.12, 0.13, 0.14],
+    "target": "enemy",
+    "logicKey": "captainsStrikeLogic"
+},
+"rally_thieves": {
+    "id": "rally_thieves",
+    "name": "Rally Thieves",
+    "description": "Rally cry grants all allies Increase Attack and Increase Speed for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "buff_increase_attack", "buff_increase_speed"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_allies",
+    "logicKey": "rallyThievesLogic"
+},
+"dirty_fighting": {
+    "id": "dirty_fighting",
+    "name": "Dirty Fighting",
+    "description": "Apply {debuffCount} random debuffs distributed among enemies for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["support"],
+    "debuffCount": [3, 3, 4, 4, 5],
+    "duration": [1, 1, 2, 2, 3],
+    "target": "all_enemies",
+    "logicKey": "dirtyFightingLogic"
+},
+"execute": {
+    "id": "execute",
+    "name": "Execute",
+    "description": "Instant kill if enemy below 25% HP, otherwise deal [{base} + {attack} + {str}] pure damage",
+    "cooldown": [6, 6, 5, 5, 4],
+    "effects": ["pure"],
+    "scaling": {
+        "base": [100, 400, 800, 1400, 2000],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.3, 0.32, 0.34, 0.36, 0.38]
+    },
+    "executeThreshold": 0.25,
+    "target": "enemy",
+    "logicKey": "executeLogic"
+},
+"shadow_strike": {
+    "id": "shadow_strike",
+    "name": "Shadow Strike",
+    "description": "Strike from shadows dealing [{base} + {attack} + {agi}] physical damage and applying Mark for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_mark"],
+    "scaling": {
+        "base": [28, 112, 224, 392, 560],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.48, 0.50, 0.52, 0.54, 0.56]
+    },
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "shadowStrikeLogic"
+},
+"smoke_bomb": {
+    "id": "smoke_bomb",
+    "name": "Smoke Bomb",
+    "description": "Throw smoke bomb, gain Increase Speed for {buffDuration} turns, all enemies gain Reduce Attack for {debuffDuration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "buff_increase_speed", "debuff_reduce_attack"],
+    "buffDuration": [3, 3, 3, 4, 4],
+    "debuffDuration": [2, 2, 2, 3, 3],
+    "target": "all",
+    "logicKey": "smokeBombLogic"
+},
+"lords_blade": {
+    "id": "lords_blade",
+    "name": "Lord's Blade",
+    "description": "Masterful strike dealing [{base} + {attack} + {agi}] physical damage and stealing 1 buff",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "dispel"],
+    "scaling": {
+        "base": [38, 152, 304, 532, 760],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.5, 0.52, 0.54, 0.56, 0.58]
+    },
+    "target": "enemy",
+    "logicKey": "lordsBladeLogic"
+},
+"bandits_gambit": {
+    "id": "bandits_gambit",
+    "name": "Bandit's Gambit",
+    "description": "Steal all buffs from enemies and distribute randomly among bandits",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "dispel", "support"],
+    "target": "all",
+    "logicKey": "banditsGambitLogic"
+},
+"plunder": {
+    "id": "plunder",
+    "name": "Plunder",
+    "description": "Steal {actionBarSteal} action bar from all enemies",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "support"],
+    "actionBarSteal": [0.3, 0.32, 0.34, 0.36, 0.38],
+    "target": "all_enemies",
+    "logicKey": "plunderLogic"
+},
+"call_to_arms": {
+    "id": "call_to_arms",
+    "name": "Call to Arms",
+    "description": "Rally call grants all allies {shieldAmount} shield and Increase Defense for {duration} turns",
+    "cooldown": [6, 6, 5, 5, 4],
+    "effects": ["aoe", "buff_shield", "buff_increase_defense"],
+    "shieldAmount": [50, 200, 400, 700, 1000],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_allies",
+    "logicKey": "callToArmsLogic"
+},
+"wrench_toss": {
+    "id": "wrench_toss",
+    "name": "Wrench Toss",
+    "description": "Throw a wrench dealing [{base} + {attack} + {str}] physical damage and applying Reduce Defense for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_reduce_defense"],
+    "scaling": {
+        "base": [30, 120, 240, 420, 600],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.2, 0.22, 0.24, 0.26, 0.28]
+    },
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "wrenchTossLogic"
+},
+"makeshift_shield": {
+    "id": "makeshift_shield",
+    "name": "Makeshift Shield",
+    "description": "Cobble together a shield absorbing {shieldAmount} damage",
+    "cooldown": [3, 3, 3, 2, 2],
+    "effects": ["buff_shield"],
+    "shieldAmount": [40, 160, 320, 560, 800],
+    "target": "self",
+    "logicKey": "makeshift_shieldLogic"
+},
+"grenade_lob": {
+    "id": "grenade_lob",
+    "name": "Grenade Lob",
+    "description": "Lob grenade dealing [{base} + {attack} + {int}] physical damage, 50% bonus vs Reduced Defense",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [35, 140, 280, 490, 700],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.4, 0.42, 0.44, 0.46, 0.48]
+    },
+    "reducedDefenseBonus": 1.5,
+    "target": "enemy",
+    "logicKey": "grenadeLobLogic"
+},
+"smoke_screen": {
+    "id": "smoke_screen",
+    "name": "Smoke Screen",
+    "description": "Deploy smoke, all enemies gain Reduce Attack for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "debuff_reduce_attack"],
+    "duration": [2, 2, 2, 3, 3],
+    "target": "all_enemies",
+    "logicKey": "smokeScreenLogic"
+},
+"repair_bot": {
+    "id": "repair_bot",
+    "name": "Repair Bot",
+    "description": "Deploy bot to heal lowest HP ally for {healPercent}% HP and grant {shieldAmount} shield",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["heal", "buff_shield"],
+    "healPercent": [0.15, 0.18, 0.21, 0.24, 0.27],
+    "shieldAmount": [30, 120, 240, 420, 600],
+    "target": "ally",
+    "logicKey": "repairBotLogic"
+},
+"overclock": {
+    "id": "overclock",
+    "name": "Overclock",
+    "description": "All allies gain Increase Attack and Increase Speed for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "buff_increase_attack", "buff_increase_speed"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_allies",
+    "logicKey": "overclockLogic"
+},
+"bomb_vest": {
+    "id": "bomb_vest",
+    "name": "Bomb Vest",
+    "description": "Explosive strike dealing [{base} + {attack} + {str}] physical damage, take 20% max HP self damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [50, 200, 400, 700, 1000],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.25, 0.27, 0.29, 0.31, 0.33]
+    },
+    "selfDamagePercent": 0.2,
+    "target": "enemy",
+    "logicKey": "bombVestLogic"
+},
+"detonate": {
+    "id": "detonate",
+    "name": "Detonate",
+    "description": "Explosion! All enemies gain Reduce Defense for {duration} turns and are stunned for 1 turn",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "debuff_reduce_defense", "debuff_stun"],
+    "duration": [3, 3, 4, 4, 5],
+    "target": "all_enemies",
+    "logicKey": "detonateLogic"
+},
+"shrapnel_blast": {
+    "id": "shrapnel_blast",
+    "name": "Shrapnel Blast",
+    "description": "AOE blast dealing [{base} + {attack} + {str}] physical damage and applying Bleed for {bleedDuration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "physical", "debuff_bleed"],
+    "scaling": {
+        "base": [40, 160, 320, 560, 800],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.22, 0.24, 0.26, 0.28, 0.30]
+    },
+    "bleedDuration": [3, 3, 4, 4, 5],
+    "target": "all_enemies",
+    "logicKey": "shrapnelBlastLogic"
+},
+"demolition_expert_passive": {
+    "id": "demolition_expert_passive",
+    "name": "Demolition Expert",
+    "description": "When taking damage while having no debuffs, deal 30% of that damage to all enemies",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "target": "self",
+    "logicKey": "demolitionExpertPassiveLogic"
+},
+"drill_charge": {
+    "id": "drill_charge",
+    "name": "Drill Charge",
+    "description": "Piercing charge dealing [{base} + {attack} + {str}] physical damage, ignores 50% armor",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [60, 240, 480, 840, 1200],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.3, 0.32, 0.34, 0.36, 0.38]
+    },
+    "armorPierce": 0.5,
+    "target": "enemy",
+    "logicKey": "drillChargeLogic"
+},
+"defense_shredder": {
+    "id": "defense_shredder",
+    "name": "Defense Shredder",
+    "description": "Apply 2 stacks of Reduce Defense and Mark for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["debuff_reduce_defense", "debuff_mark"],
+    "duration": [3, 3, 4, 4, 5],
+    "stackCount": 2,
+    "target": "enemy",
+    "logicKey": "defenseShredderLogic"
+},
+"scrap_cannon": {
+    "id": "scrap_cannon",
+    "name": "Scrap Cannon",
+    "description": "AOE blast dealing [{base} + {attack} + {int}] physical damage + 50 per debuff on enemies",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "physical"],
+    "scaling": {
+        "base": [50, 200, 400, 700, 1000],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.5, 0.52, 0.54, 0.56, 0.58]
+    },
+    "debuffBonus": 50,
+    "target": "all_enemies",
+    "logicKey": "scrapCannonLogic"
+},
+"reinforced_plating_passive": {
+    "id": "reinforced_plating_passive",
+    "name": "Reinforced Plating",
+    "description": "Take 30% less damage, regenerate 10% max HP shield every 3 turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "damageReduction": 0.3,
+    "shieldRegenPercent": 0.1,
+    "shieldRegenTurns": 3,
+    "target": "self",
+    "logicKey": "reinforcedPlatingPassiveLogic"
+},
+"arrow_volley": {
+    "id": "arrow_volley",
+    "name": "Arrow Volley",
+    "description": "Volley dealing [{base} + {attack} + {agi}] physical damage and applying Mark for {markDuration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_mark"],
+    "scaling": {
+        "base": [32, 128, 256, 448, 640],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.4, 0.42, 0.44, 0.46, 0.48]
+    },
+    "markDuration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "arrowVolleyLogic"
+},
+"swift_gallop": {
+    "id": "swift_gallop",
+    "name": "Swift Gallop",
+    "description": "Gain Increase Speed for {duration} turns and 25% action bar",
+    "cooldown": [3, 3, 3, 2, 2],
+    "effects": ["buff_increase_speed", "support"],
+    "duration": [2, 2, 3, 3, 4],
+    "actionBarGain": 0.25,
+    "target": "self",
+    "logicKey": "swiftGallopLogic"
+},
+"hoof_stomp": {
+    "id": "hoof_stomp",
+    "name": "Hoof Stomp",
+    "description": "Stomp dealing [{base} + {attack} + {str}] damage with {stunChance}% stun chance",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_stun"],
+    "scaling": {
+        "base": [38, 152, 304, 532, 760],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.22, 0.24, 0.26, 0.28, 0.30]
+    },
+    "stunChance": [0.25, 0.28, 0.31, 0.34, 0.37],
+    "target": "enemy",
+    "logicKey": "hoofStompLogic"
+},
+"battle_charge": {
+    "id": "battle_charge",
+    "name": "Battle Charge",
+    "description": "Charge dealing [{base} + {attack} + {str}] damage and taunting for 1 turn",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["physical", "debuff_taunt"],
+    "scaling": {
+        "base": [45, 180, 360, 630, 900],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.25, 0.27, 0.29, 0.31, 0.33]
+    },
+    "target": "enemy",
+    "logicKey": "battleChargeLogic"
+},
+"earthen_blessing": {
+    "id": "earthen_blessing",
+    "name": "Earthen Blessing",
+    "description": "Heal all allies for {healAmount} and grant Increase Defense for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["aoe", "heal", "buff_increase_defense"],
+    "healAmount": [40, 160, 320, 560, 800],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_allies",
+    "logicKey": "earthenBlessingLogic"
+},
+"ancestral_vigor": {
+    "id": "ancestral_vigor",
+    "name": "Ancestral Vigor",
+    "description": "Grant ally Increase Speed for {duration} turns and 3% HP regen per turn",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["buff_increase_speed", "heal"],
+    "duration": [3, 3, 4, 4, 5],
+    "healPercent": 0.03,
+    "target": "ally",
+    "logicKey": "ancestralVigorLogic"
+},
+"stampede": {
+    "id": "stampede",
+    "name": "Stampede",
+    "description": "AOE charge dealing [{base} + {attack} + {str}] damage, knocks back 30% action bar",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["aoe", "physical", "support"],
+    "scaling": {
+        "base": [55, 220, 440, 770, 1100],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.28, 0.30, 0.32, 0.34, 0.36]
+    },
+    "knockbackPercent": 0.3,
+    "target": "all_enemies",
+    "logicKey": "stampedeLogic"
+},
+"war_stomp": {
+    "id": "war_stomp",
+    "name": "War Stomp",
+    "description": "Enemies gain Reduce Speed, allies gain Increase Attack for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "debuff_reduce_speed", "buff_increase_attack"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all",
+    "logicKey": "warStompLogic"
+},
+"rallying_horn": {
+    "id": "rallying_horn",
+    "name": "Rallying Horn",
+    "description": "All allies gain 20% action bar and Increase Speed for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "buff_increase_speed", "support"],
+    "duration": [2, 2, 3, 3, 4],
+    "actionBarGrant": 0.2,
+    "target": "all_allies",
+    "logicKey": "rallyingHornLogic"
+},
+"tribal_leader_passive": {
+    "id": "tribal_leader_passive",
+    "name": "Tribal Leader",
+    "description": "Allies gain Increase Attack and Defense when near this unit",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "auraDuration": 1,
+    "target": "self",
+    "logicKey": "tribalLeaderPassiveLogic"
+},
+"horn_gore": {
+    "id": "horn_gore",
+    "name": "Horn Gore",
+    "description": "Gore dealing [{base} + {attack} + {str}] damage (30% armor pierce), apply 2 Bleed for {bleedDuration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_bleed"],
+    "scaling": {
+        "base": [70, 280, 560, 980, 1400],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.32, 0.34, 0.36, 0.38, 0.40]
+    },
+    "bleedDuration": [3, 3, 4, 4, 5],
+    "bleedStacks": 2,
+    "armorPierce": 0.3,
+    "target": "enemy",
+    "logicKey": "hornGoreLogic"
+},
+"blood_rage": {
+    "id": "blood_rage",
+    "name": "Blood Rage",
+    "description": "Gain 3 stacks of Increase Attack and Increase Speed for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_increase_attack", "buff_increase_speed"],
+    "duration": [3, 3, 4, 4, 5],
+    "stackCount": 3,
+    "target": "self",
+    "logicKey": "bloodRageLogic"
+},
+"thunderous_charge": {
+    "id": "thunderous_charge",
+    "name": "Thunderous Charge",
+    "description": "Charge dealing [{base} + {attack} + {str}] damage increased by action bar %, resets action bar",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [80, 320, 640, 1120, 1600],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.35, 0.37, 0.39, 0.41, 0.43]
+    },
+    "target": "enemy",
+    "logicKey": "thunderousChargeLogic"
+},
+"savage_momentum_passive": {
+    "id": "savage_momentum_passive",
+    "name": "Savage Momentum",
+    "description": "Deal up to 50% more damage based on missing HP",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "maxBonus": 0.5,
+    "target": "self",
+    "logicKey": "savageMomentumPassiveLogic"
+},
+"brutal_swing": {
+    "id": "brutal_swing",
+    "name": "Brutal Swing",
+    "description": "Basic attack dealing [{base} + {attack} + {str}] physical damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [35, 140, 280, 490, 700],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.24, 0.26, 0.28, 0.30, 0.32]
+    },
+    "target": "enemy",
+    "logicKey": "brutalSwingLogic"
+},
+"bloodlust": {
+    "id": "bloodlust",
+    "name": "Bloodlust",
+    "description": "Sacrifice 10% max HP to gain Increase Attack and Speed for {duration} turns",
+    "cooldown": [3, 3, 3, 2, 2],
+    "effects": ["buff_increase_attack", "buff_increase_speed"],
+    "duration": [2, 2, 3, 3, 4],
+    "hpCost": 0.1,
+    "target": "self",
+    "logicKey": "bloodlustLogic"
+},
+"reckless_assault": {
+    "id": "reckless_assault",
+    "name": "Reckless Assault",
+    "description": "Strike dealing [{base} + {attack} + {str}] damage, gain Reduce Defense for {selfDebuffDuration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_reduce_defense"],
+    "scaling": {
+        "base": [45, 180, 360, 630, 900],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.28, 0.30, 0.32, 0.34, 0.36]
+    },
+    "selfDebuffDuration": 2,
+    "target": "enemy",
+    "logicKey": "recklessAssaultLogic"
+},
+"fury_strike": {
+    "id": "fury_strike",
+    "name": "Fury Strike",
+    "description": "Strike 3 times dealing [{base} + {attack} + {str}] damage each",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [25, 100, 200, 350, 500],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.2, 0.22, 0.24, 0.26, 0.28]
+    },
+    "hitCount": 3,
+    "target": "enemy",
+    "logicKey": "furyStrikeLogic"
+},
+"lightning_bolt": {
+    "id": "lightning_bolt",
+    "name": "Lightning Bolt",
+    "description": "Cast lightning dealing [{base} + {attack} + {int}] magical damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical"],
+    "scaling": {
+        "base": [40, 160, 320, 560, 800],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.6, 0.62, 0.64, 0.66, 0.68]
+    },
+    "target": "enemy",
+    "logicKey": "lightningBoltLogic"
+},
+"bloodlust_totem": {
+    "id": "bloodlust_totem",
+    "name": "Bloodlust Totem",
+    "description": "All allies gain Increase Attack for {duration} turns and Bleed for 1 turn",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "buff_increase_attack", "debuff_bleed"],
+    "duration": [3, 3, 4, 4, 5],
+    "target": "all_allies",
+    "logicKey": "bloodlustTotemLogic"
+},
+"execute_swing": {
+    "id": "execute_swing",
+    "name": "Execute Swing",
+    "description": "Strike dealing [{base} + {attack} + {str}] damage, triple damage vs enemies below 35% HP",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [50, 200, 400, 700, 1000],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.3, 0.32, 0.34, 0.36, 0.38]
+    },
+    "executeThreshold": 0.35,
+    "target": "enemy",
+    "logicKey": "executeSwingLogic"
+},
+"intimidating_shout": {
+    "id": "intimidating_shout",
+    "name": "Intimidating Shout",
+    "description": "All enemies gain Reduce Attack and Speed for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "debuff_reduce_attack", "debuff_reduce_speed"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_enemies",
+    "logicKey": "intimidatingShoutLogic"
+},
+"command_presence": {
+    "id": "command_presence",
+    "name": "Command Presence",
+    "description": "Gain {shieldAmount} shield and Increase Defense for {duration} turns, taunt highest attack enemy",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["buff_shield", "buff_increase_defense", "debuff_taunt"],
+    "shieldAmount": [60, 240, 480, 840, 1200],
+    "duration": [3, 3, 4, 4, 5],
+    "target": "self",
+    "logicKey": "commandPresenceLogic"
+},
+"warmaster_passive": {
+    "id": "warmaster_passive",
+    "name": "Warmaster",
+    "description": "Allies with Bleed gain 25% attack damage",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "attackBonus": 0.25,
+    "target": "self",
+    "logicKey": "warmasterPassiveLogic"
+},
+"blade_flurry": {
+    "id": "blade_flurry",
+    "name": "Blade Flurry",
+    "description": "AOE strikes dealing [{base} + {attack} + {agi}] damage with 30% crit chance",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["aoe", "physical"],
+    "scaling": {
+        "base": [60, 240, 480, 840, 1200],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.5, 0.52, 0.54, 0.56, 0.58]
+    },
+    "critChance": 0.3,
+    "target": "all_enemies",
+    "logicKey": "bladeFlurryLogic"
+},
+"mirror_image": {
+    "id": "mirror_image",
+    "name": "Mirror Image",
+    "description": "Remove debuffs, gain Increase Speed for {duration} turns and 50% dodge",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["cleanse", "buff_increase_speed", "evasion"],
+    "duration": [2, 2, 3, 3, 4],
+    "dodgePhysical": 0.5,
+    "target": "self",
+    "logicKey": "mirrorImageLogic"
+},
+"wind_walk": {
+    "id": "wind_walk",
+    "name": "Wind Walk",
+    "description": "Strike all enemies for [{base} + {attack} + {agi}] damage, gain 2x Increase Speed for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "physical", "buff_increase_speed"],
+    "scaling": {
+        "base": [50, 200, 400, 700, 1000],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.45, 0.47, 0.49, 0.51, 0.53]
+    },
+    "duration": [3, 3, 4, 4, 5],
+    "target": "all_enemies",
+    "logicKey": "windWalkLogic"
+},
+"blade_mastery_passive": {
+    "id": "blade_mastery_passive",
+    "name": "Blade Mastery",
+    "description": "30% chance to gain extra attack after each strike",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "extraAttackChance": 0.3,
+    "target": "self",
+    "logicKey": "bladeMasteryPassiveLogic"
+},
+"venom_spit": {
+    "id": "venom_spit",
+    "name": "Venom Spit",
+    "description": "Spit venom dealing [{base} + {attack} + {int}] physical damage with {blightChance} chance to apply Blight for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_blight"],
+    "scaling": {
+        "base": [45, 180, 360, 630, 900],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.5, 0.52, 0.54, 0.56, 0.58]
+    },
+    "blightChance": [0.5, 0.55, 0.6, 0.65, 0.7],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "venomSpitLogic"
+},
+"toxic_spores": {
+    "id": "toxic_spores",
+    "name": "Toxic Spores",
+    "description": "Release toxic spores applying Blight and Reduce Defense to all enemies for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "debuff_blight", "debuff_reduce_defense"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_enemies",
+    "logicKey": "toxicSporesLogic"
+},
+"regenerative_roots_passive": {
+    "id": "regenerative_roots_passive",
+    "name": "Regenerative Roots",
+    "description": "Heals 3% HP per turn when below 50% HP",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "healPercent": 0.03,
+    "hpThreshold": 0.5,
+    "target": "self",
+    "logicKey": "regenerativeRootsPassiveLogic"
+},
+"brutal_club": {
+    "id": "brutal_club",
+    "name": "Brutal Club",
+    "description": "Club smash dealing [{base} + {attack} + {str}] physical damage, +50% damage vs marked targets",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [55, 220, 440, 770, 1100],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.28, 0.30, 0.32, 0.34, 0.36]
+    },
+    "markBonus": 1.5,
+    "target": "enemy",
+    "logicKey": "brutalClubLogic"
+},
+"intimidating_roar": {
+    "id": "intimidating_roar",
+    "name": "Intimidating Roar",
+    "description": "Roar that applies Reduce Attack to all enemies and Taunt for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "debuff_reduce_attack", "debuff_taunt"],
+    "duration": [2, 2, 2, 3, 3],
+    "target": "all_enemies",
+    "logicKey": "intimidatingRoarLogic"
+},
+"thick_skull": {
+    "id": "thick_skull",
+    "name": "Thick Skull",
+    "description": "Grant self {shieldAmount} shield and Increase Defense for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_shield", "buff_increase_defense"],
+    "shieldAmount": [50, 200, 400, 700, 1000],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "self",
+    "logicKey": "thickSkullLogic"
+},
+"hex_bolt": {
+    "id": "hex_bolt",
+    "name": "Hex Bolt",
+    "description": "Dark bolt dealing [{base} + {attack} + {int}] magical damage with {silenceChance} chance to Silence for {silenceDuration} turn",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "debuff_silence"],
+    "scaling": {
+        "base": [50, 200, 400, 700, 1000],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.65, 0.68, 0.71, 0.74, 0.77]
+    },
+    "silenceChance": [0.3, 0.35, 0.4, 0.45, 0.5],
+    "silenceDuration": [1, 1, 1, 2, 2],
+    "target": "enemy",
+    "logicKey": "hexBoltLogic"
+},
+"swamp_curse": {
+    "id": "swamp_curse",
+    "name": "Swamp Curse",
+    "description": "Curse target with Mark, Blight, and Reduce Speed for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["debuff_mark", "debuff_blight", "debuff_reduce_speed"],
+    "duration": [3, 3, 4, 4, 5],
+    "target": "enemy",
+    "logicKey": "swampCurseLogic"
+},
+"dark_ritual_swamp": {
+    "id": "dark_ritual_swamp",
+    "name": "Dark Ritual",
+    "description": "Heal lowest HP ally for {healAmount} and grant Increase Attack for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["heal", "buff_increase_attack"],
+    "healAmount": [40, 160, 320, 560, 800],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "ally",
+    "logicKey": "darkRitualSwampLogic"
+},
+"ambush_strike": {
+    "id": "ambush_strike",
+    "name": "Ambush Strike",
+    "description": "Strike dealing [{base} + {attack} + {agi}] physical damage, pure damage if target has 3+ debuffs",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [48, 192, 384, 672, 960],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.5, 0.52, 0.54, 0.56, 0.58]
+    },
+    "debuffThreshold": 3,
+    "target": "enemy",
+    "logicKey": "ambushStrikeLogic"
+},
+"murky_disappearance": {
+    "id": "murky_disappearance",
+    "name": "Murky Disappearance",
+    "description": "Remove all debuffs and gain Increase Speed for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["cleanse", "buff_increase_speed"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "self",
+    "logicKey": "murkyDisappearanceLogic"
+},
+"stalkers_mark_passive": {
+    "id": "stalkers_mark_passive",
+    "name": "Stalker's Mark",
+    "description": "Attacks apply Mark for 1 turn",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "markDuration": 1,
+    "target": "self",
+    "logicKey": "stalkersMarkPassiveLogic"
+},
+"crushing_tendrils": {
+    "id": "crushing_tendrils",
+    "name": "Crushing Tendrils",
+    "description": "Tendril slam dealing [{base} + {attack} + {str}] physical damage with {stunChance} chance to Stun",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_stun"],
+    "scaling": {
+        "base": [65, 260, 520, 910, 1300],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.3, 0.32, 0.34, 0.36, 0.38]
+    },
+    "stunChance": [0.3, 0.35, 0.4, 0.45, 0.5],
+    "stunDuration": 1,
+    "target": "enemy",
+    "logicKey": "crushingTendrilsLogic"
+},
+"bog_armor": {
+    "id": "bog_armor",
+    "name": "Bog Armor",
+    "description": "Grant self {shieldAmount} shield and Frost Armor for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_shield", "buff_frost_armor"],
+    "shieldAmount": [80, 320, 640, 1120, 1600],
+    "duration": [3, 3, 4, 4, 5],
+    "target": "self",
+    "logicKey": "bogArmorLogic"
+},
+"swamps_embrace": {
+    "id": "swamps_embrace",
+    "name": "Swamp's Embrace",
+    "description": "Taunt all enemies for {tauntDuration} turns and apply Bleed for {bleedDuration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "debuff_taunt", "debuff_bleed"],
+    "tauntDuration": [1, 1, 1, 2, 2],
+    "bleedDuration": [3, 3, 4, 4, 5],
+    "target": "all_enemies",
+    "logicKey": "swampsEmbraceLogic"
+},
+"natures_vengeance_passive": {
+    "id": "natures_vengeance_passive",
+    "name": "Nature's Vengeance",
+    "description": "When hit, 30% chance to apply Reduce Speed to attacker",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "procChance": 0.3,
+    "duration": 2,
+    "target": "self",
+    "logicKey": "naturesVengeancePassiveLogic"
+},
+"rending_talons": {
+    "id": "rending_talons",
+    "name": "Rending Talons",
+    "description": "Talon strike dealing [{base} + {attack} + {int}] physical damage, ignores shields and applies Bleed for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "shield_break", "debuff_bleed"],
+    "scaling": {
+        "base": [70, 280, 560, 980, 1400],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.7, 0.73, 0.76, 0.79, 0.82]
+    },
+    "duration": [3, 3, 4, 4, 5],
+    "target": "enemy",
+    "logicKey": "rendingTalonsLogic"
+},
+"wisdoms_call": {
+    "id": "wisdoms_call",
+    "name": "Wisdom's Call",
+    "description": "All allies gain Increase Attack and Increase Speed for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "buff_increase_attack", "buff_increase_speed"],
+    "duration": [3, 3, 4, 4, 5],
+    "target": "all_allies",
+    "logicKey": "wisdomsCallLogic"
+},
+"moonlit_barrier": {
+    "id": "moonlit_barrier",
+    "name": "Moonlit Barrier",
+    "description": "Grant shields to 3 lowest HP allies absorbing {shieldAmount} damage",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_shield"],
+    "shieldAmount": [60, 240, 480, 840, 1200],
+    "targetCount": 3,
+    "target": "ally",
+    "logicKey": "moonlitBarrierLogic"
+},
+"ancient_knowledge": {
+    "id": "ancient_knowledge",
+    "name": "Ancient Knowledge",
+    "description": "Steal all buffs from enemies and distribute to allies",
+    "cooldown": [6, 6, 5, 5, 4],
+    "effects": ["dispel", "support"],
+    "target": "all",
+    "logicKey": "ancientKnowledgeLogic"
+},
+"scale_slash": {
+    "id": "scale_slash",
+    "name": "Scale Slash",
+    "description": "Slashing attack dealing [{base} + {attack} + {str}] physical damage and applying Bleed for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_bleed"],
+    "scaling": {
+        "base": [52, 208, 416, 728, 1040],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.26, 0.28, 0.30, 0.32, 0.34]
+    },
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "scaleSlashLogic"
+},
+"battle_frenzy": {
+    "id": "battle_frenzy",
+    "name": "Battle Frenzy",
+    "description": "Gain Increase Attack and Speed for {duration} turns, but take Reduce Defense for {debuffDuration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["buff_increase_attack", "buff_increase_speed", "debuff_reduce_defense"],
+    "duration": [3, 3, 4, 4, 5],
+    "debuffDuration": [2, 2, 2, 3, 3],
+    "target": "self",
+    "logicKey": "battleFrenzyLogic"
+},
+"warriors_challenge": {
+    "id": "warriors_challenge",
+    "name": "Warrior's Challenge",
+    "description": "Taunt target and apply Mark for {duration} turns",
+    "cooldown": [3, 3, 3, 2, 2],
+    "effects": ["debuff_taunt", "debuff_mark"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "warriorsChallengeLogic"
+},
+"spirit_flame": {
+    "id": "spirit_flame",
+    "name": "Spirit Flame",
+    "description": "Flame burst dealing [{base} + {attack} + {int}] magical damage, heal lowest ally for 30% of damage dealt",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "heal"],
+    "scaling": {
+        "base": [56, 224, 448, 784, 1120],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.68, 0.71, 0.74, 0.77, 0.80]
+    },
+    "healPercent": 0.3,
+    "target": "enemy",
+    "logicKey": "spiritFlameLogic"
+},
+"ancestral_ward": {
+    "id": "ancestral_ward",
+    "name": "Ancestral Ward",
+    "description": "Target ally gains {shieldAmount} shield and Immune for 1 turn",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_shield", "buff_immune"],
+    "shieldAmount": [40, 160, 320, 560, 800],
+    "immuneDuration": 1,
+    "target": "ally",
+    "logicKey": "ancestralWardLogic"
+},
+"tribal_chant": {
+    "id": "tribal_chant",
+    "name": "Tribal Chant",
+    "description": "All allies cleanse 1 debuff and regenerate {regenPercent} HP per turn for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "cleanse", "heal"],
+    "regenPercent": [0.03, 0.04, 0.05, 0.06, 0.07],
+    "duration": [3, 3, 4, 4, 5],
+    "target": "all_allies",
+    "logicKey": "tribalChantLogic"
+},
+"precision_shot": {
+    "id": "precision_shot",
+    "name": "Precision Shot",
+    "description": "Precise shot dealing [{base} + {attack} + {agi}] physical damage, 25% armor pierce, drains 10% action bar",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "support"],
+    "scaling": {
+        "base": [58, 232, 464, 812, 1160],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.52, 0.54, 0.56, 0.58, 0.60]
+    },
+    "armorPierce": 0.25,
+    "actionBarDrain": 0.1,
+    "target": "enemy",
+    "logicKey": "precisionShotLogic"
+},
+"hunters_focus": {
+    "id": "hunters_focus",
+    "name": "Hunter's Focus",
+    "description": "Next attack deals double damage",
+    "cooldown": [3, 3, 3, 2, 2],
+    "effects": ["support"],
+    "duration": 1,
+    "target": "self",
+    "logicKey": "huntersFocusLogic"
+},
+"predators_instinct_passive": {
+    "id": "predators_instinct_passive",
+    "name": "Predator's Instinct",
+    "description": "+50% damage vs enemies below 30% HP",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "damageBonus": 1.5,
+    "hpThreshold": 0.3,
+    "target": "self",
+    "logicKey": "predatorsInstinctPassiveLogic"
+},
+"molten_strike": {
+    "id": "molten_strike",
+    "name": "Molten Strike",
+    "description": "Lava burst dealing [{base} + {attack} + {int}] magical damage and applying Reduce Defense for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "debuff_reduce_defense"],
+    "scaling": {
+        "base": [60, 240, 480, 840, 1200],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.72, 0.75, 0.78, 0.81, 0.84]
+    },
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "moltenStrikeLogic"
+},
+"lava_shield": {
+    "id": "lava_shield",
+    "name": "Lava Shield",
+    "description": "Grant self shield based on missing HP (up to {maxPercent} of max HP)",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["buff_shield"],
+    "maxPercent": [0.3, 0.35, 0.4, 0.45, 0.5],
+    "target": "self",
+    "logicKey": "lavaShieldLogic"
+},
+"burning_aura_passive": {
+    "id": "burning_aura_passive",
+    "name": "Burning Aura",
+    "description": "Attackers have {procChance} chance to take {retaliationDamage} magic damage and gain Reduce Attack for 1 turn",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "retaliationDamage": [50, 75, 100, 125, 150],
+    "procChance": [0.3, 0.35, 0.4, 0.45, 0.5],
+    "debuffDuration": 1,
+    "target": "self",
+    "logicKey": "burningAuraPassiveLogic"
+},
+"warchiefs_blade": {
+    "id": "warchiefs_blade",
+    "name": "Warchief's Blade",
+    "description": "Blade sweep dealing [{base} + {attack} + {str}] physical damage to all enemies",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["aoe", "physical"],
+    "scaling": {
+        "base": [75, 300, 600, 1050, 1500],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.32, 0.34, 0.36, 0.38, 0.40]
+    },
+    "target": "all_enemies",
+    "logicKey": "warchiefsBladeLogic"
+},
+"rally_the_tribe": {
+    "id": "rally_the_tribe",
+    "name": "Rally the Tribe",
+    "description": "All allies gain Increase Defense for {duration} turns and 30% action bar",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "buff_increase_defense", "support"],
+    "duration": [3, 3, 4, 4, 5],
+    "actionBarGrant": 0.3,
+    "target": "all_allies",
+    "logicKey": "rallyTheTribeLogic"
+},
+"feathered_fury": {
+    "id": "feathered_fury",
+    "name": "Feathered Fury",
+    "description": "Strike 3 times, each hit applies a random debuff",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [40, 160, 320, 560, 800],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.2, 0.22, 0.24, 0.26, 0.28]
+    },
+    "hitCount": 3,
+    "target": "enemy",
+    "logicKey": "featheredFuryLogic"
+},
+"commanders_presence_passive": {
+    "id": "commanders_presence_passive",
+    "name": "Commander's Presence",
+    "description": "Allies gain 10% attack when buffed",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "attackBonus": 0.1,
+    "target": "self",
+    "logicKey": "commandersPresencePassiveLogic"
+},
+"trick_strike": {
+    "id": "trick_strike",
+    "name": "Trick Strike",
+    "description": "Deceptive strike dealing [{base} + {attack} + {agi}] physical damage and stealing 2 buffs",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "dispel"],
+    "scaling": {
+        "base": [65, 260, 520, 910, 1300],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.58, 0.60, 0.62, 0.64, 0.66]
+    },
+    "buffStealCount": 2,
+    "target": "enemy",
+    "logicKey": "trickStrikeLogic"
+},
+"smoke_and_mirrors": {
+    "id": "smoke_and_mirrors",
+    "name": "Smoke and Mirrors",
+    "description": "Create illusion with 50% dodge, gain Increase Speed x2 for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["evasion", "buff_increase_speed"],
+    "duration": [3, 3, 4, 4, 5],
+    "dodgePhysical": 0.5,
+    "dodgeMagical": 0.5,
+    "speedStacks": 2,
+    "target": "self",
+    "logicKey": "smokeAndMirrorsLogic"
+},
+"chaos_toxin": {
+    "id": "chaos_toxin",
+    "name": "Chaos Toxin",
+    "description": "Apply 3 random debuffs to 3 random enemies",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["support"],
+    "debuffCount": 3,
+    "targetCount": 3,
+    "duration": 2,
+    "target": "all_enemies",
+    "logicKey": "chaosToxinLogic"
+},
+"master_of_deception": {
+    "id": "master_of_deception",
+    "name": "Master of Deception",
+    "description": "Reverse all buffs on target enemy to random debuffs",
+    "cooldown": [6, 6, 5, 5, 4],
+    "effects": ["dispel", "support"],
+    "target": "enemy",
+    "logicKey": "masterOfDeceptionLogic"
+},
+"frost_strike_revenant": {
+    "id": "frost_strike_revenant",
+    "name": "Frost Strike",
+    "description": "Icy strike dealing [{base} + {attack} + {int}] magical damage and applying Reduce Speed for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "debuff_reduce_speed"],
+    "scaling": {
+        "base": [54, 216, 432, 756, 1080],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.7, 0.73, 0.76, 0.79, 0.82]
+    },
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "frostStrikeRevenantLogic"
+},
+"icy_grasp": {
+    "id": "icy_grasp",
+    "name": "Icy Grasp",
+    "description": "Stun target for {stunDuration} turn and drain 20% action bar",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["debuff_stun", "support"],
+    "stunDuration": [1, 1, 1, 1, 2],
+    "actionBarDrain": 0.2,
+    "target": "enemy",
+    "logicKey": "icyGraspLogic"
+},
+"frozen_soul_passive": {
+    "id": "frozen_soul_passive",
+    "name": "Frozen Soul",
+    "description": "Immune to Reduce Speed, 20% magic resist",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "magicResist": 0.2,
+    "target": "self",
+    "logicKey": "frozenSoulPassiveLogic"
+},
+"chill_touch": {
+    "id": "chill_touch",
+    "name": "Chill Touch",
+    "description": "Touch dealing [{base} + {attack} + {int}] magical damage, applies Frost Armor to lowest HP ally",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "support"],
+    "scaling": {
+        "base": [42, 168, 336, 588, 840],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.62, 0.65, 0.68, 0.71, 0.74]
+    },
+    "frostArmorDuration": 2,
+    "target": "enemy",
+    "logicKey": "chillTouchLogic"
+},
+"spectral_wail": {
+    "id": "spectral_wail",
+    "name": "Spectral Wail",
+    "description": "Wail that silences all enemies for {duration} turn",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "debuff_silence"],
+    "duration": [1, 1, 1, 2, 2],
+    "target": "all_enemies",
+    "logicKey": "spectralWailLogic"
+},
+"phase_walk": {
+    "id": "phase_walk",
+    "name": "Phase Walk",
+    "description": "Target ally removes all debuffs and gains 50% action bar",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["cleanse", "support"],
+    "actionBarGrant": 0.5,
+    "target": "ally",
+    "logicKey": "phaseWalkLogic"
+},
+"stone_slam": {
+    "id": "stone_slam",
+    "name": "Stone Slam",
+    "description": "Heavy slam dealing [{base} + {attack} + {str}] physical damage and stunning for {stunDuration} turn",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_stun"],
+    "scaling": {
+        "base": [68, 272, 544, 952, 1360],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.35, 0.37, 0.39, 0.41, 0.43]
+    },
+    "stunDuration": [1, 1, 1, 1, 2],
+    "target": "enemy",
+    "logicKey": "stoneSlamLogic"
+},
+"crystalline_shield": {
+    "id": "crystalline_shield",
+    "name": "Crystalline Shield",
+    "description": "Grant self massive {shieldAmount} shield and taunt all enemies for {tauntDuration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_shield", "aoe", "debuff_taunt"],
+    "shieldAmount": [100, 400, 800, 1400, 2000],
+    "tauntDuration": [2, 2, 2, 3, 3],
+    "target": "self",
+    "logicKey": "crystallineShieldLogic"
+},
+"shatter_passive": {
+    "id": "shatter_passive",
+    "name": "Shatter",
+    "description": "On death, deals AOE damage and applies Reduce Speed",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "aoeDamage": 200,
+    "slowDuration": 2,
+    "target": "self",
+    "logicKey": "shatterPassiveLogic"
+},
+"soul_drain": {
+    "id": "soul_drain",
+    "name": "Soul Drain",
+    "description": "Drain dealing [{base} + {attack} + {int}] magical damage, heal self 50% of damage dealt",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "heal"],
+    "scaling": {
+        "base": [58, 232, 464, 812, 1160],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.75, 0.78, 0.81, 0.84, 0.87]
+    },
+    "healPercent": 0.5,
+    "target": "enemy",
+    "logicKey": "soulDrainLogic"
+},
+"wraith_form": {
+    "id": "wraith_form",
+    "name": "Wraith Form",
+    "description": "Gain Immune and Increase Speed for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_immune", "buff_increase_speed"],
+    "duration": [1, 1, 2, 2, 3],
+    "target": "self",
+    "logicKey": "wraithFormLogic"
+},
+"life_tap": {
+    "id": "life_tap",
+    "name": "Life Tap",
+    "description": "Sacrifice 20% current HP, all allies gain Increase Attack for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "buff_increase_attack"],
+    "hpCost": 0.2,
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_allies",
+    "logicKey": "lifeTapLogic"
+},
+"tomb_strike": {
+    "id": "tomb_strike",
+    "name": "Tomb Strike",
+    "description": "Ancient strike dealing [{base} + {attack} + {str}] physical damage, applies Mark and Blight for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_mark", "debuff_blight"],
+    "scaling": {
+        "base": [80, 320, 640, 1120, 1600],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.38, 0.40, 0.42, 0.44, 0.46]
+    },
+    "duration": [3, 3, 4, 4, 5],
+    "target": "enemy",
+    "logicKey": "tombStrikeLogic"
+},
+"eternal_guard": {
+    "id": "eternal_guard",
+    "name": "Eternal Guard",
+    "description": "Grant {shieldAmount} shield to all allies and self gains Increase Defense for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "buff_shield", "buff_increase_defense"],
+    "shieldAmount": [50, 200, 400, 700, 1000],
+    "duration": [3, 3, 4, 4, 5],
+    "target": "all_allies",
+    "logicKey": "eternalGuardLogic"
+},
+"deaths_door": {
+    "id": "deaths_door",
+    "name": "Death's Door",
+    "description": "AOE damage based on enemies' missing HP",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "magical"],
+    "missingHpPercent": [0.3, 0.35, 0.4, 0.45, 0.5],
+    "baseDamage": [100, 200, 300, 400, 500],
+    "target": "all_enemies",
+    "logicKey": "deathsDoorLogic"
+},
+"undying_will_passive": {
+    "id": "undying_will_passive",
+    "name": "Undying Will",
+    "description": "First death prevented, heal to 30% HP",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "healPercent": 0.3,
+    "target": "self",
+    "logicKey": "undyingWillPassiveLogic"
+},
+"frozen_soul_blast": {
+    "id": "frozen_soul_blast",
+    "name": "Frozen Soul Blast",
+    "description": "AOE blast dealing [{base} + {attack} + {int}] magical damage, applies Reduce Speed and Reduce Attack for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["aoe", "magical", "debuff_reduce_speed", "debuff_reduce_attack"],
+    "scaling": {
+        "base": [85, 340, 680, 1190, 1700],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.82, 0.85, 0.88, 0.91, 0.94]
+    },
+    "duration": [3, 3, 4, 4, 5],
+    "target": "all_enemies",
+    "logicKey": "frozenSoulBlastLogic"
+},
+"lichs_phylactery": {
+    "id": "lichs_phylactery",
+    "name": "Lich's Phylactery",
+    "description": "Steal all enemy buffs and gain shield equal to 50% max HP",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["dispel", "buff_shield"],
+    "shieldPercent": 0.5,
+    "target": "all_enemies",
+    "logicKey": "lichsPhylacteryLogic"
+},
+"death_and_decay": {
+    "id": "death_and_decay",
+    "name": "Death and Decay",
+    "description": "Apply Blight and Bleed to all enemies for {duration} turns, drain 30% action bar",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "debuff_blight", "debuff_bleed", "support"],
+    "duration": [3, 3, 4, 4, 5],
+    "actionBarDrain": 0.3,
+    "target": "all_enemies",
+    "logicKey": "deathAndDecayLogic"
+},
+"eternal_winter": {
+    "id": "eternal_winter",
+    "name": "Eternal Winter",
+    "description": "All enemies lose 10% max HP, all allies gain that as shield",
+    "cooldown": [6, 6, 5, 5, 4],
+    "effects": ["aoe", "support"],
+    "hpDrainPercent": 0.1,
+    "target": "all",
+    "logicKey": "eternalWinterLogic"
+},
+"hunters_shot": {
+    "id": "hunters_shot",
+    "name": "Hunter's Shot",
+    "description": "Precise shot dealing [{base} + {attack} + {agi}] physical damage and draining {actionBarDrain} action bar",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "support"],
+    "scaling": {
+        "base": [48, 192, 384, 672, 960],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.45, 0.47, 0.49, 0.51, 0.53]
+    },
+    "actionBarDrain": 0.05,
+    "target": "enemy",
+    "logicKey": "huntersShotLogic"
+},
+"track_prey": {
+    "id": "track_prey",
+    "name": "Track Prey",
+    "description": "Mark target for {duration} turns and gain Increase Speed for {speedDuration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["debuff_mark", "buff_increase_speed"],
+    "duration": [2, 2, 3, 3, 4],
+    "speedDuration": [2, 2, 2, 3, 3],
+    "target": "enemy",
+    "logicKey": "trackPreyLogic"
+},
+"swift_arrow": {
+    "id": "swift_arrow",
+    "name": "Swift Arrow",
+    "description": "Quick shot dealing [{base} + {attack} + {agi}] physical damage, grants 10% action bar to random ally",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "support"],
+    "scaling": {
+        "base": [52, 208, 416, 728, 1040],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.5, 0.52, 0.54, 0.56, 0.58]
+    },
+    "actionBarGrant": 0.1,
+    "target": "enemy",
+    "logicKey": "swiftArrowLogic"
+},
+"elven_volley": {
+    "id": "elven_volley",
+    "name": "Elven Volley",
+    "description": "Arrows rain down dealing [{base} + {attack} + {agi}] physical damage to all enemies",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "physical"],
+    "scaling": {
+        "base": [40, 160, 320, 560, 800],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.42, 0.44, 0.46, 0.48, 0.50]
+    },
+    "target": "all_enemies",
+    "logicKey": "elvenVolleyLogic"
+},
+"elven_swiftness": {
+    "id": "elven_swiftness",
+    "name": "Elven Swiftness",
+    "description": "Gain Increase Attack and Increase Speed for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_increase_attack", "buff_increase_speed"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "self",
+    "logicKey": "elvenSwiftnessLogic"
+},
+"lupine_strike": {
+    "id": "lupine_strike",
+    "name": "Lupine Strike",
+    "description": "Savage bite dealing [{base} + {attack} + {str}] physical damage with {bleedChance} chance to cause Bleed",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_bleed"],
+    "scaling": {
+        "base": [56, 224, 448, 784, 1120],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.22, 0.24, 0.26, 0.28, 0.30]
+    },
+    "bleedChance": 0.4,
+    "bleedDuration": 2,
+    "target": "enemy",
+    "logicKey": "lupineStrikeLogic"
+},
+"pack_howl": {
+    "id": "pack_howl",
+    "name": "Pack Howl",
+    "description": "All allies gain 15% action bar and Increase Speed for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "buff_increase_speed", "support"],
+    "duration": [2, 2, 3, 3, 4],
+    "actionBarGrant": 0.15,
+    "target": "all_allies",
+    "logicKey": "packHowlLogic"
+},
+"alphas_call_passive": {
+    "id": "alphas_call_passive",
+    "name": "Alpha's Call",
+    "description": "When attacking, if any ally has Increase Speed, gain Increase Attack for 2 turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "buffDuration": 2,
+    "target": "self",
+    "logicKey": "alphasCallPassiveLogic"
+},
+"shadow_strike_elf": {
+    "id": "shadow_strike_elf",
+    "name": "Shadow Strike",
+    "description": "Strike from shadows dealing [{base} + {attack} + {agi}] physical damage, steal 10% action bar",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "support"],
+    "scaling": {
+        "base": [60, 240, 480, 840, 1200],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.55, 0.57, 0.59, 0.61, 0.63]
+    },
+    "actionBarSteal": 0.1,
+    "target": "enemy",
+    "logicKey": "shadowStrikeElfLogic"
+},
+"smoke_screen_elf": {
+    "id": "smoke_screen_elf",
+    "name": "Smoke Screen",
+    "description": "Remove all debuffs from self, apply Reduce Attack to target for {duration} turns",
+    "cooldown": [3, 3, 3, 2, 2],
+    "effects": ["cleanse", "debuff_reduce_attack"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "smokeScreenElfLogic"
+},
+"vanish": {
+    "id": "vanish",
+    "name": "Vanish",
+    "description": "Gain Frost Armor and Increase Speed for {duration} turns",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_frost_armor", "buff_increase_speed"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "self",
+    "logicKey": "vanishLogic"
+},
+"dancing_blades": {
+    "id": "dancing_blades",
+    "name": "Dancing Blades",
+    "description": "Spinning strike dealing [{base} + {attack} + {agi}] physical damage to all enemies",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["aoe", "physical"],
+    "scaling": {
+        "base": [70, 280, 560, 980, 1400],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.6, 0.62, 0.64, 0.66, 0.68]
+    },
+    "target": "all_enemies",
+    "logicKey": "dancingBladesLogic"
+},
+"whirling_step": {
+    "id": "whirling_step",
+    "name": "Whirling Step",
+    "description": "Gain 2 stacks of Increase Speed, next attack hits twice",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["buff_increase_speed", "support"],
+    "duration": [2, 2, 3, 3, 4],
+    "stackCount": 2,
+    "target": "self",
+    "logicKey": "whirlingStepLogic"
+},
+"evasive_maneuvers": {
+    "id": "evasive_maneuvers",
+    "name": "Evasive Maneuvers",
+    "description": "All allies gain {actionBarGrant} action bar and remove 1 debuff",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "cleanse", "support"],
+    "actionBarGrant": [0.2, 0.2, 0.2, 0.2, 0.25],
+    "target": "all_allies",
+    "logicKey": "evasiveManeuversLogic"
+},
+"blade_dancer_passive": {
+    "id": "blade_dancer_passive",
+    "name": "Blade Dancer",
+    "description": "+50% damage when under Increase Speed buff",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "damageBonus": 1.5,
+    "target": "self",
+    "logicKey": "bladeDancerPassiveLogic"
+},
+"royal_command": {
+    "id": "royal_command",
+    "name": "Royal Command",
+    "description": "Command strike dealing [{base} + {attack} + {int}] physical damage, stun if target <50% action bar",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_stun"],
+    "scaling": {
+        "base": [75, 300, 600, 1050, 1500],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.7, 0.73, 0.76, 0.79, 0.82]
+    },
+    "actionBarThreshold": 0.5,
+    "stunDuration": 1,
+    "target": "enemy",
+    "logicKey": "royalCommandLogic"
+},
+"forests_grace": {
+    "id": "forests_grace",
+    "name": "Forest's Grace",
+    "description": "All allies gain Increase Attack, Increase Speed and 30% action bar",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "buff_increase_attack", "buff_increase_speed", "support"],
+    "duration": [2, 2, 3, 3, 4],
+    "actionBarGrant": 0.3,
+    "target": "all_allies",
+    "logicKey": "forestsGraceLogic"
+},
+"natures_wrath": {
+    "id": "natures_wrath",
+    "name": "Nature's Wrath",
+    "description": "Remove all buffs from enemies, each buff removed grants 10% action bar to all allies",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "dispel", "support"],
+    "actionBarPerBuff": 0.1,
+    "target": "all_enemies",
+    "logicKey": "naturesWrathLogic"
+},
+"sovereigns_presence_passive": {
+    "id": "sovereigns_presence_passive",
+    "name": "Sovereign's Presence",
+    "description": "Grants all allies increase speed and immunity every turn",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "duration": [1, 1, 1, 1, 2],
+    "passive": true,
+    "target": "self",
+    "logicKey": "sovereignsPresencePassiveLogic"
+},
+"scale_bash": {
+    "id": "scale_bash",
+    "name": "Scale Bash",
+    "description": "Heavy bash dealing [{base} + {attack} + {str}] physical damage and applying Reduce Defense for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_reduce_defense"],
+    "scaling": {
+        "base": [58, 232, 464, 812, 1160],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.25, 0.27, 0.29, 0.31, 0.33]
+    },
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "scaleBashLogic"
+},
+"coiled_defense": {
+    "id": "coiled_defense",
+    "name": "Coiled Defense",
+    "description": "Gain Shield (30% max HP) and Taunt all enemies for {tauntDuration} turn",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["buff_shield", "aoe", "debuff_taunt"],
+    "shieldPercent": 0.3,
+    "tauntDuration": 1,
+    "target": "self",
+    "logicKey": "coiledDefenseLogic"
+},
+"serpents_resolve": {
+    "id": "serpents_resolve",
+    "name": "Serpent's Resolve",
+    "description": "Gain Increase Defense for {duration} turns and heal 10% HP",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_increase_defense", "heal"],
+    "duration": [2, 2, 3, 3, 4],
+    "healPercent": 0.1,
+    "target": "self",
+    "logicKey": "serpentsResolveLogic"
+},
+"tidal_wave": {
+    "id": "tidal_wave",
+    "name": "Tidal Wave",
+    "description": "Magical wave dealing [{base} + {attack} + {int}] damage and draining 15% action bar",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "support"],
+    "scaling": {
+        "base": [54, 216, 432, 756, 1080],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.65, 0.68, 0.71, 0.74, 0.77]
+    },
+    "actionBarDrain": 0.15,
+    "target": "enemy",
+    "logicKey": "tidalWaveLogic"
+},
+"oceans_blessing": {
+    "id": "oceans_blessing",
+    "name": "Ocean's Blessing",
+    "description": "Grant lowest HP ally Shield (40% of their max HP)",
+    "cooldown": [3, 3, 3, 2, 2],
+    "effects": ["buff_shield"],
+    "shieldPercent": 0.4,
+    "target": "ally",
+    "logicKey": "oceansBlessingLogic"
+},
+"ebb_and_flow": {
+    "id": "ebb_and_flow",
+    "name": "Ebb and Flow",
+    "description": "All allies heal 5% HP and gain Shield (5% max HP)",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "heal", "buff_shield"],
+    "healPercent": 0.05,
+    "shieldPercent": 0.05,
+    "target": "all_allies",
+    "logicKey": "ebbAndFlowLogic"
+},
+"constrict": {
+    "id": "constrict",
+    "name": "Constrict",
+    "description": "Crushing grip dealing [{base} + {attack} + {str}] physical damage and applying Reduce Speed for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_reduce_speed"],
+    "scaling": {
+        "base": [55, 220, 440, 770, 1100],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.24, 0.26, 0.28, 0.30, 0.32]
+    },
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "constrictLogic"
+},
+"petrifying_gaze": {
+    "id": "petrifying_gaze",
+    "name": "Petrifying Gaze",
+    "description": "50% chance to Stun target for {stunDuration} turn",
+    "cooldown": [3, 3, 3, 2, 2],
+    "effects": ["debuff_stun"],
+    "stunChance": 0.5,
+    "stunDuration": 1,
+    "target": "enemy",
+    "logicKey": "petrifyingGazeLogic"
+},
+"serpents_coil": {
+    "id": "serpents_coil",
+    "name": "Serpent's Coil",
+    "description": "Target loses 30% action bar, caster gains that amount",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["support"],
+    "actionBarSteal": 0.3,
+    "target": "enemy",
+    "logicKey": "serpentsCoilLogic"
+},
+"sirens_song": {
+    "id": "sirens_song",
+    "name": "Siren's Song",
+    "description": "Enchanting song dealing [{base} + {attack} + {int}] magical damage and applying Silence for {silenceDuration} turn",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "debuff_silence"],
+    "scaling": {
+        "base": [56, 224, 448, 784, 1120],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.7, 0.73, 0.76, 0.79, 0.82]
+    },
+    "silenceDuration": 1,
+    "target": "enemy",
+    "logicKey": "sirensSongLogic"
+},
+"mesmerize": {
+    "id": "mesmerize",
+    "name": "Mesmerize",
+    "description": "All enemies lose 20% action bar and gain Reduce Attack for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "debuff_reduce_attack", "support"],
+    "actionBarDrain": 0.2,
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_enemies",
+    "logicKey": "mesmerizeLogic"
+},
+"enchanting_voice": {
+    "id": "enchanting_voice",
+    "name": "Enchanting Voice",
+    "description": "Steal all buffs from target enemy",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["dispel"],
+    "target": "enemy",
+    "logicKey": "enchantingVoiceLogic"
+},
+"trident_strike": {
+    "id": "trident_strike",
+    "name": "Trident Strike",
+    "description": "Piercing strike dealing [{base} + {attack} + {str}] physical damage to all enemies, 30% armor pierce",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["aoe", "physical"],
+    "scaling": {
+        "base": [80, 320, 640, 1120, 1600],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.32, 0.34, 0.36, 0.38, 0.40]
+    },
+    "armorPierce": 0.3,
+    "target": "all_enemies",
+    "logicKey": "tridentStrikeLogic"
+},
+"sea_lords_protection": {
+    "id": "sea_lords_protection",
+    "name": "Sea Lord's Protection",
+    "description": "All allies gain Shield (25% max HP) and Increase Defense for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "buff_shield", "buff_increase_defense"],
+    "shieldPercent": 0.25,
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_allies",
+    "logicKey": "seaLordsProtectionLogic"
+},
+"tidal_surge": {
+    "id": "tidal_surge",
+    "name": "Tidal Surge",
+    "description": "Reset all enemy action bars to 0, grant all allies 50% action bar",
+    "cooldown": [6, 6, 5, 5, 4],
+    "effects": ["aoe", "support"],
+    "actionBarReset": true,
+    "actionBarGrant": 0.5,
+    "target": "all",
+    "logicKey": "tidalSurgeLogic"
+},
+"oceanic_resilience_passive": {
+    "id": "oceanic_resilience_passive",
+    "name": "Oceanic Resilience",
+    "description": "When any ally's shield breaks, they gain Increase Defense for 2 turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "buffDuration": 2,
+    "target": "self",
+    "logicKey": "oceanicResiliencePassiveLogic"
+},
+"serpents_wrath": {
+    "id": "serpents_wrath",
+    "name": "Serpent's Wrath",
+    "description": "Devastating strike dealing [{base} + {attack} + {int}] magical damage, applies Mark and Blight for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "debuff_mark", "debuff_blight"],
+    "scaling": {
+        "base": [85, 340, 680, 1190, 1700],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.82, 0.85, 0.88, 0.91, 0.94]
+    },
+    "duration": [3, 3, 4, 4, 5],
+    "target": "enemy",
+    "logicKey": "serpentsWrathLogic"
+},
+"imperial_command": {
+    "id": "imperial_command",
+    "name": "Imperial Command",
+    "description": "All enemies gain 3 random debuffs for 2 turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "support"],
+    "debuffCount": 3,
+    "duration": 2,
+    "target": "all_enemies",
+    "logicKey": "imperialCommandLogic"
+},
+"abyssal_shield": {
+    "id": "abyssal_shield",
+    "name": "Abyssal Shield",
+    "description": "All allies gain Shield (50% max HP) and become Immune for 1 turn",
+    "cooldown": [6, 6, 5, 5, 4],
+    "effects": ["aoe", "buff_shield", "buff_immune"],
+    "shieldPercent": 0.5,
+    "immuneDuration": 1,
+    "target": "all_allies",
+    "logicKey": "abyssalShieldLogic"
+},
+"eternal_tide_passive": {
+    "id": "eternal_tide_passive",
+    "name": "Eternal Tide",
+    "description": "Every turn, lowest HP ally gains 20% shield and removes 1 debuff",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "shieldPercent": 0.2,
+    "target": "self",
+    "logicKey": "eternalTidePassiveLogic"
+},
+"infected_strike": {
+    "id": "infected_strike",
+    "name": "Infected Strike",
+    "description": "Diseased strike dealing [{base} + {attack} + {str}] physical damage, apply Blight and Bleed for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_blight", "debuff_bleed"],
+    "scaling": {
+        "base": [62, 248, 496, 868, 1240],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.26, 0.28, 0.30, 0.32, 0.34]
+    },
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "infectedStrikeLogic"
+},
+"spread_disease": {
+    "id": "spread_disease",
+    "name": "Spread Disease",
+    "description": "If target has 2+ debuffs, apply Blight to all enemies for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "debuff_blight"],
+    "debuffThreshold": 2,
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "spreadDiseaseLogic"
+},
+"toxic_blood_passive": {
+    "id": "toxic_blood_passive",
+    "name": "Toxic Blood",
+    "description": "When taking damage, 30% chance to apply Blight to attacker for 2 turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "procChance": 0.3,
+    "blightDuration": 2,
+    "target": "self",
+    "logicKey": "toxicBloodPassiveLogic"
+},
+"corrosive_touch": {
+    "id": "corrosive_touch",
+    "name": "Corrosive Touch",
+    "description": "Acidic touch dealing [{base} + {attack} + {str}] physical damage and applying Reduce Defense for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical", "debuff_reduce_defense"],
+    "scaling": {
+        "base": [65, 260, 520, 910, 1300],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.3, 0.32, 0.34, 0.36, 0.38]
+    },
+    "duration": [2, 2, 3, 3, 4],
+    "target": "enemy",
+    "logicKey": "corrosiveTouchLogic"
+},
+"noxious_pool": {
+    "id": "noxious_pool",
+    "name": "Noxious Pool",
+    "description": "All enemies gain Reduce Attack and Reduce Speed for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "debuff_reduce_attack", "debuff_reduce_speed"],
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_enemies",
+    "logicKey": "noxiousPoolLogic"
+},
+"acidic_body": {
+    "id": "acidic_body",
+    "name": "Acidic Body",
+    "description": "Gain Shield, attackers take damage equal to 20% of shield amount",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["buff_shield"],
+    "shieldAmount": [80, 160, 240, 320, 400],
+    "reflectPercent": 0.2,
+    "target": "self",
+    "logicKey": "acidicBodyLogic"
+},
+"vial_toss": {
+    "id": "vial_toss",
+    "name": "Vial Toss",
+    "description": "Throw vial dealing [{base} + {attack} + {int}] magical damage, apply random debuff (Blight/Bleed/Reduce Defense)",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["magical", "support"],
+    "scaling": {
+        "base": [58, 232, 464, 812, 1160],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.68, 0.71, 0.74, 0.77, 0.80]
+    },
+    "duration": 2,
+    "target": "enemy",
+    "logicKey": "vialTossLogic"
+},
+"mutation": {
+    "id": "mutation",
+    "name": "Mutation",
+    "description": "Convert all buffs on target to random debuffs",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["dispel", "support"],
+    "duration": 2,
+    "target": "enemy",
+    "logicKey": "mutationLogic"
+},
+"toxic_remedy": {
+    "id": "toxic_remedy",
+    "name": "Toxic Remedy",
+    "description": "Heal lowest HP ally for {healPercent}% HP, but apply 1 Bleed stack",
+    "cooldown": [3, 3, 3, 2, 2],
+    "effects": ["heal", "debuff_bleed"],
+    "healPercent": [0.2, 0.25, 0.3, 0.35, 0.4],
+    "bleedDuration": 2,
+    "target": "ally",
+    "logicKey": "toxicRemedyLogic"
+},
+"ambush": {
+    "id": "ambush",
+    "name": "Ambush",
+    "description": "Strike dealing [{base} + {attack} + {agi}] physical damage, pure damage if target has 3+ debuffs",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["physical"],
+    "scaling": {
+        "base": [68, 272, 544, 952, 1360],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "agi": [0.58, 0.60, 0.62, 0.64, 0.66]
+    },
+    "debuffThreshold": 3,
+    "target": "enemy",
+    "logicKey": "ambushLogic"
+},
+"festering_wound": {
+    "id": "festering_wound",
+    "name": "Festering Wound",
+    "description": "Apply 3 stacks of Bleed for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["debuff_bleed"],
+    "bleedStacks": 3,
+    "duration": [3, 3, 4, 4, 5],
+    "target": "enemy",
+    "logicKey": "festeringWoundLogic"
+},
+"from_the_shadows": {
+    "id": "from_the_shadows",
+    "name": "From the Shadows",
+    "description": "Remove all debuffs, gain Increase Speed for {duration} turns and 30% action bar",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["cleanse", "buff_increase_speed", "support"],
+    "duration": [2, 2, 3, 3, 4],
+    "actionBarGrant": 0.3,
+    "target": "self",
+    "logicKey": "fromTheShadowsLogic"
+},
+"putrid_slam": {
+    "id": "putrid_slam",
+    "name": "Putrid Slam",
+    "description": "Disgusting slam dealing [{base} + {attack} + {str}] physical damage to all, apply Reduce Defense for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["aoe", "physical", "debuff_reduce_defense"],
+    "scaling": {
+        "base": [90, 360, 720, 1260, 1800],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "str": [0.35, 0.37, 0.39, 0.41, 0.43]
+    },
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_enemies",
+    "logicKey": "putridSlamLogic"
+},
+"toxic_explosion": {
+    "id": "toxic_explosion",
+    "name": "Toxic Explosion",
+    "description": "Sacrifice 20% HP, all enemies gain Blight and Bleed for {duration} turns",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["aoe", "debuff_blight", "debuff_bleed"],
+    "hpCost": 0.2,
+    "duration": [2, 2, 3, 3, 4],
+    "target": "all_enemies",
+    "logicKey": "toxicExplosionLogic"
+},
+"regenerate": {
+    "id": "regenerate",
+    "name": "Regenerate",
+    "description": "Heal 15% HP, gain Shield equal to missing HP (max 40% max HP)",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["heal", "buff_shield"],
+    "healPercent": 0.15,
+    "maxShieldPercent": 0.4,
+    "target": "self",
+    "logicKey": "regenerateLogic"
+},
+"rotting_presence_passive": {
+    "id": "rotting_presence_passive",
+    "name": "Rotting Presence",
+    "description": "Attacks apply Blight for 1 turn",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "blightDuration": 1,
+    "target": "self",
+    "logicKey": "rottingPresencePassiveLogic"
+},
+"epidemic": {
+    "id": "epidemic",
+    "name": "Epidemic",
+    "description": "Plague blast to all enemies dealing [{base} + {attack} + {int}] magical damage, +20% per debuff",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["aoe", "magical"],
+    "scaling": {
+        "base": [95, 380, 760, 1330, 1900],
+        "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "int": [0.85, 0.88, 0.91, 0.94, 0.97]
+    },
+    "debuffBonus": 0.2,
+    "target": "all_enemies",
+    "logicKey": "epidemicLogic"
+},
+"quarantine": {
+    "id": "quarantine",
+    "name": "Quarantine",
+    "description": "Target gains Mark and Silence for {duration} turns, loses 50% action bar",
+    "cooldown": [4, 4, 3, 3, 2],
+    "effects": ["debuff_mark", "debuff_silence", "support"],
+    "duration": [2, 2, 3, 3, 4],
+    "actionBarDrain": 0.5,
+    "target": "enemy",
+    "logicKey": "quarantineLogic"
+},
+"black_death": {
+    "id": "black_death",
+    "name": "Black Death",
+    "description": "All enemies gain Blight for 3 turns, allies with Blight are cleansed and gain Increase Attack",
+    "cooldown": [5, 5, 4, 4, 3],
+    "effects": ["aoe", "debuff_blight", "cleanse", "buff_increase_attack"],
+    "blightDuration": 3,
+    "buffDuration": 2,
+    "target": "all",
+    "logicKey": "blackDeathLogic"
+},
+"patient_zero_passive": {
+    "id": "patient_zero_passive",
+    "name": "Patient Zero",
+    "description": "Immune to Blight and Bleed, when would receive these debuffs, heal 5% HP instead",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["passive"],
+    "passive": true,
+    "healPercent": 0.05,
+    "target": "self",
+    "logicKey": "patientZeroPassiveLogic"
+},
+"hellfire_bolt": {
+  "id": "hellfire_bolt",
+  "name": "Hellfire Bolt",
+  "description": "Demonic flame dealing [{base} + {attack} + {int}] magical damage, {defenseChance}% chance to Reduce Defense",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["magical", "debuff_reduce_defense"],
+  "scaling": {
+    "base": [60, 240, 480, 840, 1200],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.7, 0.72, 0.74, 0.76, 0.78]
+  },
+  "defenseChance": 0.3,
+  "defenseDebuffDuration": 2,
+  "target": "enemy",
+  "logicKey": "hellfireBoltLogic"
+},
+"torment": {
+  "id": "torment",
+  "name": "Torment",
+  "description": "Apply Mark and Reduce Speed to target for {duration} turns",
+  "cooldown": [3, 3, 3, 2, 2],
+  "effects": ["debuff_mark", "debuff_reduce_speed"],
+  "duration": [2, 2, 3, 3, 4],
+  "target": "enemy",
+  "logicKey": "tormentLogic"
+},
+"demonic_giggle": {
+  "id": "demonic_giggle",
+  "name": "Demonic Giggle",
+  "description": "All enemies gain 10% action bar, apply random debuff to random enemy",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["support"],
+  "actionBarGrant": 0.1,
+  "debuffDuration": 2,
+  "target": "all",
+  "logicKey": "demonicGiggleLogic"
+},
+"infernal_blade": {
+  "id": "infernal_blade",
+  "name": "Infernal Blade",
+  "description": "Fiery strike dealing [{base} + {attack} + {str}] physical damage, {bleedChance}% chance to Bleed",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "debuff_bleed"],
+  "scaling": {
+    "base": [65, 260, 520, 910, 1300],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "str": [0.32, 0.34, 0.36, 0.38, 0.40]
+  },
+  "bleedChance": 0.4,
+  "bleedDuration": 2,
+  "target": "enemy",
+  "logicKey": "infernalBladeLogic"
+},
+"hellish_vigor": {
+  "id": "hellish_vigor",
+  "name": "Hellish Vigor",
+  "description": "Gain Increase Defense and Shield ({shieldPercent}% max HP) for {duration} turns",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["buff_increase_defense", "buff_shield"],
+  "duration": [2, 2, 3, 3, 4],
+  "shieldPercent": 0.25,
+  "target": "self",
+  "logicKey": "hellishVigorLogic"
+},
+"damned_charge": {
+  "id": "damned_charge",
+  "name": "Damned Charge",
+  "description": "Taunt all enemies for {tauntDuration} turn, gain Increase Attack for {buffDuration} turns",
+  "cooldown": [3, 3, 3, 2, 2],
+  "effects": ["aoe", "debuff_taunt", "buff_increase_attack"],
+  "tauntDuration": 1,
+  "buffDuration": 2,
+  "target": "all",
+  "logicKey": "damnedChargeLogic"
+},
+"draining_kiss": {
+  "id": "draining_kiss",
+  "name": "Draining Kiss",
+  "description": "Seductive strike dealing [{base} + {attack} + {int}] magical damage, heal self {healPercent}% damage dealt",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["magical", "heal"],
+  "scaling": {
+    "base": [58, 232, 464, 812, 1160],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.65, 0.67, 0.69, 0.71, 0.73]
+  },
+  "healPercent": 0.3,
+  "target": "enemy",
+  "logicKey": "drainingKissLogic"
+},
+"charm": {
+  "id": "charm",
+  "name": "Charm",
+  "description": "Apply Taunt for {tauntDuration} turns and Reduce Attack for {debuffDuration} turns",
+  "cooldown": [3, 3, 3, 2, 2],
+  "effects": ["debuff_taunt", "debuff_reduce_attack"],
+  "tauntDuration": 2,
+  "debuffDuration": 2,
+  "target": "enemy",
+  "logicKey": "charmLogic"
+},
+"inferno_tempo": {
+  "id": "inferno_tempo",
+  "name": "Inferno Tempo",
+  "description": "Steal 20% action bar from all enemies, distribute to allies",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["aoe", "support"],
+  "actionBarSteal": 0.2,
+  "target": "all",
+  "logicKey": "infernoTempoLogic"
+},
+"hells_impact": {
+  "id": "hells_impact",
+  "name": "Hells Impact",
+  "description": "Devastating strike dealing [{base} + {attack} + {str}] physical damage, +50% damage if target has Reduce Defense",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical"],
+  "scaling": {
+    "base": [70, 280, 560, 980, 1400],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "str": [0.35, 0.37, 0.39, 0.41, 0.43]
+  },
+  "reducedDefenseBonus": 1.5,
+  "target": "enemy",
+  "logicKey": "hellsImpactLogic"
+},
+"hellfire_aura_passive": {
+  "id": "hellfire_aura_passive",
+  "name": "Hellfire Aura",
+  "description": "Attackers take fire damage and gain Reduce Speed for 1 turn",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "retaliationDamage": 50,
+  "slowDuration": 1,
+  "target": "self",
+  "logicKey": "hellfireAuraPassiveLogic"
+},
+"demons_wrath": {
+  "id": "demons_wrath",
+  "name": "Demon's Wrath",
+  "description": "Heavy physical damage to target, magical damage to 2 random enemies",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "magical", "aoe"],
+  "scaling": {
+    "base": [75, 300, 600, 1050, 1500],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "str": [0.4, 0.42, 0.44, 0.46, 0.48],
+    "int": [0.3, 0.32, 0.34, 0.36, 0.38]
+  },
+  "randomTargets": 2,
+  "target": "enemy",
+  "logicKey": "demonsWrathLogic"
+},
+"summon_hellfire": {
+  "id": "summon_hellfire",
+  "name": "Summon Hellfire",
+  "description": "All enemies gain Blight for {blightDuration} turns, all allies gain Increase Attack for {buffDuration} turns",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["aoe", "debuff_blight", "buff_increase_attack"],
+  "blightDuration": 3,
+  "buffDuration": 2,
+  "target": "all",
+  "logicKey": "summonHellfireLogic"
+},
+"infernal_command": {
+  "id": "infernal_command",
+  "name": "Infernal Command",
+  "description": "Reset all enemy action bars to 0, all allies gain 30% action bar",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "support"],
+  "actionBarReset": true,
+  "actionBarGrant": 0.3,
+  "target": "all",
+  "logicKey": "infernalCommandLogic"
+},
+"lords_presence_passive": {
+  "id": "lords_presence_passive",
+  "name": "Lord's Presence",
+  "description": "Allies gain Increase Attack buff and are immune to Stun.",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "buffDuration": [1, 1, 1, 1, 1],
+  "target": "self",
+  "logicKey": "lordsPresencePassiveLogic"
+},
+"soul_reaper": {
+  "id": "soul_reaper",
+  "name": "Soul Reaper",
+  "description": "Pure damage if target below 30% HP, otherwise heavy physical damage [{base} + {attack} + {str}]",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "pure"],
+  "scaling": {
+    "base": [80, 320, 640, 1120, 1600],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "str": [0.45, 0.47, 0.49, 0.51, 0.53]
+  },
+  "executeThreshold": 0.3,
+  "target": "enemy",
+  "logicKey": "soulReaperLogic"
+},
+"underworld_gates": {
+  "id": "underworld_gates",
+  "name": "Underworld Gates",
+  "description": "All enemies gain Mark and Blight for {duration} turns, drain 30% action bar",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "debuff_mark", "debuff_blight", "support"],
+  "duration": 3,
+  "actionBarDrain": 0.3,
+  "target": "all_enemies",
+  "logicKey": "underworldGatesLogic"
+},
+"eternal_torment": {
+  "id": "eternal_torment",
+  "name": "Eternal Torment",
+  "description": "Apply 2 stacks each of Bleed, Blight, and Reduce Defense to all enemies for {duration} turns",
+  "cooldown": [6, 6, 5, 5, 4],
+  "effects": ["aoe", "debuff_bleed", "debuff_blight", "debuff_reduce_defense"],
+  "duration": 3,
+  "stackCount": 2,
+  "target": "all_enemies",
+  "logicKey": "eternalTormentLogic"
+},
+"deaths_domain_passive": {
+  "id": "deaths_domain_passive",
+  "name": "Death's Domain",
+  "description": "When any unit dies, gain Shield (20% max HP) and Increase Speed for 2 turns",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "shieldPercent": 0.2,
+  "speedDuration": 2,
+  "target": "self",
+  "logicKey": "deathsDomainPassiveLogic"
+},
+"psychic_lash": {
+  "id": "psychic_lash",
+  "name": "Psychic Lash",
+  "description": "Mental strike dealing [{base} + {attack} + {int}] magical damage, drain 10% action bar",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["magical", "support"],
+  "scaling": {
+    "base": [62, 248, 496, 868, 1240],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.72, 0.74, 0.76, 0.78, 0.80]
+  },
+  "actionBarDrain": 0.1,
+  "target": "enemy",
+  "logicKey": "psychicLashLogic"
+},
+"mind_fog": {
+  "id": "mind_fog",
+  "name": "Mind Fog",
+  "description": "Apply Silence and Reduce Attack to target for {duration} turns",
+  "cooldown": [3, 3, 3, 2, 2],
+  "effects": ["debuff_silence", "debuff_reduce_attack"],
+  "duration": [2, 2, 3, 3, 4],
+  "target": "enemy",
+  "logicKey": "mindFogLogic"
+},
+"telepathic_surge": {
+  "id": "telepathic_surge",
+  "name": "Telepathic Surge",
+  "description": "Steal all buffs from target, gain Increase Speed for {speedDuration} turns",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["dispel", "buff_increase_speed"],
+  "speedDuration": 2,
+  "target": "enemy",
+  "logicKey": "telepathicSurgeLogic"
+},
+"phase_strike": {
+  "id": "phase_strike",
+  "name": "Phase Strike",
+  "description": "Ethereal strike dealing [{base} + {attack} + {agi}] physical damage, pure if target is Marked",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "pure"],
+  "scaling": {
+    "base": [68, 272, 544, 952, 1360],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "agi": [0.6, 0.62, 0.64, 0.66, 0.68]
+  },
+  "target": "enemy",
+  "logicKey": "phaseStrikeLogic"
+},
+"void_step": {
+  "id": "void_step",
+  "name": "Void Step",
+  "description": "Remove all debuffs, gain 2 stacks of Increase Speed for {duration} turns",
+  "cooldown": [3, 3, 3, 2, 2],
+  "effects": ["cleanse", "buff_increase_speed"],
+  "duration": [2, 2, 3, 3, 4],
+  "stackCount": 2,
+  "target": "self",
+  "logicKey": "voidStepLogic"
+},
+"shadow_realm_passive": {
+  "id": "shadow_realm_passive",
+  "name": "Shadow Realm",
+  "description": "Take 30% less physical and magical damage",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "damageReduction": 0.3,
+  "target": "self",
+  "logicKey": "shadowRealmPassiveLogic"
+},
+"tentacle_slam": {
+  "id": "tentacle_slam",
+  "name": "Tentacle Slam",
+  "description": "Crushing blow dealing [{base} + {attack} + {str}] physical damage and Reduce Speed for {duration} turns",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "debuff_reduce_speed"],
+  "scaling": {
+    "base": [72, 288, 576, 1008, 1440],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "str": [0.38, 0.40, 0.42, 0.44, 0.46]
+  },
+  "duration": [2, 2, 3, 3, 4],
+  "target": "enemy",
+  "logicKey": "tentacleSlamLogic"
+},
+"maddening_presence": {
+  "id": "maddening_presence",
+  "name": "Maddening Presence",
+  "description": "All enemies gain random debuff and lose 15% action bar",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["aoe", "support"],
+  "actionBarDrain": 0.15,
+  "debuffDuration": 2,
+  "target": "all_enemies",
+  "logicKey": "maddeningPresenceLogic"
+},
+"eldritch_resilience": {
+  "id": "eldritch_resilience",
+  "name": "Eldritch Resilience",
+  "description": "Gain Shield (40% max HP) and Immune for 1 turn",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["buff_shield", "buff_immune"],
+  "shieldPercent": 0.4,
+  "immuneDuration": 1,
+  "target": "self",
+  "logicKey": "eldritchResilienceLogic"
+},
+"phantom_bolt": {
+  "id": "phantom_bolt",
+  "name": "Phantom Bolt",
+  "description": "Illusory strike dealing [{base} + {attack} + {int}] magical damage, double damage if target has 3+ debuffs",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["magical"],
+  "scaling": {
+    "base": [60, 240, 480, 840, 1200],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.68, 0.70, 0.72, 0.74, 0.76]
+  },
+  "debuffThreshold": 3,
+  "damageMultiplier": 2,
+  "target": "enemy",
+  "logicKey": "phantomBoltLogic"
+},
+"mirror_images": {
+  "id": "mirror_images",
+  "name": "Mirror Images",
+  "description": "All allies gain Frost Armor for {duration} turns",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["aoe", "buff_frost_armor"],
+  "duration": 2,
+  "target": "all_allies",
+  "logicKey": "mirrorImagesLogic"
+},
+"reality_twist": {
+  "id": "reality_twist",
+  "name": "Reality Twist",
+  "description": "Convert all enemy buffs to random debuffs for {duration} turns",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "dispel"],
+  "duration": 2,
+  "target": "all_enemies",
+  "logicKey": "realityTwistLogic"
+},
+"dimensional_slash": {
+  "id": "dimensional_slash",
+  "name": "Dimensional Slash",
+  "description": "Reality-cutting strike dealing [{base} + {attack} + {str}] physical damage ignoring 50% armor",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical"],
+  "scaling": {
+    "base": [75, 300, 600, 1050, 1500],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "str": [0.42, 0.44, 0.46, 0.48, 0.50]
+  },
+  "armorPierce": 0.5,
+  "target": "enemy",
+  "logicKey": "dimensionalSlashLogic"
+},
+"maze_shift": {
+  "id": "maze_shift",
+  "name": "Maze Shift",
+  "description": "All enemies gain Reduce Speed for {duration} turns and lose 20% action bar",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["aoe", "debuff_reduce_speed", "support"],
+  "duration": 2,
+  "actionBarDrain": 0.2,
+  "target": "all_enemies",
+  "logicKey": "mazeShiftLogic"
+},
+"guardians_ward": {
+  "id": "guardians_ward",
+  "name": "Guardian's Ward",
+  "description": "All allies gain Shield (30% max HP) and cleanse 1 debuff",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "buff_shield", "cleanse"],
+  "shieldPercent": 0.3,
+  "target": "all_allies",
+  "logicKey": "guardiansWardLogic"
+},
+"eternal_vigil_passive": {
+  "id": "eternal_vigil_passive",
+  "name": "Eternal Vigil",
+  "description": "Immune to Reduce Speed, +25% base speed",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "speedBonus": 0.25,
+  "target": "self",
+  "logicKey": "eternalVigilPassiveLogic"
+},
+"mind_spike": {
+  "id": "mind_spike",
+  "name": "Mind Spike",
+  "description": "Psychic lance dealing [{base} + {attack} + {int}] magical damage, apply Mark or Stun if already Marked",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["magical", "debuff_mark", "debuff_stun"],
+  "scaling": {
+    "base": [78, 312, 624, 1092, 1560],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.75, 0.77, 0.79, 0.81, 0.83]
+  },
+  "markDuration": 3,
+  "stunDuration": 1,
+  "target": "enemy",
+  "logicKey": "mindSpikeLogic"
+},
+"psychic_storm": {
+  "id": "psychic_storm",
+  "name": "Psychic Storm",
+  "description": "Deal damage to all enemies based on 30% of their missing HP",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "magical"],
+  "missingHpPercent": 0.3,
+  "target": "all_enemies",
+  "logicKey": "psychicStormLogic"
+},
+"madness_cascade": {
+  "id": "madness_cascade",
+  "name": "Madness Cascade",
+  "description": "All enemies gain Silence for 1 turn, then Reduce Attack and Reduce Defense for {duration} turns",
+  "cooldown": [6, 6, 5, 5, 4],
+  "effects": ["aoe", "debuff_silence", "debuff_reduce_attack", "debuff_reduce_defense"],
+  "silenceDuration": 1,
+  "duration": 3,
+  "target": "all_enemies",
+  "logicKey": "madnessCascadeLogic"
+},
+"hivemind_passive": {
+  "id": "hivemind_passive",
+  "name": "Hivemind",
+  "description": "When any ally dies, heal 20% max HP and gain Increase Attack for 2 turns",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "healPercent": 0.2,
+  "buffDuration": 2,
+  "target": "self",
+  "logicKey": "hivemindPassiveLogic"
+},
+"lava_burst": {
+  "id": "lava_burst",
+  "name": "Lava Burst",
+  "description": "Molten blast dealing [{base} + {attack} + {int}] magical damage and Reduce Defense for {duration} turns",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["magical", "debuff_reduce_defense"],
+  "scaling": {
+    "base": [64, 256, 512, 896, 1280],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.7, 0.72, 0.74, 0.76, 0.78]
+  },
+  "duration": [2, 2, 3, 3, 4],
+  "target": "enemy",
+  "logicKey": "lavaBurstLogic"
+},
+"molten_shield": {
+  "id": "molten_shield",
+  "name": "Molten Shield",
+  "description": "Gain Shield (20% max HP), attackers take fire damage",
+  "cooldown": [3, 3, 3, 2, 2],
+  "effects": ["buff_shield"],
+  "shieldPercent": 0.2,
+  "retaliationDamage": 75,
+  "target": "self",
+  "logicKey": "moltenShieldLogic"
+},
+"eruption": {
+  "id": "eruption",
+  "name": "Eruption",
+  "description": "Volcanic explosion dealing [{base} + {attack} + {int}] magical damage and Bleed to all enemies",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["aoe", "magical", "debuff_bleed"],
+  "scaling": {
+    "base": [55, 220, 440, 770, 1100],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.65, 0.67, 0.69, 0.71, 0.73]
+  },
+  "bleedDuration": 2,
+  "target": "all_enemies",
+  "logicKey": "eruptionLogic"
+},
+"burning_strike": {
+  "id": "burning_strike",
+  "name": "Burning Strike",
+  "description": "Fiery slash dealing [{base} + {attack} + {agi}] physical damage and drain 5% action bar",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "support"],
+  "scaling": {
+    "base": [66, 264, 528, 924, 1320],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "agi": [0.58, 0.60, 0.62, 0.64, 0.66]
+  },
+  "actionBarDrain": 0.05,
+  "target": "enemy",
+  "logicKey": "burningStrikeLogic"
+},
+"fire_dance": {
+  "id": "fire_dance",
+  "name": "Fire Dance",
+  "description": "Gain 2x Increase Speed and Increase Attack for {duration} turns, mark self for AoE next attack",
+  "cooldown": [3, 3, 3, 2, 2],
+  "effects": ["buff_increase_speed", "buff_increase_attack"],
+  "duration": [2, 2, 3, 3, 4],
+  "stackCount": 2,
+  "target": "self",
+  "logicKey": "fireDanceLogic"
+},
+"ignition_trail_passive": {
+  "id": "ignition_trail_passive",
+  "name": "Ignition Trail",
+  "description": "Attacks apply Bleed for 1 turn",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "bleedDuration": 1,
+  "target": "self",
+  "logicKey": "ignitionTrailPassiveLogic"
+},
+"volcanic_slam": {
+  "id": "volcanic_slam",
+  "name": "Volcanic Slam",
+  "description": "Earth-shaking blow dealing [{base} + {attack} + {str}] physical damage, 25% chance to Stun",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "debuff_stun"],
+  "scaling": {
+    "base": [74, 296, 592, 1036, 1480],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "str": [0.4, 0.42, 0.44, 0.46, 0.48]
+  },
+  "stunChance": 0.25,
+  "stunDuration": 1,
+  "target": "enemy",
+  "logicKey": "volcanicSlamLogic"
+},
+"hardened_lava": {
+  "id": "hardened_lava",
+  "name": "Hardened Lava",
+  "description": "Gain Increase Defense and Frost Armor for {duration} turns",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["buff_increase_defense", "buff_frost_armor"],
+  "duration": 3,
+  "target": "self",
+  "logicKey": "hardenedLavaLogic"
+},
+"molten_core": {
+  "id": "molten_core",
+  "name": "Molten Core",
+  "description": "Sacrifice 20% HP, all enemies gain Reduce Attack and Bleed for {duration} turns",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "debuff_reduce_attack", "debuff_bleed"],
+  "hpCost": 0.2,
+  "duration": 2,
+  "target": "all",
+  "logicKey": "moltenCoreLogic"
+},
+"flame_feather": {
+  "id": "flame_feather",
+  "name": "Flame Feather",
+  "description": "Phoenix fire dealing [{base} + {attack} + {int}] magical damage, heal lowest HP ally {healPercent}% damage dealt",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["magical", "heal"],
+  "scaling": {
+    "base": [60, 240, 480, 840, 1200],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.66, 0.68, 0.70, 0.72, 0.74]
+  },
+  "healPercent": 0.3,
+  "target": "enemy",
+  "logicKey": "flameFeatherLogic"
+},
+"rebirth": {
+  "id": "rebirth",
+  "name": "Rebirth",
+  "description": "Cleanse all debuffs from allies, grant Increase Speed for {duration} turns",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "cleanse", "buff_increase_speed"],
+  "duration": 2,
+  "target": "all_allies",
+  "logicKey": "rebirthLogic"
+},
+"from_ashes": {
+  "id": "from_ashes",
+  "name": "From Ashes",
+  "description": "Upon reaching 25% HP, heal all allies for 25% max HP",
+  "cooldown": [8, 8, 7, 7, 6],
+  "effects": ["heal"],
+  "healPercent": 0.25,
+  "hpThreshold": 0.25,
+  "target": "all_allies",
+  "logicKey": "fromAshesLogic"
+},
+"pyroblast": {
+  "id": "pyroblast",
+  "name": "Pyroblast",
+  "description": "Devastating fire blast dealing [{base} + {attack} + {int}] magical damage, pure if target has Bleed",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["magical", "pure"],
+  "scaling": {
+    "base": [82, 328, 656, 1148, 1640],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.78, 0.80, 0.82, 0.84, 0.86]
+  },
+  "target": "enemy",
+  "logicKey": "pyroblastLogic"
+},
+"flame_wave": {
+  "id": "flame_wave",
+  "name": "Flame Wave",
+  "description": "All enemies take [{base} + {attack} + {int}] damage and gain Reduce Defense for {duration} turns",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["aoe", "magical", "debuff_reduce_defense"],
+  "scaling": {
+    "base": [65, 260, 520, 910, 1300],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.72, 0.74, 0.76, 0.78, 0.80]
+  },
+  "duration": 3,
+  "target": "all_enemies",
+  "logicKey": "flameWaveLogic"
+},
+"infernal_rage": {
+  "id": "infernal_rage",
+  "name": "Infernal Rage",
+  "description": "Self gains 3x Increase Attack, all allies gain Increase Speed for {duration} turns",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["buff_increase_attack", "buff_increase_speed"],
+  "duration": 2,
+  "stackCount": 3,
+  "target": "all",
+  "logicKey": "infernalRageLogic"
+},
+"burning_wounds_passive": {
+  "id": "burning_wounds_passive",
+  "name": "Burning Wounds",
+  "description": "All enemy attacks have 30% chance to apply Bleed to attacker for 1 turn",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "procChance": 0.3,
+  "bleedDuration": 1,
+  "target": "self",
+  "logicKey": "burningWoundsPassiveLogic"
+},
+"soulfire": {
+  "id": "soulfire",
+  "name": "Soulfire",
+  "description": "Ethereal flame dealing damage equal to 10% of enemy's current HP",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["magical"],
+  "hpPercentDamage": 0.1,
+  "target": "enemy",
+  "logicKey": "soulfireLogic"
+},
+"eternal_flame": {
+  "id": "eternal_flame",
+  "name": "Eternal Flame",
+  "description": "Apply Blight and 3 stacks of Bleed to all enemies for {duration} turns",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "debuff_blight", "debuff_bleed"],
+  "duration": 3,
+  "bleedStacks": 3,
+  "target": "all_enemies",
+  "logicKey": "eternalFlameLogic"
+},
+"phoenix_rising": {
+  "id": "phoenix_rising",
+  "name": "Phoenix Rising",
+  "description": "When below 25% HP, activate to heal all allies to full HP and grant Immune for 1 turn",
+  "cooldown": [6, 6, 5, 5, 4],
+  "effects": ["heal", "buff_immune"],
+  "hpThreshold": 0.25,
+  "immuneDuration": 1,
+  "target": "all_allies",
+  "logicKey": "phoenixRisingLogic"
+},
+"cinder_lord_passive": {
+  "id": "cinder_lord_passive",
+  "name": "Cinder Lord",
+  "description": "Immune to Reduce Attack, all allies gain +15% magical damage",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "magicalDamageBonus": 0.15,
+  "target": "self",
+  "logicKey": "cinderLordPassiveLogic"
+},
+"rabid_bite": {
+  "id": "rabid_bite",
+  "name": "Rabid Bite",
+  "description": "Vicious bite dealing [{base} + {attack} + {str}] physical damage with {bleedChance}% chance to cause Bleed for {bleedDuration} turns",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "debuff_bleed"],
+  "scaling": {
+    "base": [85, 340, 680, 1190, 1700],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "str": [0.3, 0.32, 0.34, 0.36, 0.38]
+  },
+  "bleedChance": [0.8, 0.85, 0.9, 0.95, 1.0],
+  "bleedDuration": [1, 1, 2, 2, 3],
+  "target": "enemy",
+  "logicKey": "rabidBiteLogic"
+},
+"festering_wound_dog": {
+  "id": "festering_wound_dog",
+  "name": "Festering Wound",
+  "description": "Apply Blight to self and all enemies for {duration} turns",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "debuff_blight"],
+  "duration": [1, 1, 2, 2, 2],
+  "target": "all",
+  "logicKey": "festeringWoundDogLogic"
+},
+"savage_leap": {
+  "id": "savage_leap",
+  "name": "Savage Leap",
+  "description": "Gain Increase Speed for {duration} turns and drain {actionBarDrain}% action bar from target",
+  "cooldown": [6, 5, 4, 3, 3],
+  "effects": ["buff_increase_speed", "support"],
+  "duration": [2, 2, 2, 3, 3],
+  "actionBarDrain": 0.2,
+  "target": "enemy",
+  "logicKey": "savageLeapLogic"
+},
+"toxic_prayer": {
+  "id": "toxic_prayer",
+  "name": "Toxic Prayer",
+  "description": "Heal ally for {healPercent}% HP and drain {actionBarDrain}% action bar from lowest HP enemy",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["heal", "support"],
+  "healPercent": [0.15, 0.18, 0.21, 0.24, 0.27],
+  "actionBarDrain": 0.15,
+  "target": "ally",
+  "logicKey": "toxicPrayerLogic"
+},
+"spread_corruption": {
+  "id": "spread_corruption",
+  "name": "Spread Corruption",
+  "description": "All enemies gain Reduce Defense for {duration} turns",
+  "cooldown": [5, 4, 4, 3, 3],
+  "effects": ["aoe", "debuff_reduce_defense"],
+  "duration": [1, 2, 2, 2, 3],
+  "target": "all_enemies",
+  "logicKey": "spreadCorruptionLogic"
+},
+"dark_blessing_plague": {
+  "id": "dark_blessing_plague",
+  "name": "Dark Blessing",
+  "description": "All allies gain Increase Attack and Defense for {duration} turns but gain 1 Bleed stack",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "buff_increase_attack", "buff_increase_defense", "debuff_bleed"],
+  "duration": [1, 1, 1, 2, 2],
+  "bleedDuration": 2,
+  "target": "all_allies",
+  "logicKey": "darkBlessingPlagueLogic"
+},
+"putrid_shield": {
+  "id": "putrid_shield",
+  "name": "Putrid Shield",
+  "description": "Gain {shieldAmount} shield and taunt all enemies for {tauntDuration} turns",
+  "cooldown": [6, 6, 5, 5, 4],
+  "effects": ["buff_shield", "aoe", "debuff_taunt"],
+  "shieldAmount": [120, 480, 960, 2180, 4000],
+  "tauntDuration": [1, 1, 1, 1, 1],
+  "target": "self",
+  "logicKey": "putridShieldLogic"
+},
+"diseased_strike": {
+  "id": "diseased_strike",
+  "name": "Diseased Strike",
+  "description": "Deal [{base} + {attack} + {str}] physical damage, stun for {stunDuration} turn if target has Blight",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "debuff_stun"],
+  "scaling": {
+    "base": [75, 300, 600, 1050, 1500],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "str": [0.15, 0.17, 0.19, 0.21, 0.23]
+  },
+  "stunDuration": 1,
+  "target": "enemy",
+  "logicKey": "diseasedStrikeLogic"
+},
+"corpse_bloat_passive": {
+  "id": "corpse_bloat_passive",
+  "name": "Corpse Bloat",
+  "description": "On death, all enemies gain Blight for {blightDuration} turn",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "blightDuration": 1,
+  "target": "self",
+  "logicKey": "corpseBloatPassiveLogic"
+},
+"plague_bolt": {
+  "id": "plague_bolt",
+  "name": "Plague Bolt",
+  "description": "Diseased bolt dealing [{base} + {attack} + {int}] magical damage, +{bonusPercent} per debuff",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["magical"],
+  "scaling": {
+    "base": [70, 280, 560, 980, 1400],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.75, 0.78, 0.81, 0.84, 0.87]
+  },
+  "bonusPercent": 0.25,
+  "target": "enemy",
+  "logicKey": "plagueBoltLogic"
+},
+"toxic_cloud": {
+  "id": "toxic_cloud",
+  "name": "Toxic Cloud",
+  "description": "Poison gas dealing [{base} + {attack} + {int}] magical damage to all enemies",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["aoe", "magical"],
+  "scaling": {
+    "base": [60, 240, 480, 840, 1200],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.7, 0.73, 0.76, 0.79, 0.82]
+  },
+  "target": "all_enemies",
+  "logicKey": "toxicCloudLogic"
+},
+"siphon_vitality": {
+  "id": "siphon_vitality",
+  "name": "Siphon Vitality",
+  "description": "Drain life dealing [{base} + {attack} + {int}] magical damage, heal self {healPercent} of damage",
+  "cooldown": [3, 3, 3, 2, 2],
+  "effects": ["magical", "heal"],
+  "scaling": {
+    "base": [65, 260, 520, 910, 1300],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.72, 0.75, 0.78, 0.81, 0.84]
+  },
+  "healPercent": 0.5,
+  "target": "enemy",
+  "logicKey": "siphonVitalityLogic"
+},
+"poisoned_blade": {
+  "id": "poisoned_blade",
+  "name": "Poisoned Blade",
+  "description": "Toxic strike dealing [{base} + {attack} + {agi}] physical damage, apply Blight and Mark for {duration} turns",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "debuff_blight", "debuff_mark"],
+  "scaling": {
+    "base": [72, 288, 576, 1008, 1440],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "agi": [0.48, 0.50, 0.52, 0.54, 0.56]
+  },
+  "duration": [2, 2, 3, 3, 4],
+  "target": "enemy",
+  "logicKey": "poisonedBladeLogic"
+},
+"crippling_strike": {
+  "id": "crippling_strike",
+  "name": "Crippling Strike",
+  "description": "Hamstring dealing [{base} + {attack} + {agi}] physical damage, apply Reduce Speed for {duration} turns",
+  "cooldown": [3, 3, 3, 2, 2],
+  "effects": ["physical", "debuff_reduce_speed"],
+  "scaling": {
+    "base": [68, 272, 544, 952, 1360],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "agi": [0.45, 0.47, 0.49, 0.51, 0.53]
+  },
+  "duration": [1, 1, 2, 2, 2],
+  "target": "enemy",
+  "logicKey": "cripplingStrikeLogic"
+},
+"vanish_in_smoke": {
+  "id": "vanish_in_smoke",
+  "name": "Vanish in Smoke",
+  "description": "Remove all debuffs, gain Increase Speed and Immune for {duration} turn",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["cleanse", "buff_increase_speed", "buff_immune"],
+  "duration": 1,
+  "target": "self",
+  "logicKey": "vanishInSmokeLogic"
+},
+"unholy_sermon": {
+  "id": "unholy_sermon",
+  "name": "Unholy Sermon",
+  "description": "Dark words dealing [{base} + {attack} + {int}] magical damage to all, apply Silence for {silenceDuration} turn",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["aoe", "magical", "debuff_silence"],
+  "scaling": {
+    "base": [100, 400, 800, 1400, 2000],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.85, 0.88, 0.91, 0.94, 0.97]
+  },
+  "silenceDuration": 1,
+  "target": "all_enemies",
+  "logicKey": "unholySermonLogic"
+},
+"corrupt_blessing": {
+  "id": "corrupt_blessing",
+  "name": "Corrupt Blessing",
+  "description": "All enemies gain one random buff and Mark debuff, all allies gain one random buff",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "support"],
+  "markDuration": 2,
+  "buffDuration": 2,
+  "target": "all",
+  "logicKey": "corruptBlessingLogic"
+},
+"divine_plague": {
+  "id": "divine_plague",
+  "name": "Divine Plague",
+  "description": "Holy corruption dealing [{base} + {attack} + {int}] magical damage, apply Blight and Silence for {duration} turns",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["magical", "debuff_blight", "debuff_silence"],
+  "scaling": {
+    "base": [90, 360, 720, 1260, 1800],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.72, 0.75, 0.78, 0.81, 0.84]
+  },
+  "duration": [1, 1, 1, 2, 2],
+  "target": "enemy",
+  "logicKey": "divinePlagueLogic"
+},
+"toxic_slam": {
+  "id": "toxic_slam",
+  "name": "Toxic Slam",
+  "description": "Putrid slam dealing [{base} + {attack} + {str}] physical damage to all, apply {bleedStacks} Bleed stacks",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["aoe", "physical", "debuff_bleed"],
+  "scaling": {
+    "base": [95, 380, 760, 1330, 1900],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "str": [0.25, 0.27, 0.29, 0.31, 0.33]
+  },
+  "bleedStacks": 2,
+  "target": "all_enemies",
+  "logicKey": "toxicSlamLogic"
+},
+"epidemic_burst": {
+  "id": "epidemic_burst",
+  "name": "Epidemic Burst",
+  "description": "Plague explosion dealing [{base} + {attack} + {int}] magical damage +{bonusDamage} per total debuffs on enemies",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["magical"],
+  "scaling": {
+    "base": [80, 320, 640, 1120, 1600],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.75, 0.78, 0.81, 0.84, 0.87]
+  },
+  "bonusDamage": 500,
+  "target": "enemy",
+  "logicKey": "epidemicBurstLogic"
+},
+"consume_corruption": {
+  "id": "consume_corruption",
+  "name": "Consume Corruption",
+  "description": "Remove all debuffs, gain massive Shield and Increase Attack/Speed for {duration} turns",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["cleanse", "buff_shield", "buff_increase_attack", "buff_increase_speed"],
+  "shieldPercent": 0.5,
+  "duration": [1, 1, 2, 2, 2],
+  "target": "self",
+  "logicKey": "consumeCorruptionLogic"
+},
+"plague_nova": {
+  "id": "plague_nova",
+  "name": "Plague Nova",
+  "description": "Disease wave dealing [{base} + {attack} + {int}] magical damage to all, stun enemies with Blight for {stunDuration} turn",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "magical", "debuff_stun"],
+  "scaling": {
+    "base": [85, 340, 680, 1190, 1700],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.7, 0.73, 0.76, 0.79, 0.82]
+  },
+  "stunDuration": 1,
+  "target": "all_enemies",
+  "logicKey": "plagueNovaLogic"
+},
+"living_disease_passive": {
+  "id": "living_disease_passive",
+  "name": "Living Disease",
+  "description": "Apply one random debuff to random enemy every turn",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "debuffDuration": 2,
+  "target": "self",
+  "logicKey": "livingDiseasePassiveLogic"
+},
+"mirror_strike": {
+  "id": "mirror_strike",
+  "name": "Mirror Strike",
+  "description": "Physical damage dealing [{base} + {attack} + {str}] damage, creates 5% HP shield on allies with no debuffs",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "buff_shield"],
+  "scaling": {
+    "base": [75, 300, 600, 1050, 1500],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "str": [0.35, 0.37, 0.39, 0.41, 0.43]
+  },
+  "shieldPercent": 0.05,
+  "target": "enemy",
+  "logicKey": "mirrorStrikeLogic"
+},
+"false_image": {
+  "id": "false_image",
+  "name": "False Image",
+  "description": "Grants self Frost Armor and Increase Defense for {duration} turns",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["buff_frost_armor", "buff_increase_defense"],
+  "duration": [3, 3, 3, 3, 3],
+  "target": "self",
+  "logicKey": "falseImageLogic"
+},
+"deceptive_guard": {
+  "id": "deceptive_guard",
+  "name": "Deceptive Guard",
+  "description": "Taunt all enemies for 1 turn, heal self 10% HP, grant 10% HP shield to all allies",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "debuff_taunt", "heal", "buff_shield"],
+  "tauntDuration": 1,
+  "healPercent": 0.1,
+  "shieldPercent": 0.1,
+  "target": "all",
+  "logicKey": "deceptiveGuardLogic"
+},
+"illusion_bolt": {
+  "id": "illusion_bolt",
+  "name": "Illusion Bolt",
+  "description": "Magical bolt dealing [{base} + {attack} + {int}] damage, grants random ally Immune",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["magical", "buff_immune"],
+  "scaling": {
+    "base": [70, 280, 560, 980, 1400],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.75, 0.77, 0.79, 0.81, 0.83]
+  },
+  "immuneDuration": 1,
+  "target": "enemy",
+  "logicKey": "illusionBoltLogic"
+},
+"veil_of_deception": {
+  "id": "veil_of_deception",
+  "name": "Veil of Deception",
+  "description": "All allies heal 10% HP, gain Immune and Increase Speed for {duration} turn",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "heal", "buff_immune", "buff_increase_speed"],
+  "healPercent": 0.1,
+  "duration": 1,
+  "target": "all_allies",
+  "logicKey": "veilOfDeceptionLogic"
+},
+"reality_blur": {
+  "id": "reality_blur",
+  "name": "Reality Blur",
+  "description": "Remove all debuffs from allies and grant 20% HP shield",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["aoe", "cleanse", "buff_shield"],
+  "shieldPercent": 0.2,
+  "target": "all_allies",
+  "logicKey": "realityBlurLogic"
+},
+"phantom_strike": {
+  "id": "phantom_strike",
+  "name": "Phantom Strike",
+  "description": "Physical strike dealing [{base} + {attack} + {agi}] damage, steals 1 buff",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "dispel"],
+  "scaling": {
+    "base": [72, 288, 576, 1008, 1440],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "agi": [0.55, 0.57, 0.59, 0.61, 0.63]
+  },
+  "buffStealCount": 1,
+  "target": "enemy",
+  "logicKey": "phantomStrikeLogic"
+},
+"smoke_and_daggers": {
+  "id": "smoke_and_daggers",
+  "name": "Smoke and Daggers",
+  "description": "Apply Mark and Reduce Speed to target for {duration} turns",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["debuff_mark", "debuff_reduce_speed"],
+  "duration": [2, 2, 3, 3, 4],
+  "target": "enemy",
+  "logicKey": "smokeAndDaggersLogic"
+},
+"illusory_double": {
+  "id": "illusory_double",
+  "name": "Illusory Double",
+  "description": "All debuffs on self are applied to random enemies, then cleansed",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["cleanse", "support"],
+  "target": "self",
+  "logicKey": "illusoryDoubleLogic"
+},
+"nightmare_touch": {
+  "id": "nightmare_touch",
+  "name": "Nightmare Touch",
+  "description": "Dark touch dealing [{base} + {attack} + {int}] magical damage, drains 10% action bar",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["magical", "support"],
+  "scaling": {
+    "base": [68, 272, 544, 952, 1360],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.72, 0.74, 0.76, 0.78, 0.80]
+  },
+  "actionBarDrain": 0.1,
+  "target": "enemy",
+  "logicKey": "nightmareTouchLogic"
+},
+"sleep_paralysis": {
+  "id": "sleep_paralysis",
+  "name": "Sleep Paralysis",
+  "description": "Stun target for 1 turn if they have less than 50% action bar",
+  "cooldown": [3, 3, 3, 2, 2],
+  "effects": ["debuff_stun"],
+  "stunDuration": 1,
+  "actionBarThreshold": 0.5,
+  "target": "enemy",
+  "logicKey": "sleepParalysisLogic"
+},
+"dream_feast": {
+  "id": "dream_feast",
+  "name": "Dream Feast",
+  "description": "Drain 20% action bar from all enemies, heal allies based on drain (max 30% HP)",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "support", "heal"],
+  "actionBarDrain": 0.2,
+  "maxHealPercent": 0.3,
+  "target": "all",
+  "logicKey": "dreamFeastLogic"
+},
+"mirror_blade": {
+  "id": "mirror_blade",
+  "name": "Mirror Blade",
+  "description": "Physical strike dealing [{base} + {attack} + {agi}] damage, double if sharing buffs with target",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical"],
+  "scaling": {
+    "base": [74, 296, 592, 1036, 1480],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "agi": [0.6, 0.62, 0.64, 0.66, 0.68]
+  },
+  "target": "enemy",
+  "logicKey": "mirrorBladeLogic"
+},
+"perfect_copy": {
+  "id": "perfect_copy",
+  "name": "Perfect Copy",
+  "description": "Copy all buffs from target enemy to self",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["support"],
+  "target": "enemy",
+  "logicKey": "perfectCopyLogic"
+},
+"shattered_reflection": {
+  "id": "shattered_reflection",
+  "name": "Shattered Reflection",
+  "description": "On death, all allies gain Immune for 1 turn",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "immuneDuration": 1,
+  "target": "self",
+  "logicKey": "shatteredReflectionLogic"
+},
+"shell_slam": {
+  "id": "shell_slam",
+  "name": "Shell Slam",
+  "description": "Heavy slam dealing [{base} + {attack} + {str}] physical damage, 30% stun chance",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "debuff_stun"],
+  "scaling": {
+    "base": [90, 360, 720, 1260, 1800],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "str": [0.45, 0.47, 0.49, 0.51, 0.53]
+  },
+  "stunChance": 0.3,
+  "stunDuration": 1,
+  "target": "enemy",
+  "logicKey": "shellSlamLogic"
+},
+"fortress_shell": {
+  "id": "fortress_shell",
+  "name": "Fortress Shell",
+  "description": "Grant self massive shield (50% max HP) and Increase Defense for {duration} turns",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["buff_shield", "buff_increase_defense"],
+  "shieldPercent": 0.5,
+  "duration": [3, 3, 4, 4, 5],
+  "target": "self",
+  "logicKey": "fortressShellLogic"
+},
+"tsunami": {
+  "id": "tsunami",
+  "name": "Tsunami",
+  "description": "Halve all enemy action bars, deal [{base} + {attack} + {int}] magical damage to all",
+  "cooldown": [10, 10, 10, 10, 10],
+  "effects": ["aoe", "magical", "support"],
+  "scaling": {
+    "base": [100, 400, 800, 1400, 2000],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.8, 0.82, 0.84, 0.86, 0.88]
+  },
+  "actionBarMultiplier": 0.5,
+  "target": "all_enemies",
+  "logicKey": "tsunamiLogic"
+},
+"ancient_shell": {
+  "id": "ancient_shell",
+  "name": "Ancient Shell",
+  "description": "Gains Frost Armor for 3 turns when created",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "frostArmorDuration": 3,
+  "target": "self",
+  "logicKey": "ancientShellLogic"
+},
+"phantom_blade": {
+  "id": "phantom_blade",
+  "name": "Phantom Blade",
+  "description": "Hybrid strike dealing [{base} + {attack} + {agi}] damage based on lower defense",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "magical"],
+  "scaling": {
+    "base": [78, 312, 624, 1092, 1560],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "agi": [0.65, 0.67, 0.69, 0.71, 0.73],
+    "int": [0.65, 0.67, 0.69, 0.71, 0.73]
+  },
+  "target": "enemy",
+  "logicKey": "phantomBladeLogic"
+},
+"perfect_illusion": {
+  "id": "perfect_illusion",
+  "name": "Perfect Illusion",
+  "description": "Remove all debuffs, gain Increase Speed and Frost Armor for {duration} turns",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["cleanse", "buff_increase_speed", "buff_frost_armor"],
+  "duration": [2, 2, 3, 3, 4],
+  "target": "self",
+  "logicKey": "perfectIllusionLogic"
+},
+"shimmering_assault": {
+  "id": "shimmering_assault",
+  "name": "Shimmering Assault",
+  "description": "Attack all enemies for [{base} + {attack} + {agi}] damage, steal 1 buff from each",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "physical", "dispel"],
+  "scaling": {
+    "base": [65, 260, 520, 910, 1300],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "agi": [0.55, 0.57, 0.59, 0.61, 0.63]
+  },
+  "buffStealCount": 1,
+  "target": "all_enemies",
+  "logicKey": "shimmeringAssaultLogic"
+},
+"mirror_of_truth": {
+  "id": "mirror_of_truth",
+  "name": "Mirror of Truth",
+  "description": "Each turn, copy all unique buffs from enemy team (unless stunned/silenced/taunted)",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "target": "self",
+  "logicKey": "mirrorOfTruthLogic"
+},
+"lightning_breath": {
+  "id": "lightning_breath",
+  "name": "Lightning Breath",
+  "description": "Electric breath dealing [{base} + {attack} + {int}] magical damage to all enemies with {stunChance}% chance to Stun for {stunDuration} turn",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["aoe", "magical", "debuff_stun"],
+  "scaling": {
+    "base": [65, 260, 520, 910, 1300],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.7, 0.73, 0.76, 0.79, 0.82]
+  },
+  "stunChance": [0.25, 0.3, 0.35, 0.4, 0.45],
+  "stunDuration": [1, 1, 1, 1, 2],
+  "target": "all_enemies",
+  "logicKey": "lightningBreathLogic"
+},
+"storm_shield": {
+  "id": "storm_shield",
+  "name": "Storm Shield",
+  "description": "Grant all allies a {shieldAmount} HP Shield",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "buff_shield"],
+  "shieldAmount": [60, 240, 480, 840, 1200],
+  "target": "all_allies",
+  "logicKey": "stormShieldLogic"
+},
+"eye_of_the_storm": {
+  "id": "eye_of_the_storm",
+  "name": "Eye of the Storm",
+  "description": "When damaged, grants random ally Increase Speed for {duration} turns",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "duration": [1, 1, 2, 2, 2],
+  "target": "self",
+  "logicKey": "eyeOfTheStormLogic"
+},
+"shadow_flame": {
+  "id": "shadow_flame",
+  "name": "Shadow Flame",
+  "description": "Dark flames dealing [{base} + {attack} + {int}] magical damage and applying Mark and Blight for {duration} turns",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["magical", "debuff_mark", "debuff_blight"],
+  "scaling": {
+    "base": [70, 280, 560, 980, 1400],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.75, 0.78, 0.81, 0.84, 0.87]
+  },
+  "duration": [2, 2, 3, 3, 4],
+  "target": "enemy",
+  "logicKey": "shadowFlameLogic"
+},
+"corrupting_darkness": {
+  "id": "corrupting_darkness",
+  "name": "Corrupting Darkness",
+  "description": "Shadow wave silencing all enemies for {silenceDuration} turn",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "debuff_silence"],
+  "silenceDuration": [1, 1, 1, 2, 2],
+  "target": "all_enemies",
+  "logicKey": "corruptingDarknessLogic"
+},
+"shadow_veil": {
+  "id": "shadow_veil",
+  "name": "Shadow Veil",
+  "description": "Attacks have {markChance}% chance to apply Mark for {markDuration} turn",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "markChance": [0.3, 0.35, 0.4, 0.45, 0.5],
+  "markDuration": [1, 1, 1, 1, 2],
+  "target": "self",
+  "logicKey": "shadowVeilLogic"
+},
+"scorching_breath": {
+  "id": "scorching_breath",
+  "name": "Scorching Breath",
+  "description": "Fiery breath dealing [{base} + {attack} + {str}] physical damage to all enemies and applying Bleed for {bleedDuration} turns",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["aoe", "physical", "debuff_bleed"],
+  "scaling": {
+    "base": [75, 300, 600, 1050, 1500],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "str": [0.35, 0.38, 0.41, 0.44, 0.47]
+  },
+  "bleedDuration": [2, 2, 3, 3, 4],
+  "target": "all_enemies",
+  "logicKey": "scorchingBreathLogic"
+},
+"inferno_wave": {
+  "id": "inferno_wave",
+  "name": "Inferno Wave",
+  "description": "Devastating fire wave dealing [{base} + {attack} + {str}] physical damage to all enemies, +50% damage to bleeding targets",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "physical"],
+  "scaling": {
+    "base": [85, 340, 680, 1190, 1700],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "str": [0.4, 0.43, 0.46, 0.49, 0.52]
+  },
+  "bleedBonus": [1.5, 1.5, 1.5, 1.5, 1.5],
+  "target": "all_enemies",
+  "logicKey": "infernoWaveLogic"
+},
+"burning_fury": {
+  "id": "burning_fury",
+  "name": "Burning Fury",
+  "description": "Gains Increase Attack for {duration} turns when any unit has Bleed",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "duration": [1, 1, 2, 2, 2],
+  "target": "self",
+  "logicKey": "burningFuryLogic"
+},
+"frost_breath_dragon": {
+  "id": "frost_breath_dragon",
+  "name": "Frost Breath",
+  "description": "Icy breath dealing [{base} + {attack} + {int}] magical damage to all enemies, applying Reduce Speed and Reduce Attack for {duration} turns",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["aoe", "magical", "debuff_reduce_speed", "debuff_reduce_attack"],
+  "scaling": {
+    "base": [80, 320, 640, 1120, 1600],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.8, 0.83, 0.86, 0.89, 0.92]
+  },
+  "duration": [2, 2, 3, 3, 4],
+  "target": "all_enemies",
+  "logicKey": "frostBreathDragonLogic"
+},
+"glacial_barrier": {
+  "id": "glacial_barrier",
+  "name": "Glacial Barrier",
+  "description": "Grant Frost Armor to all allies for {duration} turns",
+  "cooldown": [5, 5, 4, 4, 3],
+  "effects": ["aoe", "buff_frost_armor"],
+  "duration": [2, 2, 3, 3, 4],
+  "target": "all_allies",
+  "logicKey": "glacialBarrierLogic"
+},
+"frozen_heart": {
+  "id": "frozen_heart",
+  "name": "Frozen Heart",
+  "description": "All magical damage is halved, gain Increase Defense for {duration} turns when hit with magical damage",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "magicReduction": [0.5, 0.5, 0.5, 0.5, 0.5],
+  "duration": [1, 1, 2, 2, 2],
+  "target": "self",
+  "logicKey": "frozenHeartLogic"
+},
+"elemental_devastation": {
+  "id": "elemental_devastation",
+  "name": "Elemental Devastation",
+  "description": "Catastrophic AOE dealing [{base} + {attack} + {int}] magical damage + {debuffBonus} per debuff on targets",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["aoe", "magical"],
+  "scaling": {
+    "base": [100, 400, 800, 1400, 2000],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.85, 0.88, 0.91, 0.94, 0.97]
+  },
+  "debuffBonus": [50, 100, 200, 400, 800],
+  "target": "all_enemies",
+  "logicKey": "elementalDevastationLogic"
+},
+"regenerating_heads": {
+  "id": "regenerating_heads",
+  "name": "Regenerating Heads",
+  "description": "When below {hpThreshold}% HP, fully heal and cleanse all debuffs (once per battle)",
+  "cooldown": [99, 99, 99, 99, 99],
+  "effects": ["heal", "cleanse"],
+  "hpThreshold": [0.3, 0.3, 0.3, 0.3, 0.3],
+  "target": "self",
+  "logicKey": "regeneratingHeadsLogic"
+},
+"hydras_command": {
+  "id": "hydras_command",
+  "name": "Hydra's Command",
+  "description": "After Hydra's turn, random ally attacks with their first spell",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["passive"],
+  "passive": true,
+  "target": "self",
+  "logicKey": "hydrasCommandLogic"
+},
+"swift_strike": {
+  "id": "swift_strike",
+  "name": "Swift Strike",
+  "description": "Quick attack dealing [{base} + {attack} + {agi}] physical damage and granting Increase Speed for {duration} turns",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["physical", "buff_increase_speed"],
+  "scaling": {
+    "base": [40, 160, 320, 560, 800],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "agi": [0.5, 0.53, 0.56, 0.59, 0.62]
+  },
+  "duration": [1, 1, 2, 2, 2],
+  "target": "enemy",
+  "logicKey": "swiftStrikeLogic"
+},
+"aerial_support": {
+  "id": "aerial_support",
+  "name": "Aerial Support",
+  "description": "Grant all allies Increase Speed for {duration} turns and heal lowest HP ally for {healPercent}% max HP",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["aoe", "buff_increase_speed", "heal"],
+  "duration": [2, 2, 3, 3, 4],
+  "healPercent": [0.15, 0.18, 0.21, 0.24, 0.27],
+  "target": "all_allies",
+  "logicKey": "aerialSupportLogic"
+},
+"purifying_flame": {
+  "id": "purifying_flame",
+  "name": "Purifying Flame",
+  "description": "Small flame dealing [{base} + {attack} + {int}] magical damage and removing 1 buff from target",
+  "cooldown": [0, 0, 0, 0, 0],
+  "effects": ["magical", "dispel"],
+  "scaling": {
+    "base": [30, 120, 240, 420, 600],
+    "attack": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "int": [0.6, 0.63, 0.66, 0.69, 0.72]
+  },
+  "buffsToRemove": [1, 1, 1, 1, 1],
+  "target": "enemy",
+  "logicKey": "purifyingFlameLogic"
+},
+"youthful_energy": {
+  "id": "youthful_energy",
+  "name": "Youthful Energy",
+  "description": "Grant all allies {actionBarGrant}% action bar",
+  "cooldown": [4, 4, 3, 3, 2],
+  "effects": ["aoe", "support"],
+  "actionBarGrant": [0.2, 0.22, 0.24, 0.26, 0.28],
+  "target": "all_allies",
+  "logicKey": "youthfulEnergyLogic"
+},
+"win": {
+    "id": "win",
+    "name": "Win",
+    "description": "[{base}] Pure Damage and gain Increase Speed for {duration} turns",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["aoe", "pure", "buff_increase_speed"],
+    "scaling": {
+        "base": [10000000, 100000000, 200000000, 300000000, 400000000]
+    },
+    "duration": [5, 6, 7, 8, 9],
+    "target": "all_enemies",
+    "logicKey": "winLogic"
+},
+"lose": {
+    "id": "lose",
+    "name": "Lose",
+    "description": "Lose intentionally",
+    "cooldown": [0, 0, 0, 0, 0],
+    "effects": ["pure", "aoe"],
+    "scaling": {
+        "base": [10000000, 100000000, 200000000, 300000000, 400000000]
+    },
+    "target": "all_allies",
+    "logicKey": "loseLogic"
+},
+"increase_attack_test": {
+    "id": "increase_attack_test",
+    "name": "Increase Attack Test",
+    "description": "Grants Increase Attack buff for {duration} turns",
+    "cooldown": [1, 1, 1, 1, 1],
+    "duration": [1, 2, 3, 3, 4],
+    "effects": ["buff_increase_attack"],
+    "target": "ally",
+    "logicKey": "increaseAttackTestLogic"
+},
+"increase_speed_test": {
+    "id": "increase_speed_test",
+    "name": "Increase Speed Test",
+    "description": "Grants Increase Speed buff for {duration} turns",
+    "cooldown": [1, 1, 1, 1, 1],
+    "duration": [2, 2, 3, 3, 4],
+    "effects": ["buff_increase_speed"],
+    "target": "ally",
+    "logicKey": "increaseSpeedTestLogic"
+},
+"increase_defense_test": {
+    "id": "increase_defense_test",
+    "name": "Increase Defense Test",
+    "description": "Grants Increase Defense buff for {duration} turns",
+    "cooldown": [1, 1, 1, 1, 1],
+    "duration": [2, 2, 3, 3, 4],
+    "effects": ["buff_increase_defense"],
+    "target": "ally",
+    "logicKey": "increaseDefenseTestLogic"
+},
+"immune_test": {
+    "id": "immune_test",
+    "name": "Immune Test",
+    "description": "Grants Immune buff for {duration} turns",
+    "cooldown": [1, 1, 1, 1, 1],
+    "duration": [2, 2, 3, 3, 4],
+    "effects": ["buff_immune"],
+    "target": "ally",
+    "logicKey": "immuneTestLogic"
+},
+"shield_test": {
+    "id": "shield_test",
+    "name": "Shield Test",
+    "description": "Grants Shield buff that absorbs {shieldAmount} damage",
+    "cooldown": [1, 1, 1, 1, 1],
+    "shieldAmount": [50, 200, 400, 600, 800],
+    "effects": ["buff_shield"],
+    "target": "ally",
+    "logicKey": "shieldTestLogic"
+},
+"frost_armor_test": {
+    "id": "frost_armor_test",
+    "name": "Frost Armor Test",
+    "description": "Grants Frost Armor buff for {duration} turns (25% damage reduction, attackers are slowed)",
+    "cooldown": [1, 1, 1, 1, 1],
+    "duration": [2, 2, 3, 3, 4],
+    "effects": ["buff_frost_armor", "support"],
+    "target": "ally",
+    "logicKey": "frostArmorTestLogic"
+},
+"reduce_attack_test": {
+    "id": "reduce_attack_test",
+    "name": "Reduce Attack Test",
+    "description": "Inflicts Reduce Attack debuff for {duration} turns",
+    "cooldown": [1, 1, 1, 1, 1],
+    "duration": [2, 2, 3, 3, 4],
+    "effects": ["debuff_reduce_attack"],
+    "target": "enemy",
+    "logicKey": "reduceAttackTestLogic"
+},
+"reduce_speed_test": {
+    "id": "reduce_speed_test",
+    "name": "Reduce Speed Test",
+    "description": "Inflicts Reduce Speed debuff for {duration} turns",
+    "cooldown": [1, 1, 1, 1, 1],
+    "duration": [2, 2, 3, 3, 4],
+    "effects": ["debuff_reduce_speed"],
+    "target": "enemy",
+    "logicKey": "reduceSpeedTestLogic"
+},
+"reduce_defense_test": {
+    "id": "reduce_defense_test",
+    "name": "Reduce Defense Test",
+    "description": "Inflicts Reduce Defense debuff for {duration} turns",
+    "cooldown": [1, 1, 1, 1, 1],
+    "duration": [2, 2, 3, 3, 4],
+    "effects": ["debuff_reduce_defense"],
+    "target": "enemy",
+    "logicKey": "reduceDefenseTestLogic"
+},
+"blight_test": {
+    "id": "blight_test",
+    "name": "Blight Test",
+    "description": "Inflicts Blight debuff for {duration} turns",
+    "cooldown": [1, 1, 1, 1, 1],
+    "duration": [2, 2, 3, 3, 4],
+    "effects": ["debuff_blight"],
+    "target": "enemy",
+    "logicKey": "blightTestLogic"
+},
+"bleed_test": {
+    "id": "bleed_test",
+    "name": "Bleed Test",
+    "description": "Inflicts Bleed debuff for {duration} turns",
+    "cooldown": [1, 1, 1, 1, 1],
+    "duration": [2, 2, 3, 3, 4],
+    "effects": ["debuff_bleed"],
+    "target": "enemy",
+    "logicKey": "bleedTestLogic"
+},
+"stun_test": {
+    "id": "stun_test",
+    "name": "Stun Test",
+    "description": "Inflicts Stun debuff for {duration} turns",
+    "cooldown": [1, 1, 1, 1, 1],
+    "duration": [1, 1, 2, 2, 2],
+    "effects": ["debuff_stun"],
+    "target": "enemy",
+    "logicKey": "stunTestLogic"
+},
+"taunt_test": {
+    "id": "taunt_test",
+    "name": "Taunt Test",
+    "description": "Forces enemy to attack this unit for {duration} turns",
+    "cooldown": [1, 1, 1, 1, 1],
+    "duration": [2, 2, 3, 3, 4],
+    "effects": ["debuff_taunt"],
+    "target": "enemy",
+    "logicKey": "tauntTestLogic"
+},
+"silence_test": {
+    "id": "silence_test",
+    "name": "Silence Test",
+    "description": "Inflicts Silence debuff for {duration} turns",
+    "cooldown": [1, 1, 1, 1, 1],
+    "duration": [2, 2, 3, 3, 4],
+    "effects": ["debuff_silence"],
+    "target": "enemy",
+    "logicKey": "silenceTestLogic"
+},
+"mark_test": {
+    "id": "mark_test",
+    "name": "Mark Test",
+    "description": "Inflicts Mark debuff for {duration} turns",
+    "cooldown": [1, 1, 1, 1, 1],
+    "duration": [2, 2, 3, 3, 4],
+    "effects": ["debuff_mark"],
+    "target": "enemy",
+    "logicKey": "markTestLogic"
+}
+}
