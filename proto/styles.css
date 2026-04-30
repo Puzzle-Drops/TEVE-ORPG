@@ -1,0 +1,611 @@
+/* TEVE Prototype — HUD + overlay styling */
+
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0; overflow: hidden;
+    width: 100vw; height: 100vh;
+    background: #000;
+    color: #ddd;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+}
+
+canvas#proto-canvas {
+    position: absolute; inset: 0;
+    width: 100vw; height: 100vh;
+    display: block; cursor: default;
+}
+
+/* Loading screen */
+#proto-loading {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at center, #1a1f3a 0%, #06080f 100%);
+    z-index: 1000;
+}
+.loading-title {
+    font-size: 32px; font-weight: 800;
+    letter-spacing: 8px;
+    color: #c8a050;
+    text-shadow: 0 0 20px rgba(200, 160, 80, 0.6), 0 4px 8px rgba(0,0,0,0.8);
+    margin-bottom: 28px;
+}
+.loading-bar {
+    width: 360px; height: 4px;
+    background: rgba(200, 160, 80, 0.15);
+    border-radius: 2px; overflow: hidden;
+}
+.loading-fill {
+    width: 0%; height: 100%;
+    background: linear-gradient(90deg, #c8a050, #f1d28a, #c8a050);
+    transition: width 0.25s ease-out;
+    box-shadow: 0 0 8px rgba(241, 210, 138, 0.6);
+}
+
+/* HUD container */
+#proto-hud {
+    position: absolute; inset: 0;
+    pointer-events: none; z-index: 100;
+}
+#proto-hud > * { pointer-events: auto; }
+
+/* === LEFT panel: portrait + bars === */
+.hud-left {
+    position: absolute; bottom: 18px; left: 18px;
+    pointer-events: auto;
+}
+
+/* === Fancy player frame: portrait + bars + stats, all attached === */
+.player-frame {
+    background: linear-gradient(180deg, rgba(28,22,40,0.96), rgba(8,6,14,0.92));
+    border: 2px solid #c8a050;
+    border-radius: 8px;
+    padding: 12px;
+    min-width: 380px;
+    box-shadow:
+        0 6px 22px rgba(0,0,0,0.7),
+        inset 0 0 18px rgba(0,0,0,0.55),
+        0 0 18px rgba(200,160,80,0.18);
+}
+.pf-top { display: flex; gap: 14px; align-items: stretch; }
+.pf-portrait {
+    position: relative;
+    width: 100px; height: 100px;
+    flex-shrink: 0;
+    /* Outer container is NOT clipped, so the level pill can overhang. */
+}
+.pf-portrait-clip {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 30%, #2a2438, #06080f);
+    border: 3px solid #c8a050;
+    border-radius: 50%;
+    box-shadow: inset 0 0 22px rgba(0,0,0,0.75), 0 0 14px rgba(0,0,0,0.7);
+    overflow: hidden;
+}
+.pf-portrait-art {
+    position: absolute; inset: 4px;
+    background: radial-gradient(circle at 50% 35%, #f1d28a 0%, #c8a050 60%, #6a4226 100%);
+    border-radius: 50%;
+    box-shadow: inset 0 -8px 18px rgba(0,0,0,0.45);
+}
+.pf-portrait-img {
+    position: absolute; inset: 4px;
+    width: calc(100% - 8px); height: calc(100% - 8px);
+    object-fit: cover;
+    border-radius: 50%;
+    image-rendering: -webkit-optimize-contrast;
+}
+.tf-portrait-img {
+    position: absolute; inset: 4px;
+    width: calc(100% - 8px); height: calc(100% - 8px);
+    object-fit: cover;
+    border-radius: 50%;
+    image-rendering: -webkit-optimize-contrast;
+}
+
+/* Star ratings — row sits below name, only filled gold stars are shown */
+.pf-stars-row, .tf-stars-row {
+    display: flex; gap: 2px;
+    margin: 1px 0 4px;
+    min-height: 14px;
+}
+.star {
+    font-size: 13px; line-height: 1;
+    color: #fbbf24;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.95), 0 0 4px rgba(251,191,36,0.45);
+}
+.tf-stars-row .star { font-size: 12px; }
+.pf-portrait-lv {
+    position: absolute; bottom: -4px; right: -4px;
+    width: 32px; height: 32px;
+    background: #14101e;
+    border: 2px solid #c8a050;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #f1d28a;
+    font-weight: 800; font-size: 14px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.9);
+    z-index: 5;
+}
+.pf-side {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    min-width: 240px;
+}
+.pf-name-row { display: flex; align-items: center; padding-bottom: 2px; margin-bottom: 2px; }
+.pf-side .hud-name {
+    font-weight: 800; font-size: 16px; color: #f1d28a;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.95);
+    letter-spacing: 0.5px;
+}
+
+/* Stats row below portrait+bars block */
+.pf-stats-row {
+    display: flex; gap: 6px; align-items: center;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(200,160,80,0.30);
+}
+.stat-card {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.7));
+    border: 1px solid #2a2a3a;
+    border-radius: 4px;
+    padding: 4px 0 5px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
+}
+.stat-card .sc-ico {
+    width: 22px; height: 22px;
+    image-rendering: -webkit-optimize-contrast;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.7));
+}
+.stat-card .sc-lbl {
+    font-size: 10px; color: #888; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    line-height: 12px;
+}
+.stat-card .sc-val {
+    font-size: 16px; font-weight: 800; color: #f1d28a;
+    line-height: 18px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+}
+.stat-card.s-str { border-color: #882828; box-shadow: inset 0 1px 2px rgba(0,0,0,0.6), 0 0 6px rgba(236,80,80,0.18); }
+.stat-card.s-agi { border-color: #287a40; box-shadow: inset 0 1px 2px rgba(0,0,0,0.6), 0 0 6px rgba(110,245,142,0.18); }
+.stat-card.s-int { border-color: #2c4a82; box-shadow: inset 0 1px 2px rgba(0,0,0,0.6), 0 0 6px rgba(88,164,255,0.18); }
+.stat-card.s-str .sc-val { color: #ec5050; }
+.stat-card.s-agi .sc-val { color: #6ef58e; }
+.stat-card.s-int .sc-val { color: #58a4ff; }
+.stat-divider {
+    width: 1px; height: 38px;
+    background: rgba(200,160,80,0.35);
+    margin: 0 4px;
+}
+
+/* Old portrait class — keep selectors so any stale references hide cleanly */
+.hud-portrait, .hud-portrait-level, .hud-portrait-glyph,
+.hud-frame, .hud-name-row, .hud-lvl-pill, .hud-stats-grid,
+.ss, .ss-lbl, .ss-val { /* unused now */ }
+
+.hud-bars { display: flex; flex-direction: column; gap: 4px; min-width: 280px; }
+.hud-name { font-weight: 700; font-size: 15px; color: #f1d28a; text-shadow: 0 1px 2px rgba(0,0,0,0.8); margin-bottom: 2px; }
+.hud-bar {
+    position: relative;
+    width: 100%; height: 18px;
+    background: linear-gradient(180deg, #060812, #14101e);
+    border: 1px solid #1a1a2a;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow:
+        inset 0 0 8px rgba(0,0,0,0.85),
+        inset 0 1px 0 rgba(0,0,0,0.5),
+        0 1px 0 rgba(200,160,80,0.18);
+}
+.hud-bar-fill {
+    height: 100%;
+    transition: width 0.18s ease-out;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -2px 4px rgba(0,0,0,0.4);
+}
+.hud-bar.hp .hud-bar-fill {
+    background: linear-gradient(180deg, #ff7066 0%, #d83838 35%, #8a1a1a 70%, #4a0808 100%);
+}
+.hud-bar.mp .hud-bar-fill {
+    background: linear-gradient(180deg, #88c4ff 0%, #4682e0 35%, #1f4ca0 70%, #0a2050 100%);
+}
+.hud-bar.xp { height: 7px; }
+.hud-bar.xp .hud-bar-fill {
+    background: linear-gradient(90deg, #b8741a 0%, #f1c40f 50%, #ffe070 100%);
+}
+.hud-bar-text {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    color: #fff;
+    text-shadow: 0 0 3px #000, 0 1px 2px rgba(0,0,0,0.95);
+    letter-spacing: 0.3px;
+}
+
+/* === CENTER ability bar === */
+.hud-center {
+    position: absolute; bottom: 18px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 8px; align-items: flex-end;
+}
+.ab-slot {
+    position: relative;
+    width: 64px; height: 64px;
+    background: linear-gradient(180deg, #1a1626 0%, #08070d 100%);
+    border: 2px solid #4a4a6a;
+    border-radius: 6px;
+    cursor: help;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5), inset 0 0 12px rgba(0,0,0,0.4);
+}
+.ab-slot.basic   { border-color: #c8a050; }
+.ab-slot.ready   { border-color: #c8a050; box-shadow: 0 4px 8px rgba(0,0,0,0.5), 0 0 8px rgba(200,160,80,0.4); }
+.ab-slot.just-ready { animation: justReady 0.5s ease-out; }
+@keyframes justReady {
+    0%   { box-shadow: 0 4px 8px rgba(0,0,0,0.5), 0 0 22px rgba(241,210,138,0.95), 0 0 32px rgba(255,200,100,0.65); transform: scale(1.06); }
+    100% { box-shadow: 0 4px 8px rgba(0,0,0,0.5), 0 0 8px rgba(200,160,80,0.4); transform: scale(1.0); }
+}
+.ab-slot.cd      { border-color: #444; opacity: 0.85; }
+.ab-slot.no-mana { border-color: #2a4868; }
+.ab-slot.casting { border-color: #58a4ff; box-shadow: 0 0 14px #58a4ff; }
+.ab-icon {
+    position: absolute; inset: 3px;
+    background-color: #06080f;
+    background-size: cover;
+    background-position: center;
+    border-radius: 4px;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.7);
+}
+.ab-sweep { position: absolute; inset: 0; pointer-events: none; }
+.ab-key {
+    position: absolute; top: 2px; left: 5px;
+    font-size: 12px; font-weight: 800;
+    color: #f1d28a;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+}
+.ab-cd-text {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 800; color: #fff;
+    text-shadow: 0 0 4px #000, 0 1px 3px rgba(0,0,0,1);
+    pointer-events: none;
+}
+.ab-cost {
+    position: absolute; bottom: 2px; right: 4px;
+    font-size: 10px; font-weight: 700; color: #58a4ff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+}
+
+.passive-slot {
+    width: 48px; height: 48px;
+    background: radial-gradient(circle at 50% 30%, #2a2438, #06080f);
+    border: 2px solid #6a4aa0;
+    border-radius: 50%;
+    margin-left: 8px;
+    box-shadow: 0 0 12px rgba(106,74,160,0.4);
+    position: relative;
+    cursor: help;
+}
+.passive-icon {
+    position: absolute; inset: 3px;
+    background-color: #06080f;
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.7);
+}
+
+/* === Target frame (selected mob, top-left) === */
+.target-frame {
+    position: absolute; top: 18px; left: 18px;
+    background: linear-gradient(180deg, rgba(40,18,18,0.96), rgba(10,4,8,0.92));
+    border: 2px solid #c0392b;
+    border-radius: 8px;
+    padding: 10px;
+    min-width: 340px;
+    box-shadow:
+        0 6px 22px rgba(0,0,0,0.7),
+        inset 0 0 18px rgba(0,0,0,0.55),
+        0 0 14px rgba(192,57,43,0.22);
+    pointer-events: auto;
+}
+.tf-top { display: flex; gap: 12px; align-items: stretch; }
+.tf-portrait {
+    position: relative;
+    width: 78px; height: 78px;
+    flex-shrink: 0;
+}
+.tf-portrait-clip {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 30%, #2a1014, #06030a);
+    border: 3px solid #c0392b;
+    border-radius: 50%;
+    box-shadow: inset 0 0 18px rgba(0,0,0,0.75), 0 0 10px rgba(0,0,0,0.7);
+    overflow: hidden;
+}
+.tf-portrait-art {
+    position: absolute; inset: 4px;
+    background: radial-gradient(circle at 50% 35%, #c0392b 0%, #4a1818 70%, #14060a 100%);
+    border-radius: 50%;
+    box-shadow: inset 0 -6px 14px rgba(0,0,0,0.5);
+}
+.tf-portrait-tier {
+    position: absolute; bottom: -4px; right: -4px;
+    width: 26px; height: 26px;
+    background: #14101e;
+    border: 2px solid #c0392b;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #ec5050;
+    font-weight: 800; font-size: 12px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.85);
+    z-index: 5;
+}
+.tf-side {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    min-width: 220px;
+}
+.tf-name-row { display: flex; align-items: center; padding-bottom: 2px; margin-bottom: 2px; }
+.tf-name {
+    font-weight: 800; font-size: 15px; color: #f1d28a;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.95);
+    letter-spacing: 0.4px;
+}
+/* Empty MP/XP bars on the target frame — keep the slot's footprint so the HP
+ * bar lines up vertically with the player's HP bar. Show muted gray fill. */
+.hud-bar.empty { opacity: 0.35; }
+.hud-bar.empty .hud-bar-fill { background: linear-gradient(180deg, #555, #333); width: 0% !important; }
+.hud-bar.empty .hud-bar-text { color: #888; }
+.tf-stats-row {
+    display: flex; gap: 5px; align-items: center;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(192,57,43,0.30);
+}
+.tf-stats-row .stat-card { padding: 3px 0 4px; }
+.tf-stats-row .stat-card .sc-val { font-size: 16px; line-height: 20px; }
+
+/* === Combat log (top-right) === */
+.combat-log {
+    position: absolute; top: 60px; right: 18px;
+    width: 300px; max-height: 200px;
+    overflow-y: auto;
+    background: rgba(8,10,16,0.55);
+    border: 1px solid #2a2a3a;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 11px; line-height: 14px;
+    color: #aaa;
+    pointer-events: auto;
+}
+.combat-log-line { line-height: 14px; }
+
+/* === Top-center stats === */
+.hud-top { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 16px; }
+.hud-top-stat {
+    background: rgba(8,10,16,0.65);
+    border: 1px solid #2a2a3a;
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 12px; font-weight: 600;
+    display: flex; gap: 6px; align-items: center;
+}
+.hud-top-stat .lbl { color: #888; margin-left: 4px; }
+.hud-top-stat .val { color: #f1d28a; margin-right: 6px; }
+.hud-top-stat .val-str { color: #ec5050; }
+.hud-top-stat .val-agi { color: #6ef58e; }
+.hud-top-stat .val-int { color: #58a4ff; }
+
+/* === Vignette overlay === */
+#proto-vignette {
+    position: absolute; inset: 0;
+    pointer-events: none; z-index: 50;
+    box-shadow: inset 0 0 200px rgba(0,0,0,0.6);
+    transition: box-shadow 0.18s ease-out;
+}
+#proto-vignette.danger { box-shadow: inset 0 0 280px rgba(180,0,0,0.7); }
+#proto-vignette.hit    { box-shadow: inset 0 0 360px rgba(255,40,40,0.85); transition: box-shadow 0.04s ease-out; }
+#proto-vignette.hit.danger { box-shadow: inset 0 0 360px rgba(255,40,40,0.95); }
+
+/* === Damage / heal numbers === */
+.dmg-num {
+    position: absolute;
+    pointer-events: none;
+    font-size: 22px;
+    font-weight: 800;
+    text-shadow: 0 0 6px #000, 2px 2px 4px rgba(0,0,0,0.9);
+    z-index: 200;
+    letter-spacing: -0.5px;
+}
+.dmg-num.physical { color: #fff; }
+.dmg-num.magical  { color: #88aaff; }
+.dmg-num.heal     { color: #6ef58e; }
+.dmg-num.crit     { color: #fbbf24; font-size: 30px; text-shadow: 0 0 10px rgba(251,191,36,0.7), 2px 2px 4px #000; }
+.dmg-num.mana     { color: #58a4ff; font-size: 16px; }
+.dmg-num.miss     { color: #888; }
+
+/* Floating label (e.g. "+Buff", "Level Up!") */
+.float-text {
+    position: absolute; pointer-events: none;
+    font-size: 14px; font-weight: 700;
+    text-shadow: 0 0 6px #000, 1px 1px 3px #000;
+    z-index: 200;
+}
+
+/* === Debug overlay === */
+#proto-debug {
+    position: absolute; top: 18px; left: 18px;
+    background: rgba(8,10,16,0.65);
+    padding: 4px 10px;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 11px; color: #888;
+    border-radius: 3px;
+    pointer-events: none;
+}
+
+/* === Death overlay === */
+.death-overlay {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(80,0,0,0.4), rgba(0,0,0,0.85));
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 300;
+    color: #fff;
+    pointer-events: none;
+}
+.death-title { font-size: 56px; font-weight: 800; color: #ec5050; text-shadow: 0 0 24px rgba(200,40,40,0.6), 0 4px 12px rgba(0,0,0,0.9); letter-spacing: 4px; }
+.death-sub   { font-size: 18px; color: #aaa; margin-top: 16px; }
+
+/* === Char sheet panel === */
+.cs-panel {
+    position: absolute; top: 70px; left: 18px;
+    width: 360px;
+    background: rgba(10,12,20,0.96);
+    border: 2px solid #c8a050;
+    border-radius: 8px;
+    padding: 14px 16px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+    z-index: 150;
+}
+.cs-title {
+    font-size: 16px; font-weight: 800; color: #f1d28a;
+    border-bottom: 1px solid #4a4a6a;
+    padding-bottom: 8px; margin-bottom: 10px;
+}
+.cs-close { position: absolute; top: 10px; right: 14px; cursor: pointer; color: #888; font-size: 18px; }
+.cs-close:hover { color: #fff; }
+.cs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cs-section {
+    background: rgba(20,22,32,0.7);
+    border: 1px solid #2a2a3a; border-radius: 4px;
+    padding: 6px 10px;
+}
+.cs-section-title {
+    font-size: 10px; color: #c8a050;
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 4px; padding-bottom: 2px;
+    border-bottom: 1px solid #2a2a3a;
+}
+.cs-row { display: flex; justify-content: space-between; font-size: 12px; line-height: 18px; color: #ddd; }
+.cs-row b { color: #f1d28a; }
+.cs-bonus { color: #6ef58e; font-size: 11px; font-weight: 600; }
+
+/* === Custom tooltip (ProtoTooltip) === */
+.proto-tooltip {
+    position: absolute;
+    background: linear-gradient(180deg, rgba(28,22,40,0.98), rgba(8,6,14,0.98));
+    border: 2px solid #c8a050;
+    border-radius: 6px;
+    padding: 0;
+    max-width: 320px; min-width: 160px;
+    pointer-events: none;
+    z-index: 20000;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.85), 0 0 14px rgba(200,160,80,0.18);
+    font-size: 12px;
+    color: #ddd;
+}
+.proto-tooltip .tt-head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(200,160,80,0.30);
+    background: linear-gradient(180deg, rgba(200,160,80,0.10), rgba(200,160,80,0.02));
+}
+.proto-tooltip .tt-ico {
+    width: 24px; height: 24px;
+    image-rendering: -webkit-optimize-contrast;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.7));
+    flex-shrink: 0;
+}
+.proto-tooltip .tt-name {
+    font-weight: 800;
+    font-size: 14px;
+    color: #f1d28a;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+}
+.proto-tooltip .tt-name .tt-key {
+    color: #c599ff;
+    font-weight: 700;
+    margin-left: 4px;
+}
+.proto-tooltip .tt-body {
+    padding: 6px 10px 8px;
+}
+.proto-tooltip .tt-line {
+    line-height: 16px;
+    margin: 2px 0;
+}
+.proto-tooltip .tt-line.muted { color: #999; font-size: 11px; }
+.proto-tooltip .tt-line.meta {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed rgba(200,160,80,0.20);
+    font-size: 11px;
+    color: #aaa;
+}
+.proto-tooltip .tt-line .tt-cost { color: #58a4ff; font-weight: 700; }
+.proto-tooltip .tt-line .tt-cd   { color: #fbbf24; font-weight: 700; }
+.proto-tooltip .tt-head.tt-str .tt-name { color: #ec5050; }
+.proto-tooltip .tt-head.tt-agi .tt-name { color: #6ef58e; }
+.proto-tooltip .tt-head.tt-int .tt-name { color: #58a4ff; }
+.proto-tooltip .tt-head.tt-hp  .tt-name { color: #ff7066; }
+.proto-tooltip .tt-head.tt-mp  .tt-name { color: #88c4ff; }
+.proto-tooltip .tt-head.tt-xp  .tt-name { color: #ffe070; }
+.proto-tooltip .tt-head.tt-passive .tt-name { color: #c599ff; }
+
+/* Hide the legacy .tooltip class since we built our own */
+.tooltip { display: none !important; }
+
+/* === Tooltips (legacy section below) === */
+.tooltip {
+    position: absolute;
+    background: rgba(8,10,16,0.96);
+    border: 1px solid #c8a050;
+    border-radius: 4px;
+    padding: 8px 12px;
+    max-width: 280px;
+    pointer-events: none;
+    z-index: 9999;
+    font-size: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+}
+.tt-name { font-size: 14px; font-weight: 800; color: #f1d28a; margin-bottom: 4px; }
+.tt-line { line-height: 16px; }
+.tt-line.muted { color: #888; font-size: 11px; }
+.tt-cost  { color: #58a4ff; }
+.tt-cd    { color: #c8a050; }
+
+/* Buff strip (above portrait) */
+.buff-strip {
+    position: absolute; bottom: 110px; left: 18px;
+    display: flex; gap: 4px; flex-wrap: wrap; max-width: 380px;
+}
+.buff-chip {
+    width: 26px; height: 26px;
+    background: #1a1626;
+    border: 1.5px solid #4a4a6a;
+    border-radius: 4px;
+    position: relative;
+    color: #f1d28a;
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    text-shadow: 0 1px 2px #000;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+.buff-chip.buff   { border-color: #58a4ff; }
+.buff-chip.debuff { border-color: #ec5050; }
+.buff-chip-dur {
+    position: absolute; bottom: -4px; right: -4px;
+    background: rgba(0,0,0,0.9);
+    color: #f1c40f; font-size: 9px; font-weight: 800;
+    padding: 0 3px; border-radius: 2px; line-height: 11px;
+}

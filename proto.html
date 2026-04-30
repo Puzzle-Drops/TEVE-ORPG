@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TEVE — ARPG Prototype</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="proto/styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+        }
+    }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        window.THREE = THREE;
+        window.dispatchEvent(new Event('three-ready'));
+    </script>
+</head>
+<body>
+    <div id="proto-loading">
+        <div class="loading-title">TEVE PROTOTYPE</div>
+        <div class="loading-bar"><div class="loading-fill"></div></div>
+    </div>
+    <div id="proto-root" style="display:none;">
+        <canvas id="proto-canvas"></canvas>
+        <div id="proto-hud"></div>
+        <div id="proto-overlay"></div>
+        <div id="proto-debug"></div>
+        <div id="proto-vignette"></div>
+    </div>
+
+    <script>
+        if (window.THREE) bootProto();
+        else window.addEventListener('three-ready', bootProto, { once: true });
+
+        function bootProto() {
+            const scripts = [
+                'proto/textures.js',
+                'proto/scene.js',
+                'proto/camera.js',
+                'proto/renderer.js',
+                'proto/input.js',
+                'proto/effects.js',
+                'proto/indicators.js',
+                'proto/character.js',
+                'proto/entity.js',
+                'proto/projectile.js',
+                'proto/combat.js',
+                'proto/abilities.js',
+                'proto/player.js',
+                'proto/enemy.js',
+                'proto/world.js',
+                'proto/hud.js',
+                'proto/tooltip.js',
+                'proto/charsheet.js',
+                'proto/save.js',
+                'proto/net.js',
+                'proto/main.js',
+            ];
+            scripts.reduce((p, src) => p.then(() => new Promise((r, e) => {
+                const s = document.createElement('script');
+                s.src = src;
+                s.onload = r;
+                s.onerror = () => e(new Error('Failed: ' + src));
+                document.head.appendChild(s);
+            })), Promise.resolve()).then(() => Proto.boot()).catch(err => {
+                document.getElementById('proto-loading').innerHTML = '<div style="color:#ff4444">Boot failed: ' + err.message + '</div>';
+            });
+        }
+    </script>
+</body>
+</html>
