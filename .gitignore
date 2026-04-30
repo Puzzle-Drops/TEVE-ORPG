@@ -1,0 +1,13 @@
+# Local-only model bundles (large binary FBX/TGA assets, ~9 GB).
+# Will be cleaned and a curated subset committed back later.
+models/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Node
+node_modules/
+npm-debug.log
