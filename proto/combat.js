@@ -135,16 +135,19 @@
         }
 
         // Chain-aggro: a hostile that takes damage aggros the source, and any
-        // other hostile within 5 units of the victim also aggros the same
-        // source. Overrides existing targets — getting shot makes you turn to
-        // face the shooter. One-hop only (doesn't propagate further).
+        // other hostile within 5 units also aggros the same source. The mob
+        // gets a "chase persist" lock so it actually pursues the attacker
+        // instead of resetting on the next 0.5s retarget tick.
         if (attacker && !attacker.isHostile && !attacker.dead && target.isHostile && !target.dead) {
             const CHAIN_RADIUS = 5;
-            // 1) Damaged mob retargets the attacker
+            const persistFor = (target.aggroRadius || 13) * 0.7; // seconds — enough to cover aggro-range distance
+            const persistUntil = (performance.now() / 1000) + persistFor;
+            // 1) Damaged mob retargets the attacker and persists the chase
             target._target = attacker;
             target._retarget = 0.5;
             target._returningHome = false;
-            // 2) Nearby allies also retarget the attacker
+            target._chasePersistUntil = persistUntil;
+            // 2) Nearby allies also retarget and persist
             for (const e of ProtoCombat.allHostilesOf(attacker)) {
                 if (e === target || e.dead) continue;
                 const dx = e.position.x - target.position.x;
@@ -153,6 +156,7 @@
                     e._target = attacker;
                     e._retarget = 0.5;
                     e._returningHome = false;
+                    e._chasePersistUntil = persistUntil;
                 }
             }
         }

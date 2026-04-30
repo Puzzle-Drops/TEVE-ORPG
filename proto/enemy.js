@@ -79,13 +79,18 @@
             super.tick(dt);
             if (this.dead) return;
 
-            // Anchor leash: if we've strayed past 2× aggroRadius from spawn,
-            // drop aggro and walk back home.
+            // Chase persist — set when this mob got hit (or chain-aggroed).
+            // While active, we don't trip the leash or auto-drop the target on
+            // retarget ticks even if the attacker is outside aggroRadius.
+            const nowSec = performance.now() / 1000;
+            const persisting = this._chasePersistUntil && nowSec < this._chasePersistUntil;
+
+            // Anchor leash (skipped while persisting)
             const anchorMax = (this.aggroRadius || 18) * 2;
             const dxAnchor = this.position.x - this.spawn.x;
             const dzAnchor = this.position.z - this.spawn.z;
             const distFromSpawn = Math.hypot(dxAnchor, dzAnchor);
-            if (distFromSpawn > anchorMax) {
+            if (!persisting && distFromSpawn > anchorMax) {
                 this._target = null;
                 this._returningHome = true;
             }
@@ -96,8 +101,13 @@
             // Re-target periodically (skip while returning home)
             this._retarget -= dt;
             if (!this._returningHome && (!this._target || this._target.dead || this._retarget <= 0)) {
-                this._target = ProtoCombat.findNearestHostile(this, this.aggroRadius);
-                this._retarget = 0.5;
+                if (persisting && this._target && !this._target.dead) {
+                    // Keep chasing the persist target — just reset the timer
+                    this._retarget = 0.5;
+                } else {
+                    this._target = ProtoCombat.findNearestHostile(this, this.aggroRadius);
+                    this._retarget = 0.5;
+                }
             }
 
             // Stunned: cannot act
