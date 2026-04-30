@@ -1,6 +1,6 @@
 # Local-only model bundles (large binary FBX/TGA assets, ~9 GB).
-# Will be cleaned and a curated subset committed back later.
-models/
+# Anchored to root so proto/assets/models/ (curated GLB+PNG output) stays tracked.
+/models/
 
 # OS / editor
 .DS_Store

@@ -13,7 +13,7 @@
     const TEMPLATES = {
         grunt: {
             name: 'Satyr Youth', tier: 1,
-            preset: 'beast', scale: 1.0, tint: 0x6a4030,
+            preset: 'satyr_1h', scale: 1.0, tint: 0x6a4030,
             spriteId: 'satyr_youth',
             stats: { str: 8, agi: 6, int: 2 },
             hp: 80, attack: 8, armor: 4, resist: 2,
@@ -22,7 +22,7 @@
         },
         brute: {
             name: 'Satyr Instigator', tier: 3,
-            preset: 'beast', scale: 1.4, tint: 0x8a3030,
+            preset: 'satyr_2h', scale: 1.3, tint: 0x8a3030,
             spriteId: 'satyr_instigator',
             stats: { str: 18, agi: 4, int: 2 },
             hp: 220, attack: 14, armor: 8, resist: 4,
@@ -31,7 +31,7 @@
         },
         stalker: {
             name: 'Aggressive Satyr', tier: 2,
-            preset: 'beast', scale: 0.85, tint: 0x55304a,
+            preset: 'satyr_1h', scale: 0.9, tint: 0x55304a,
             spriteId: 'aggressive_satyr',
             stats: { str: 6, agi: 12, int: 8 },
             hp: 60, attack: 10, armor: 2, resist: 8,

@@ -8,13 +8,18 @@
     <script type="importmap">
     {
         "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
         }
     }
     </script>
     <script type="module">
         import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
         window.THREE = THREE;
+        window.GLTFLoader = GLTFLoader;
+        window.cloneSkeleton = cloneSkeleton;
         window.dispatchEvent(new Event('three-ready'));
     </script>
 </head>
@@ -44,6 +49,7 @@
                 'proto/input.js',
                 'proto/effects.js',
                 'proto/indicators.js',
+                'proto/models.js',
                 'proto/character.js',
                 'proto/entity.js',
                 'proto/projectile.js',

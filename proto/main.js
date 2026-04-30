@@ -24,6 +24,12 @@
                 ProtoHud.init();
                 if (window.ProtoTooltip) ProtoTooltip.init();
 
+                setLoad(0.20, 'Loading models…');
+                if (window.ProtoModels) {
+                    try { await ProtoModels.preload(); }
+                    catch (e) { console.warn('[boot] Model preload failed (will fall back to procedural):', e); }
+                }
+
                 setLoad(0.30, 'Sculpting world…');
                 ProtoWorld.build();
 

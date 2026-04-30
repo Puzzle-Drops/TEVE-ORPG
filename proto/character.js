@@ -42,6 +42,11 @@
 
     /** Build a character from a preset key. */
     ProtoChar.create = function (presetKey = 'warrior', opts = {}) {
+        // GLB-backed presets — only available once ProtoModels.preload() resolved.
+        if ((presetKey === 'satyr_1h' || presetKey === 'satyr_2h') &&
+            window.ProtoModels && ProtoModels.loaded) {
+            return createSatyr(presetKey, opts);
+        }
         const p = Object.assign({}, PRESETS[presetKey] || PRESETS.warrior, opts);
         const root = new THREE.Group();
 
@@ -351,6 +356,230 @@
     }
 
     function wrap(a) {
+        while (a > Math.PI)  a -= Math.PI * 2;
+        while (a < -Math.PI) a += Math.PI * 2;
+        return a;
+    }
+
+    /* =========================================================================
+     *  GLB-backed satyr character
+     *  ---------------------------------------------------------------------
+     *  Mirrors the procedural API surface (tick / playSwing / playDeath /
+     *  setFacing / playHurt / reset / group) but drives an imported skinned
+     *  mesh via THREE.AnimationMixer. The 8 clip names are produced by the
+     *  Blender FBX→GLB pipeline:
+     *    Armature|Idle_<Variant>|BaseLayer_Armature
+     *    Armature|Walk_<Variant>|BaseLayer_Armature
+     *    Armature|Attack_<Variant>|BaseLayer_Armature
+     *    Armature|Death_<Variant>|BaseLayer_Armature
+     *  where <Variant> is "1H_WepR" or "2H".
+     * =======================================================================*/
+
+    const SATYR_VARIANTS = {
+        satyr_1h: { animSuffix: '1H_WepR', weaponKey: 'satyr1HAxe' },
+        satyr_2h: { animSuffix: '2H',     weaponKey: 'satyr2HAxe' },
+    };
+
+    function createSatyr(presetKey, opts = {}) {
+        const variant = SATYR_VARIANTS[presetKey];
+        const tpl = ProtoModels.satyr;
+        const scaleMul = (opts.scale != null) ? opts.scale : 1.0;
+
+        const root = new THREE.Group();
+
+        // Clone the rigged satyr (SkeletonUtils preserves bone bindings).
+        const model = window.cloneSkeleton(tpl.template);
+        model.scale.setScalar(tpl.scaleFactor * scaleMul);
+        // FBX import puts the root on its feet at y=0 already; no offset needed.
+        root.add(model);
+
+        // Attach the appropriate axe to the right hand. The rig uses bones
+        // named "weapon_r" (or similar); we find the first bone whose lowercase
+        // name contains "weapon" and ends with "_r" or "right".
+        const weaponBone = findWeaponBone(model);
+        if (weaponBone && ProtoModels[variant.weaponKey]) {
+            const axe = ProtoModels[variant.weaponKey].template.clone(true);
+            // Swap the axe materials so the clone doesn't share state with
+            // the cached template (in case we ever tint per-instance).
+            axe.traverse((c) => { if (c.isMesh && c.material) c.material = c.material.clone(); });
+            weaponBone.add(axe);
+        }
+
+        // Drop shadow disc, same as the procedural character.
+        const shadowMat = new THREE.MeshBasicMaterial({
+            color: 0x000000, transparent: true, opacity: 0.35, depthWrite: false,
+        });
+        const shadow = new THREE.Mesh(new THREE.CircleGeometry(0.55 * scaleMul, 24), shadowMat);
+        shadow.rotation.x = -Math.PI / 2;
+        shadow.position.y = 0.02;
+        root.add(shadow);
+
+        // Animation setup
+        const mixer = new THREE.AnimationMixer(model);
+        const clips = tpl.animations;
+        const idleClip   = ProtoModels.findClip(clips, 'Idle_'   + variant.animSuffix);
+        const walkClip   = ProtoModels.findClip(clips, 'Walk_'   + variant.animSuffix);
+        const attackClip = ProtoModels.findClip(clips, 'Attack_' + variant.animSuffix);
+        const deathClip  = ProtoModels.findClip(clips, 'Death_'  + variant.animSuffix);
+
+        const idleAction   = idleClip   ? mixer.clipAction(idleClip)   : null;
+        const walkAction   = walkClip   ? mixer.clipAction(walkClip)   : null;
+        const attackAction = attackClip ? mixer.clipAction(attackClip) : null;
+        const deathAction  = deathClip  ? mixer.clipAction(deathClip)  : null;
+
+        if (attackAction) {
+            attackAction.setLoop(THREE.LoopOnce);
+            attackAction.clampWhenFinished = false;
+        }
+        if (deathAction) {
+            deathAction.setLoop(THREE.LoopOnce);
+            deathAction.clampWhenFinished = true;
+        }
+        if (idleAction) idleAction.play();
+
+        // Track materials for hurt-flash tinting.
+        const allMaterials = [];
+        model.traverse((n) => {
+            if (n.material) {
+                if (Array.isArray(n.material)) allMaterials.push(...n.material);
+                else allMaterials.push(n.material);
+            }
+        });
+
+        const state = {
+            facing: 0,
+            facingTarget: 0,
+            current: 'idle',  // 'idle' | 'walk' | 'attack' | 'death'
+            attackingT: 0,
+            attackTotal: attackClip ? attackClip.duration : 0,
+            hurtT: 0,
+            dying: false,
+        };
+
+        function setAnim(name) {
+            if (state.dying || state.current === name) return;
+            const fadeOut = (a) => { if (a && a.isRunning()) a.fadeOut(0.15); };
+            const fadeIn = (a) => { if (a) a.reset().fadeIn(0.15).play(); };
+            if (state.current === 'idle')   fadeOut(idleAction);
+            if (state.current === 'walk')   fadeOut(walkAction);
+            if (state.current === 'attack') fadeOut(attackAction);
+            if (name === 'idle')   fadeIn(idleAction);
+            if (name === 'walk')   fadeIn(walkAction);
+            if (name === 'attack') fadeIn(attackAction);
+            state.current = name;
+        }
+
+        return {
+            group: root,
+            state,
+            setFacing(dx, dz) {
+                if (Math.abs(dx) < 0.001 && Math.abs(dz) < 0.001) return;
+                state.facingTarget = Math.atan2(dx, dz);
+            },
+            playSwing(/* side */) {
+                if (state.dying || !attackAction) return;
+                state.attackingT = state.attackTotal;
+                if (idleAction && idleAction.isRunning()) idleAction.fadeOut(0.1);
+                if (walkAction && walkAction.isRunning()) walkAction.fadeOut(0.1);
+                attackAction.reset().fadeIn(0.1).play();
+                state.current = 'attack';
+            },
+            playCast(/* durationSec */) {
+                // No dedicated cast clip in our filtered set — reuse attack.
+                this.playSwing(1);
+            },
+            playHurt() { state.hurtT = 0.15; },
+            playDeath() {
+                if (state.dying) return;
+                state.dying = true;
+                if (idleAction)   idleAction.fadeOut(0.15);
+                if (walkAction)   walkAction.fadeOut(0.15);
+                if (attackAction) attackAction.fadeOut(0.15);
+                if (deathAction)  deathAction.reset().fadeIn(0.15).play();
+            },
+            reset() {
+                state.dying = false;
+                state.current = 'idle';
+                state.attackingT = 0;
+                if (deathAction)  deathAction.stop();
+                if (attackAction) attackAction.stop();
+                if (walkAction)   walkAction.stop();
+                if (idleAction)   idleAction.reset().play();
+                shadow.material.opacity = 0.35;
+                allMaterials.forEach(m => {
+                    if (m && m._origColor !== undefined) {
+                        m.color && m.color.setHex(m._origColor);
+                        delete m._origColor;
+                    }
+                });
+            },
+            tick(dt, ctrl = {}) {
+                // Smooth facing turn — rotate the GLB root.
+                const yawDiff = wrapAngle(state.facingTarget - state.facing);
+                state.facing += yawDiff * Math.min(1, 12 * dt);
+                root.rotation.y = state.facing;
+
+                mixer.update(dt);
+
+                if (state.dying) return;
+
+                // Drive the locomotion blend off `ctrl.moving`. Don't override
+                // the attack while it's playing.
+                if (state.attackingT > 0) {
+                    state.attackingT -= dt;
+                    if (state.attackingT <= 0) {
+                        // Attack finished — return to idle/walk. The next tick
+                        // will pick the right one based on current ctrl.moving.
+                        state.attackingT = 0;
+                        state.current = 'attack-finished';
+                    }
+                } else {
+                    setAnim(ctrl.moving ? 'walk' : 'idle');
+                }
+
+                // Hurt flash (same idea as procedural; works on Standard mats).
+                if (state.hurtT > 0) {
+                    state.hurtT = Math.max(0, state.hurtT - dt);
+                    const k = state.hurtT / 0.15;
+                    allMaterials.forEach(m => {
+                        if (!m || !m.color) return;
+                        if (m._origColor === undefined) m._origColor = m.color.getHex();
+                        const orig = new THREE.Color(m._origColor);
+                        const flash = new THREE.Color(0xff5050);
+                        m.color.copy(orig.lerp(flash, 0.5 * k));
+                    });
+                } else {
+                    allMaterials.forEach(m => {
+                        if (m && m._origColor !== undefined) {
+                            m.color && m.color.setHex(m._origColor);
+                            delete m._origColor;
+                        }
+                    });
+                }
+            },
+        };
+    }
+
+    function findWeaponBone(model) {
+        let bone = null;
+        model.traverse((n) => {
+            if (bone || !n.isBone) return;
+            const name = (n.name || '').toLowerCase();
+            if (name.includes('weapon') && (name.endsWith('_r') || name.includes('right'))) {
+                bone = n;
+            }
+        });
+        // Fallback: any bone with "weapon" in the name.
+        if (!bone) {
+            model.traverse((n) => {
+                if (bone || !n.isBone) return;
+                if ((n.name || '').toLowerCase().includes('weapon')) bone = n;
+            });
+        }
+        return bone;
+    }
+
+    function wrapAngle(a) {
         while (a > Math.PI)  a -= Math.PI * 2;
         while (a < -Math.PI) a += Math.PI * 2;
         return a;
