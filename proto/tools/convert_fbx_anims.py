@@ -65,13 +65,43 @@ for arm in armatures:
     for action in kept_actions:
         track = ad.nla_tracks.new()
         track.name = action.name
-        track.strips.new(action.name, int(action.frame_range[0]), action)
+        # IMPORTANT: place each strip at frame 1 (not at the action's original
+        # frame range). The FBX import preserves the action's source frames
+        # — e.g. Idle_2H lives at frames 4391-4451 — and if we leave the
+        # strip there, the glTF exporter bakes a clip running from time 0 to
+        # ~185 seconds with actual animation data only in the last ~2.5s.
+        # Three.js then "plays" 183 seconds of empty timeline (holding the
+        # first keyframe) before reaching the actual motion, making the rig
+        # appear to stand still. Strip at frame 1 = clip duration matches
+        # the action's actual length.
+        strip = track.strips.new(action.name, 1, action)
+        strip.frame_start_ui = 1
+        strip.frame_end_ui = 1 + int(action.frame_range[1] - action.frame_range[0])
         track.mute = False
-    # Force armature evaluation in REST pose during export. Without this,
-    # whichever NLA strip the playhead lands on becomes the bind pose used
-    # for the skinned-mesh's inverseBindMatrices in the GLB — and the mesh
-    # ends up bound to a walk/idle frame instead of T-pose.
-    arm.data.pose_position = 'REST'
+
+# Disable the Armature modifier on every mesh during export. The depsgraph
+# applies the modifier when evaluating mesh data for export, baking the
+# current pose into the vertex positions — so even at scene frame 0, if any
+# pose drives the rig, the mesh comes out deformed and three.js sees a
+# "twisted" bind pose.
+#
+# Disabling the modifier (show_viewport/show_render = False) makes depsgraph
+# skip the deformation, and the mesh evaluates to its raw vertex data, which
+# IS the bind pose. The modifier metadata remains on the object, and the
+# vertex groups carry the skin weights — so the glTF exporter still finds
+# the armature relationship and writes a valid skin/inverseBindMatrices set.
+# Animations sample bone keyframes from the NLA strips per-bone, never going
+# through the mesh modifier, so they export with full motion data.
+saved_mod_visibility = []  # [(modifier, show_viewport, show_render), ...]
+for obj in bpy.data.objects:
+    if obj.type != 'MESH':
+        continue
+    for mod in obj.modifiers:
+        if mod.type == 'ARMATURE':
+            saved_mod_visibility.append((mod, mod.show_viewport, mod.show_render))
+            mod.show_viewport = False
+            mod.show_render = False
+print(f"Disabled {len(saved_mod_visibility)} Armature modifier(s) for mesh-bind-pose snapshot.")
 
 bpy.ops.export_scene.gltf(
     filepath=glb_path,

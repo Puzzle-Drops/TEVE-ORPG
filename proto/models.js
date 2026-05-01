@@ -61,11 +61,12 @@
     ProtoModels.preload = async function () {
         if (ProtoModels.loaded) return;
         const base = 'proto/assets/models/satyr/';
+        const v = '?v=' + Date.now(); // bust browser cache while we iterate on the GLB
 
         const [satyrGltf, axe1Gltf, axe2Gltf] = await Promise.all([
-            loadGLB(base + 'Satyr.glb'),
-            loadGLB(base + 'Satyr_1H_Axe.glb'),
-            loadGLB(base + 'Satyr_2H_Axe.glb'),
+            loadGLB(base + 'Satyr.glb' + v),
+            loadGLB(base + 'Satyr_1H_Axe.glb' + v),
+            loadGLB(base + 'Satyr_2H_Axe.glb' + v),
         ]);
 
         // Body — apply diffuse, compute scale once based on the template.
