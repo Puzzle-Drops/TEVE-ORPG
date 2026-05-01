@@ -3,6 +3,11 @@
 Turn-based strategy RPG / idle game hybrid. Browser-based, vanilla JS, 1920x1080 fixed resolution.
 Summoners War PvE-inspired. Party of up to 5 heroes vs waves of enemies. Progression-driven with item farming, class promotions, and dungeon grinding.
 
+## Two codebases in this repo
+
+- **The original turn-based game** (this CLAUDE.md, root-level `*.js`, `index.html`) — the active codebase.
+- **`proto/`** — a frozen single-player 3D ARPG prototype (Three.js sandbox). Kept as a feel/loop reference for a future Unity multiplayer build. See `proto/CLAUDE.md` for its architecture and the GLB conversion pipeline. Don't edit it during turn-based work; treat it as read-only.
+
 ## Quick Reference
 
 - **Entry point**: `index.html` → `loadingManager.js` (loads all scripts sequentially, then JSON data)

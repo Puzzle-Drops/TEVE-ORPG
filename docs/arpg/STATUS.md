@@ -1,6 +1,10 @@
 # ARPG v1 Status
 
-## Current state
+> **Superseded.** The `arpg/` folder and `arpg.html` described in this document were never built. The actual prototype lives in `proto/` (entry: `proto.html`) and is a much smaller scope — a single-player 3D combat sandbox, no character slots, no dungeons, no real networking. See `proto/CLAUDE.md` for the prototype's true architecture and final feature set. The notes below remain only as a snapshot of the original ambition for the upcoming Unity multiplayer build to mine for design intent.
+
+---
+
+## Original planned state (NOT what was built)
 
 **Runtime-clean for the first 5+ minutes of play** as verified by two independent code reviews after the build pass.
 
