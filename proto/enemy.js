@@ -31,7 +31,7 @@
         },
         stalker: {
             name: 'Aggressive Satyr', tier: 2,
-            preset: 'satyr_1h', scale: 0.9, tint: 0x55304a,
+            preset: 'satyr_dual', scale: 0.9, tint: 0x55304a,
             spriteId: 'aggressive_satyr',
             stats: { str: 6, agi: 12, int: 8 },
             hp: 60, attack: 10, armor: 2, resist: 8,
@@ -77,7 +77,13 @@
 
         tick(dt) {
             super.tick(dt);
-            if (this.dead) return;
+            if (this.dead) {
+                // Keep ticking the character so the death animation actually
+                // plays out (AnimationMixer.update needs to be called per frame).
+                // No AI/movement, just animation.
+                if (this.character) this.character.tick(dt, { moving: false });
+                return;
+            }
 
             // Chase persist — set when this mob got hit (or chain-aggroed).
             // While active, we don't trip the leash or auto-drop the target on

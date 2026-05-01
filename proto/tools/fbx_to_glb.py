@@ -246,38 +246,43 @@ if INSIDE_BLENDER:
         drop_weapon_anims = cfg.get("drop_weapon_anims", True)
         disable_arm_mod   = cfg.get("disable_armature_mod", True)
         orient_auto_anims = cfg.get("orient_auto", False)
-        # Use orient=True for the model-side import as a safety net for
-        # Unity-exported FBXs that hit the Blender 4.1 KeyError bug. If your
-        # model imports broken, set this False via --no-model-orient-auto.
         orient_auto_model = cfg.get("model_orient_auto", True)
 
         model_path = cfg["model"]
         model_is_glb = model_path.lower().endswith((".glb", ".gltf"))
+        animations_path = cfg["animations"]
+        animations_is_glb = animations_path.lower().endswith((".glb", ".gltf"))
 
-        # ===== Step 1: import animations FBX (source of actions) =====
+        # ===== Step 1: import animations file (FBX or GLB) =====
+        # We keep THIS armature for the final output. The actions were authored
+        # against this armature's bone orientations — specifically, the local
+        # axes (head/tail direction + roll) of each bone. F-curves store
+        # bone-local rotations; if the local axes differ between two armatures,
+        # the same f-curve produces a different visual result. Using the same
+        # importer for BOTH files (e.g. both GLB) guarantees consistent bone
+        # orientation, which is the key to making animations + new mesh work.
         bpy.ops.wm.read_factory_settings(use_empty=True)
-        print(f"[merge] importing animations from: {cfg['animations']}")
-        bpy.ops.import_scene.fbx(
-            filepath=cfg["animations"],
-            automatic_bone_orientation=orient_auto_anims,
-            use_anim=True,
-        )
+        print(f"[merge] importing animations from: {animations_path}")
+        if animations_is_glb:
+            print(f"[merge] (animations file is GLB — using glTF importer)")
+            bpy.ops.import_scene.gltf(filepath=animations_path)
+        else:
+            bpy.ops.import_scene.fbx(
+                filepath=animations_path,
+                automatic_bone_orientation=orient_auto_anims,
+                use_anim=True,
+            )
 
-        # Capture the source rig's bone names BEFORE we delete anything,
-        # so we can validate the model rig has compatible bones later.
         source_armatures = [o for o in bpy.data.objects if o.type == 'ARMATURE']
-        source_bone_names = set()
-        for arm in source_armatures:
-            for b in arm.data.bones:
-                source_bone_names.add(b.name)
-
+        if not source_armatures:
+            raise RuntimeError("Animations FBX has no armature.")
+        keep_armature = source_armatures[0]
+        source_bone_names = set(b.name for b in keep_armature.data.bones)
         all_source_actions = _gather_actions()
-        print(f"[merge] source animations imported: "
-              f"{len(source_armatures)} armature(s), {len(all_source_actions)} action(s), "
-              f"{len(source_bone_names)} bones")
+        print(f"[merge] keeping armature: {keep_armature.name}  "
+              f"({len(source_bone_names)} bones), {len(all_source_actions)} action(s)")
 
-        # ===== Step 2: filter actions BEFORE deleting things =====
-        # (so any stale bpy.data.actions cleanup doesn't fight us later)
+        # ===== Step 2: filter actions =====
         if not keep_all:
             for a in list(bpy.data.actions):
                 if not _is_wanted(a.name, wanted_set):
@@ -287,31 +292,28 @@ if INSIDE_BLENDER:
 
         kept_actions = list(bpy.data.actions)
         for a in kept_actions:
-            a.use_fake_user = True  # survive armature deletion
+            a.use_fake_user = True  # survive any later object deletions
         kept_action_names = {a.name for a in kept_actions}
         print(f"[merge] kept {len(kept_actions)} action(s) after filter")
 
-        # ===== Step 3: delete source rig+mesh, keep actions =====
-        # Actions are stored in bpy.data.actions independently of objects.
-        # Deleting the source armature does NOT delete its actions, as long
-        # as use_fake_user=True (set above).
-        bpy.ops.object.select_all(action='DESELECT')
-        for o in list(bpy.data.objects):
-            o.select_set(True)
-        bpy.ops.object.delete()
-        print(f"[merge] deleted source mesh + armature, "
-              f"actions still in bpy.data.actions: {len(bpy.data.actions)}")
+        # ===== Step 3: delete only the original mesh(es), keep armature =====
+        # The model file will provide replacement meshes in step 4.
+        existing_before_model = set(bpy.data.objects)
+        original_meshes = [o for o in bpy.data.objects if o.type == 'MESH']
+        if original_meshes:
+            bpy.ops.object.select_all(action='DESELECT')
+            for o in original_meshes:
+                o.select_set(True)
+            bpy.ops.object.delete()
+            existing_before_model = set(bpy.data.objects)
+            print(f"[merge] deleted {len(original_meshes)} original mesh(es)")
 
         # ===== Step 4: import the model file (FBX or GLB) =====
-        # GLB path is the workaround for the Blender 4.1 FBX importer bug on
-        # Unity-exported FBXs (KeyError on mesh.armature_setup). User runs the
-        # Unity FBX through convert3d.org once, gets a GLB, and feeds that here.
         print(f"[merge] importing model from: {model_path}")
         if model_is_glb:
-            print(f"[merge] (using GLB importer — bypasses the Blender 4.1 FBX bug)")
+            print(f"[merge] (using GLB importer — bypasses the Blender FBX bug)")
             bpy.ops.import_scene.gltf(filepath=model_path)
-            # GLB import may add stray actions (T_Pose, etc) — wipe anything
-            # that wasn't already present from the animations FBX.
+            # GLB import may add stray actions — strip anything we don't want.
             stray = [a for a in bpy.data.actions if a.name not in kept_action_names]
             for a in stray:
                 bpy.data.actions.remove(a, do_unlink=True)
@@ -321,39 +323,71 @@ if INSIDE_BLENDER:
             bpy.ops.import_scene.fbx(
                 filepath=model_path,
                 automatic_bone_orientation=orient_auto_model,
-                use_anim=False,         # we already have the anims from step 1
-                ignore_leaf_bones=True, # extra safety against the KeyError bug
+                use_anim=False,
+                ignore_leaf_bones=True,
             )
 
-        new_armatures = [o for o in bpy.data.objects if o.type == 'ARMATURE']
-        if not new_armatures:
-            raise RuntimeError("Model FBX has no armature.")
-        new_armature = new_armatures[0]
-        new_bone_names = set(b.name for b in new_armature.data.bones)
-        print(f"[merge] model armature: {new_armature.name}  "
-              f"({len(new_bone_names)} bones)")
+        # ===== Step 5: find new objects, swap their armature reference =====
+        new_objects   = [o for o in bpy.data.objects if o not in existing_before_model]
+        new_meshes    = [o for o in new_objects if o.type == 'MESH']
+        new_armatures = [o for o in new_objects if o.type == 'ARMATURE']
+        if not new_meshes:
+            raise RuntimeError("Model file has no meshes.")
+        print(f"[merge] model added: {len(new_meshes)} mesh(es), "
+              f"{len(new_armatures)} armature(s) (will be deleted), "
+              f"{len(new_objects) - len(new_meshes) - len(new_armatures)} other object(s)")
 
-        # ===== Step 5: bone-compatibility check =====
-        # Actions reference bones by name like pose.bones["Hand_R"]...
-        # We need every bone the actions reference to exist on the new rig.
-        bones_used_by_actions = set()
-        for a in kept_actions:
-            for fc in _iter_fcurves(a):
-                # data_path looks like 'pose.bones["BoneName"].rotation_quaternion'
-                dp = fc.data_path
-                if dp.startswith('pose.bones["'):
-                    end = dp.find('"', 12)
-                    if end > 12:
-                        bones_used_by_actions.add(dp[12:end])
-        missing_bones = bones_used_by_actions - new_bone_names
-        unused_new_bones = new_bone_names - bones_used_by_actions
+        # Validate vertex-group names against the armature we're keeping. Any
+        # vertex group whose name isn't a bone in keep_armature won't deform.
+        new_mesh_vgroups = set()
+        for m in new_meshes:
+            for vg in m.vertex_groups:
+                new_mesh_vgroups.add(vg.name)
+        unmatched_vgroups = new_mesh_vgroups - source_bone_names
+        if unmatched_vgroups:
+            print(f"[merge] WARNING: {len(unmatched_vgroups)} vertex group(s) on the new "
+                  f"meshes have no matching bone in the armature — those vertices "
+                  f"won't deform: {sorted(unmatched_vgroups)[:10]}")
 
-        # ===== Step 6: assign one action to the new armature so the
-        # exporter knows the armature has animation data =====
-        if new_armature.animation_data is None:
-            new_armature.animation_data_create()
+        # Swap each new mesh's Armature modifier to reference keep_armature
+        # instead of the new (about-to-be-deleted) armature. Mesh vertex
+        # groups are name-based, so they'll bind to keep_armature's bones
+        # automatically as long as bone names match (which we just validated).
+        for mesh in new_meshes:
+            had_arm_mod = False
+            for mod in mesh.modifiers:
+                if mod.type == 'ARMATURE':
+                    mod.object = keep_armature
+                    had_arm_mod = True
+            if not had_arm_mod:
+                mod = mesh.modifiers.new(name="Armature", type='ARMATURE')
+                mod.object = keep_armature
+
+        # ===== Step 6: delete the new armature + any other new helper objects =====
+        # Anything from the model file that isn't a mesh gets dropped: the new
+        # armature, weapon-mount empties, root nodes, etc. Mesh objects survive
+        # (and become parented to None when their armature parent is deleted;
+        # we re-parent below for tidiness).
+        to_delete = [o for o in new_objects if o not in new_meshes]
+        if to_delete:
+            bpy.ops.object.select_all(action='DESELECT')
+            for o in to_delete:
+                o.select_set(True)
+            bpy.ops.object.delete()
+            print(f"[merge] deleted {len(to_delete)} helper object(s)")
+
+        # Re-parent surviving meshes to keep_armature for a clean hierarchy.
+        for mesh in new_meshes:
+            if mesh.parent != keep_armature:
+                world = mesh.matrix_world.copy()
+                mesh.parent = keep_armature
+                mesh.matrix_world = world
+
+        # ===== Step 7: pin actions to keep_armature for the exporter =====
+        if keep_armature.animation_data is None:
+            keep_armature.animation_data_create()
         if kept_actions:
-            new_armature.animation_data.action = kept_actions[0]
+            keep_armature.animation_data.action = kept_actions[0]
 
         if disable_arm_mod:
             for obj in bpy.data.objects:
@@ -364,9 +398,7 @@ if INSIDE_BLENDER:
                         mod.show_viewport = False
                         mod.show_render = False
 
-        # ===== Step 7: export =====
-        # ACTIONS mode: each action in bpy.data.actions becomes a glTF clip,
-        # automatically associated with the (sole) armature.
+        # ===== Step 8: export =====
         bpy.ops.export_scene.gltf(
             filepath=cfg["output"],
             export_format='GLB',
@@ -377,18 +409,31 @@ if INSIDE_BLENDER:
             export_optimize_animation_size=False,
         )
 
+        # Compute bone-usage report for the result panel.
+        bones_used_by_actions = set()
+        for a in kept_actions:
+            for fc in _iter_fcurves(a):
+                dp = fc.data_path
+                if dp.startswith('pose.bones["'):
+                    end = dp.find('"', 12)
+                    if end > 12:
+                        bones_used_by_actions.add(dp[12:end])
+        missing_bones = bones_used_by_actions - source_bone_names
+        unused_bones = source_bone_names - bones_used_by_actions
+
         final_actions = sorted(bpy.data.actions, key=lambda a: a.name)
         _write_result(cfg, {
             "ok": True,
             "kind": "merge",
             "output": cfg["output"],
-            "model_armature": new_armature.name,
-            "model_bones":    len(new_bone_names),
+            "model_armature": keep_armature.name,
+            "model_bones":    len(source_bone_names),
             "source_bones":   len(source_bone_names),
             "actions_kept":   len(final_actions),
             "exported_actions": [_action_summary(a) for a in final_actions],
             "missing_bones":  sorted(missing_bones),
-            "unused_new_bones": sorted(unused_new_bones),
+            "unused_new_bones": sorted(unused_bones),
+            "unmatched_vgroups": sorted(unmatched_vgroups),
         })
 
     def main_blender():
@@ -762,11 +807,57 @@ def launch_gui():
     ttk.Button(frm_filesM, text="Browse...",
                command=lambda: _pick_save_glb(state["output"])).grid(row=2, column=2, **pad)
     frm_filesM.columnconfigure(1, weight=1)
+
+    # --- Animation picker (live checkbox list from the animations file) ---
+    # Picker state lives in a dict so closures below can mutate it. Keys:
+    #   vars: dict of short_name -> tk.BooleanVar (one per displayed checkbox)
+    #   inner: the Frame that holds the checkboxes (scrollable)
+    #   count_label: the "N animations loaded" label
+    picker = {"vars": {}, "inner": None, "count_label": None}
+
+    frm_picker = ttk.LabelFrame(tab_merge, text="Animation selection (Merge tab only)")
+    frm_picker.pack(fill="both", expand=True, padx=6, pady=6)
+
+    frm_pick_buttons = ttk.Frame(frm_picker)
+    frm_pick_buttons.pack(fill="x", padx=4, pady=(4, 2))
+    btn_load_anims = ttk.Button(frm_pick_buttons, text="Load animations from file",
+                                command=lambda: do_load_anims())
+    btn_load_anims.pack(side="left", padx=2)
+    ttk.Button(frm_pick_buttons, text="Defaults",
+               command=lambda: select_anims("defaults")).pack(side="left", padx=2)
+    ttk.Button(frm_pick_buttons, text="All",
+               command=lambda: select_anims("all")).pack(side="left", padx=2)
+    ttk.Button(frm_pick_buttons, text="None",
+               command=lambda: select_anims("none")).pack(side="left", padx=2)
+    picker["count_label"] = ttk.Label(
+        frm_pick_buttons,
+        text="  (load animations to see the list — otherwise the comma-separated list below is used)",
+        foreground="gray")
+    picker["count_label"].pack(side="left", padx=8)
+
+    # Scrollable area for checkboxes
+    frm_scroll = ttk.Frame(frm_picker)
+    frm_scroll.pack(fill="both", expand=True, padx=4, pady=(0, 4))
+    pick_canvas = tk.Canvas(frm_scroll, height=180, highlightthickness=0)
+    pick_scrollbar = ttk.Scrollbar(frm_scroll, orient="vertical", command=pick_canvas.yview)
+    pick_inner = ttk.Frame(pick_canvas)
+    pick_inner.bind("<Configure>",
+                    lambda e: pick_canvas.configure(scrollregion=pick_canvas.bbox("all")))
+    pick_canvas.create_window((0, 0), window=pick_inner, anchor="nw")
+    pick_canvas.configure(yscrollcommand=pick_scrollbar.set)
+    pick_canvas.pack(side="left", fill="both", expand=True)
+    pick_scrollbar.pack(side="right", fill="y")
+    # Mouse wheel scrolling — only when pointer is over the canvas
+    def _on_mousewheel(event):
+        pick_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+    pick_canvas.bind("<Enter>", lambda e: pick_canvas.bind_all("<MouseWheel>", _on_mousewheel))
+    pick_canvas.bind("<Leave>", lambda e: pick_canvas.unbind_all("<MouseWheel>"))
+    picker["inner"] = pick_inner
+
     ttk.Label(tab_merge,
-        text=("Use the model FBX for mesh, textures, weapon attachments, and overall scale (Unity export).\n"
-              "Use the animations FBX as the clean source of animation clips (the original bundle FBX).\n"
-              "Bone names must match between the two — they will if both come from the same source rig."),
-        foreground="gray", justify="left").pack(fill="x", padx=10, pady=(0, 8))
+        text=("Tip: bone names must match between the two files — they will if both come from the "
+              "same source rig."),
+        foreground="gray", justify="left").pack(fill="x", padx=10, pady=(0, 4))
 
     # ===== shared blender + filter sections =====
     frm_blender = ttk.LabelFrame(root, text="Blender")
@@ -801,7 +892,7 @@ def launch_gui():
     # ===== buttons + log =====
     frm_act = ttk.Frame(root); frm_act.pack(fill="x", padx=10, pady=4)
 
-    log = scrolledtext.ScrolledText(root, height=18, font=("Consolas", 9))
+    log = scrolledtext.ScrolledText(root, height=12, font=("Consolas", 9))
     log.pack(fill="both", expand=True, padx=10, pady=8)
     log.tag_configure("ok",   foreground="#0a0")
     log.tag_configure("err",  foreground="#c00")
@@ -890,7 +981,24 @@ def launch_gui():
         log_write(f"Merging:", "info")
         log_write(f"  model:      {state['model'].get()}", "info")
         log_write(f"  animations: {state['animations'].get()}", "info")
-        log_write(f"  -> output:  {state['output'].get()}\n", "info")
+        log_write(f"  -> output:  {state['output'].get()}", "info")
+
+        # If the picker has been loaded, its checkbox selection takes priority
+        # over the comma-separated wanted-list. Otherwise fall back to the
+        # shared filter section's text field (legacy behavior).
+        cfg = _common_cfg()
+        if picker["vars"]:
+            picked = [name for name, var in picker["vars"].items() if var.get()]
+            if not picked:
+                messagebox.showerror("Empty selection",
+                    "No animations selected. Click 'Defaults' or check at least one.")
+                return
+            cfg["wanted_anims"] = picked
+            cfg["keep_all_anims"] = False  # explicit pick beats keep_all
+            log_write(f"  selection:  {len(picked)} animation(s) from picker\n", "info")
+        else:
+            log_write(f"  selection:  using comma-separated filter (picker not loaded)\n", "dim")
+
         set_busy(True)
         def work():
             try:
@@ -899,11 +1007,89 @@ def launch_gui():
                     model=state["model"].get(),
                     animations=state["animations"].get(),
                     output=state["output"].get(),
-                    **_common_cfg())
+                    **cfg)
                 root.after(0, lambda: gui_show_result(result))
             finally:
                 root.after(0, lambda: set_busy(False))
         threading.Thread(target=work, daemon=True).start()
+
+    def do_load_anims():
+        path = state["animations"].get()
+        if not _need(path, "the animations file"): return
+        if not _need_blender(): return
+        is_glb = path.lower().endswith(".glb")
+        mode = "inspect_glb" if is_glb else "inspect_fbx"
+        log.delete("1.0", "end")
+        log_write(f"Loading animations from: {path}", "info")
+        log_write("(Blender startup + import can take 30+ seconds for large files...)\n", "dim")
+        set_busy(True)
+        def work():
+            try:
+                result, _ = run_blender(
+                    state["blender"].get(), mode, on_log=stream_log,
+                    input=path, orient_auto=state["orient_auto"].get())
+                root.after(0, lambda: on_anims_loaded(result))
+            finally:
+                root.after(0, lambda: set_busy(False))
+        threading.Thread(target=work, daemon=True).start()
+
+    def on_anims_loaded(r):
+        if not r.get("ok"):
+            log_write("FAILED to load animations: " + r.get("error", "<no error>"), "err")
+            if "trace" in r:
+                log_write(r["trace"], "err")
+            return
+
+        # Clear existing checkboxes (re-loads should replace, not append).
+        for w in picker["inner"].winfo_children():
+            w.destroy()
+        picker["vars"].clear()
+
+        # Group by short name. The FBX often has Armature|X and Weapon_R|X /
+        # Weapon_L|X duplicates — show one checkbox per unique short name.
+        # The merge backend's drop_weapon_anims handles weapon duplicates,
+        # so we hide the Weapon_L/R variants from the picker too when on.
+        seen = {}
+        for s in r.get("actions", []):
+            if state["drop_weapon"].get() and s["name"].startswith(("Weapon_L|", "Weapon_R|")):
+                continue
+            short = s["short"]
+            if short not in seen:
+                seen[short] = s
+
+        defaults_set = set(DEFAULT_WANTED_ANIMS)
+        for short in sorted(seen.keys()):
+            s = seen[short]
+            var = tk.BooleanVar(value=(short in defaults_set))
+            picker["vars"][short] = var
+            warn = "  ⚠️ low keyframes" if s["keyframes"] <= 2 else ""
+            text = (f"{short:<28}  {s['keyframes']:>4} kf   "
+                    f"frames {s['frame_start']}–{s['frame_end']}{warn}")
+            ttk.Checkbutton(picker["inner"], text=text, variable=var).pack(anchor="w", padx=4, pady=1)
+
+        n_default_present = sum(1 for short in seen if short in defaults_set)
+        picker["count_label"].config(
+            text=(f"  Loaded {len(seen)} unique animation(s). "
+                  f"{n_default_present} default(s) pre-checked."),
+            foreground="#444")
+        log_write(
+            f"Loaded {len(r.get('actions', []))} action(s), {len(seen)} unique short name(s) "
+            f"— {n_default_present} default(s) pre-checked.", "ok")
+
+    def select_anims(mode):
+        if not picker["vars"]:
+            messagebox.showinfo(
+                "Picker empty",
+                "No animations loaded yet. Click 'Load animations from file' first.")
+            return
+        defaults_set = set(DEFAULT_WANTED_ANIMS)
+        for short, var in picker["vars"].items():
+            if mode == "all":
+                var.set(True)
+            elif mode == "none":
+                var.set(False)
+            elif mode == "defaults":
+                var.set(short in defaults_set)
 
     def gui_show_result(r):
         log_write("")
@@ -939,8 +1125,7 @@ def launch_gui():
 
         if r.get("kind") == "merge":
             log_write(f"DONE: {r['output']}", "ok")
-            log_write(f"  Model armature:   {r['model_armature']}  ({r['model_bones']} bones)")
-            log_write(f"  Source rig had:   {r['source_bones']} bones")
+            log_write(f"  Armature kept:    {r['model_armature']}  ({r['model_bones']} bones)")
             log_write(f"  Actions exported: {r['actions_kept']}", "ok")
             had_low = False
             for a in r["exported_actions"]:
@@ -950,18 +1135,20 @@ def launch_gui():
                           f"frames {a['frame_start']}-{a['frame_end']}", tag)
             if had_low:
                 log_write("\n  ⚠️ Some clips have ≤2 keyframes — animations will look wrong.", "warn")
-            if r.get("missing_bones"):
+            if r.get("unmatched_vgroups"):
+                log_write(f"\n  ⚠️ {len(r['unmatched_vgroups'])} vertex group(s) on the new mesh "
+                          f"have no matching bone:", "warn")
+                for b in r["unmatched_vgroups"][:15]:
+                    log_write(f"      - {b}", "warn")
+                if len(r["unmatched_vgroups"]) > 15:
+                    log_write(f"      ...and {len(r['unmatched_vgroups'])-15} more", "warn")
+                log_write("  Vertices weighted to those groups won't deform. Likely Unity renamed "
+                          "or added bones that aren't in the original rig.", "warn")
+            elif r.get("missing_bones"):
                 log_write(f"\n  ⚠️ {len(r['missing_bones'])} bone(s) used by animations are NOT in "
-                          f"the model armature:", "warn")
+                          f"the armature:", "warn")
                 for b in r["missing_bones"][:15]:
                     log_write(f"      - {b}", "warn")
-                if len(r["missing_bones"]) > 15:
-                    log_write(f"      ...and {len(r['missing_bones'])-15} more", "warn")
-                log_write("  Those joints won't animate. Make sure your Unity export keeps the "
-                          "original bone names.", "warn")
-            elif r.get("unused_new_bones"):
-                log_write(f"\n  Note: {len(r['unused_new_bones'])} bone(s) on the model "
-                          f"aren't animated (probably weapon mounts — fine).", "dim")
 
     btn_inspect = ttk.Button(frm_act, text="Inspect (single tab)",  command=do_inspect)
     btn_inspect.pack(side="left", padx=4)

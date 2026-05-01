@@ -43,7 +43,7 @@
     /** Build a character from a preset key. */
     ProtoChar.create = function (presetKey = 'warrior', opts = {}) {
         // GLB-backed presets — only available once ProtoModels.preload() resolved.
-        if ((presetKey === 'satyr_1h' || presetKey === 'satyr_2h') &&
+        if ((presetKey === 'satyr_1h' || presetKey === 'satyr_dual' || presetKey === 'satyr_2h') &&
             window.ProtoModels && ProtoModels.loaded) {
             return createSatyr(presetKey, opts);
         }
@@ -376,13 +376,14 @@
      * =======================================================================*/
 
     const SATYR_VARIANTS = {
-        satyr_1h: { animSuffix: '1H_WepR' },
-        satyr_2h: { animSuffix: '2H'      },
+        satyr_1h:   { modelKey: 'satyrT1', animSuffix: '1H_WepR'      },
+        satyr_dual: { modelKey: 'satyrT2', animSuffix: '1H_DualWield' },
+        satyr_2h:   { modelKey: 'satyrT3', animSuffix: '2H'           },
     };
 
     function createSatyr(presetKey, opts = {}) {
         const variant = SATYR_VARIANTS[presetKey];
-        const tpl = ProtoModels.satyr;
+        const tpl = ProtoModels[variant.modelKey];
         const scaleMul = (opts.scale != null) ? opts.scale : 1.0;
 
         const root = new THREE.Group();
