@@ -81,13 +81,15 @@
             // Selection ring pulse
             this.tickSelectionRing(dt);
 
-            // Health bar — sprites auto-face camera; we just rescale fill from
-            // the left edge so it shrinks toward the right as HP drops.
+            // Health bar — one sprite, single canvas-rendered texture. Redraw
+            // only when the HP fraction actually changes.
             if (this.healthBar && this.maxHp > 0) {
-                const pct = Math.max(0, this.currentHp / this.maxHp);
-                const w = this.healthBar.width;
-                this.healthBar.fill.scale.x = Math.max(0.001, w * pct);
-                this.healthBar.fill.position.x = -((1 - pct) * w * 0.5);
+                const pct = Math.max(0, Math.min(1, this.currentHp / this.maxHp));
+                if (Math.abs(pct - this.healthBar.pct) > 0.001) {
+                    drawHealthBar(this.healthBar.ctx, pct);
+                    this.healthBar.tex.needsUpdate = true;
+                    this.healthBar.pct = pct;
+                }
             }
         }
 
@@ -150,27 +152,71 @@
             }
         }
 
-        /** Ornate sprite-based HP bar with gold trim, gradient fill, and dark
-         *  recessed background — reads cleanly even at distance. */
+        /** HP bar as a single billboarded sprite backed by a per-entity canvas
+         *  texture. The plate, gold border, and red gradient fill are all drawn
+         *  into one canvas; on HP change we redraw and flag the texture. This
+         *  avoids the prior two-sprite design where the fill's local-x offset
+         *  drifted out of alignment with the bg whenever a parent group rotated. */
         addHealthBar(width = 1.4, yOffset = 2.4) {
-            // BG sprite: dark recessed plate with gold border (canvas-drawn)
-            const bgTex = makeBarBgTexture(160, 26);
-            const bgMat = new THREE.SpriteMaterial({ map: bgTex, transparent: true, depthTest: false });
-            const bg = new THREE.Sprite(bgMat);
-            bg.scale.set(width, width * (26 / 160), 1);
-            bg.renderOrder = 9000;
-            // Fill sprite: red gradient, scales x with HP%
-            const fillTex = makeBarFillTexture(160, 18, '#ff7066', '#d83838', '#8a1a1a', '#4a0808');
-            const fillMat = new THREE.SpriteMaterial({ map: fillTex, transparent: true, depthTest: false });
-            const fill = new THREE.Sprite(fillMat);
-            fill.scale.set(width * 0.92, width * 0.92 * (18 / 160), 1);
-            fill.renderOrder = 9001;
-            const grp = new THREE.Group();
-            grp.add(bg); grp.add(fill);
-            grp.position.y = yOffset;
-            if (this.mesh) this.mesh.add(grp);
-            this.healthBar = { group: grp, fill, bg, width: width * 0.92 };
+            const canvas = document.createElement('canvas');
+            canvas.width = 160; canvas.height = 26;
+            const ctx = canvas.getContext('2d');
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            tex.minFilter = THREE.LinearFilter;
+            const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+            const sprite = new THREE.Sprite(mat);
+            sprite.scale.set(width, width * (canvas.height / canvas.width), 1);
+            sprite.position.y = yOffset;
+            sprite.renderOrder = 9000;
+            if (this.mesh) this.mesh.add(sprite);
+            drawHealthBar(ctx, 1.0);
+            this.healthBar = { sprite, tex, ctx, pct: 1.0 };
         }
+    }
+
+    /** Paint the bar into `ctx` with `pct` of the inner area filled. */
+    function drawHealthBar(ctx, pct) {
+        const w = ctx.canvas.width, h = ctx.canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        // Dark recessed plate
+        const bg = ctx.createLinearGradient(0, 0, 0, h);
+        bg.addColorStop(0, '#08080f');
+        bg.addColorStop(1, '#1a1626');
+        ctx.fillStyle = bg;
+        ctx.fillRect(2, 2, w - 4, h - 4);
+
+        // Red gradient fill, anchored to the left, scaled to pct
+        const fillX = 4, fillY = 4;
+        const fillW = w - 8, fillH = h - 8;
+        if (pct > 0) {
+            const fw = Math.max(1, Math.round(fillW * pct));
+            const grd = ctx.createLinearGradient(0, fillY, 0, fillY + fillH);
+            grd.addColorStop(0,    '#ff7066');
+            grd.addColorStop(0.35, '#d83838');
+            grd.addColorStop(0.7,  '#8a1a1a');
+            grd.addColorStop(1,    '#4a0808');
+            ctx.fillStyle = grd;
+            ctx.fillRect(fillX, fillY, fw, fillH);
+
+            // Glossy highlight along the top of the fill
+            const gloss = ctx.createLinearGradient(0, fillY, 0, fillY + fillH * 0.5);
+            gloss.addColorStop(0, 'rgba(255,255,255,0.35)');
+            gloss.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = gloss;
+            ctx.fillRect(fillX, fillY, fw, fillH * 0.5);
+        }
+
+        // Gold border
+        ctx.strokeStyle = '#c8a050';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(1, 1, w - 2, h - 2);
+
+        // Inner dark stroke for depth
+        ctx.strokeStyle = 'rgba(0,0,0,0.7)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(3, 3, w - 6, h - 6);
     }
 
     function tickStatusFx(unit, dt) {
@@ -195,60 +241,6 @@
         }
     }
 
-    /** Cached canvas → THREE.CanvasTexture for the HP bar background. */
-    let _bgTexCache = null;
-    function makeBarBgTexture(w, h) {
-        if (_bgTexCache) return _bgTexCache;
-        const c = document.createElement('canvas');
-        c.width = w; c.height = h;
-        const ctx = c.getContext('2d');
-        // Dark recessed plate
-        const grd = ctx.createLinearGradient(0, 0, 0, h);
-        grd.addColorStop(0, '#08080f');
-        grd.addColorStop(1, '#1a1626');
-        ctx.fillStyle = grd;
-        ctx.fillRect(2, 2, w - 4, h - 4);
-        // Gold border
-        ctx.strokeStyle = '#c8a050';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(1, 1, w - 2, h - 2);
-        // Inner dark stroke for depth
-        ctx.strokeStyle = 'rgba(0,0,0,0.7)';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(3, 3, w - 6, h - 6);
-        const tex = new THREE.CanvasTexture(c);
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.minFilter = THREE.LinearFilter;
-        _bgTexCache = tex;
-        return tex;
-    }
-
-    /** Cached red-gradient fill texture for HP bar. */
-    let _fillTexCache = null;
-    function makeBarFillTexture(w, h, c1, c2, c3, c4) {
-        if (_fillTexCache) return _fillTexCache;
-        const c = document.createElement('canvas');
-        c.width = w; c.height = h;
-        const ctx = c.getContext('2d');
-        const grd = ctx.createLinearGradient(0, 0, 0, h);
-        grd.addColorStop(0,    c1);
-        grd.addColorStop(0.35, c2);
-        grd.addColorStop(0.7,  c3);
-        grd.addColorStop(1,    c4);
-        ctx.fillStyle = grd;
-        ctx.fillRect(0, 0, w, h);
-        // Glossy highlight along top
-        const gloss = ctx.createLinearGradient(0, 0, 0, h * 0.5);
-        gloss.addColorStop(0, 'rgba(255,255,255,0.35)');
-        gloss.addColorStop(1, 'rgba(255,255,255,0)');
-        ctx.fillStyle = gloss;
-        ctx.fillRect(0, 0, w, h * 0.5);
-        const tex = new THREE.CanvasTexture(c);
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.minFilter = THREE.LinearFilter;
-        _fillTexCache = tex;
-        return tex;
-    }
 
     window.ProtoEntity = Entity;
 })();

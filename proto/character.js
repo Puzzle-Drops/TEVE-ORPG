@@ -514,10 +514,15 @@
                 });
             },
             tick(dt, ctrl = {}) {
-                // Smooth facing turn — rotate the GLB root.
+                // Smooth facing turn — rotate the inner model, NOT the root.
+                // The HP bar and selection ring are attached by entity.js as
+                // children of the root (the entity's mesh), and we want them
+                // to stay aligned in world space when the satyr turns. The
+                // procedural character does the same trick by rotating its
+                // hip sub-group while keeping root unrotated.
                 const yawDiff = wrapAngle(state.facingTarget - state.facing);
                 state.facing += yawDiff * Math.min(1, 12 * dt);
-                root.rotation.y = state.facing;
+                model.rotation.y = state.facing;
 
                 mixer.update(dt);
 
