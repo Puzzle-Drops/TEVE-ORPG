@@ -53,8 +53,6 @@
             this.character = ProtoChar.create('warrior');
             this.mesh = this.character.group;
             this.addToScene();
-            // WC3-style green friendly ring under our feet
-            this.addSelectionRing(0x55cc66, 0.95);
 
             // Movement state
             this.moveTarget = null;

@@ -13,7 +13,7 @@
     const TEMPLATES = {
         grunt: {
             name: 'Satyr Youth', tier: 1,
-            preset: 'satyr_1h', scale: 1.0, tint: 0x6a4030,
+            preset: 'satyr_1h',
             spriteId: 'satyr_youth',
             stats: { str: 8, agi: 6, int: 2 },
             hp: 80, attack: 8, armor: 4, resist: 2,
@@ -22,7 +22,7 @@
         },
         brute: {
             name: 'Satyr Instigator', tier: 3,
-            preset: 'satyr_2h', scale: 1.3, tint: 0x8a3030,
+            preset: 'satyr_2h',
             spriteId: 'satyr_instigator',
             stats: { str: 18, agi: 4, int: 2 },
             hp: 220, attack: 14, armor: 8, resist: 4,
@@ -31,7 +31,7 @@
         },
         stalker: {
             name: 'Aggressive Satyr', tier: 2,
-            preset: 'satyr_dual', scale: 0.9, tint: 0x55304a,
+            preset: 'satyr_dual',
             spriteId: 'aggressive_satyr',
             stats: { str: 6, agi: 12, int: 8 },
             hp: 60, attack: 10, armor: 2, resist: 8,
@@ -63,9 +63,10 @@
             this.character = ProtoChar.create(t.preset, { bodyColor: t.tint, scale: t.scale });
             this.mesh = this.character.group;
             this.addToScene();
-            this.addHealthBar(1.0 + 0.5 * t.scale, 1.6 + 1.4 * t.scale);
-            // WC3-style red hostile ring; size scales with model
-            this.addSelectionRing(0xdd4444, 0.85 * t.scale);
+            // GLB-backed presets (e.g. satyr_*) carry their own scale on the
+            // variant config, so the template doesn't need a scale field.
+            const visualScale = (t.scale != null) ? t.scale : 1.0;
+            this.addHealthBar(1.0 + 0.5 * visualScale, 1.6 + 1.4 * visualScale);
 
             // AI state
             this._target = null;

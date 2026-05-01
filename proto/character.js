@@ -375,16 +375,49 @@
      *  where <Variant> is "1H_WepR" or "2H".
      * =======================================================================*/
 
+    /** Per-variant unit config — model template, scale multiplier, and the
+     *  exact animation clip names to drive idle/walk/attack/death. Spelled out
+     *  rather than derived from a suffix so each unit reads at a glance and
+     *  can mix-and-match clips that don't share a naming pattern. */
     const SATYR_VARIANTS = {
-        satyr_1h:   { modelKey: 'satyrT1', animSuffix: '1H_WepR'      },
-        satyr_dual: { modelKey: 'satyrT2', animSuffix: '1H_DualWield' },
-        satyr_2h:   { modelKey: 'satyrT3', animSuffix: '2H'           },
+        satyr_1h: {
+            modelKey: 'satyrT1',
+            scale: 1.0,
+            animations: {
+                idle:   'Idle_1H_WepR',
+                walk:   'Walk_1H_WepR',
+                attack: 'Attack_1H_WepR',
+                death:  'Death_1H_WepR',
+            },
+        },
+        satyr_dual: {
+            modelKey: 'satyrT2',
+            scale: 1.1,
+            animations: {
+                idle:   'Idle_1H_DualWield',
+                walk:   'Walk_1H_DualWield',
+                attack: 'Attack_1H_DualWield',
+                death:  'Death_1H_DualWield',
+            },
+        },
+        satyr_2h: {
+            modelKey: 'satyrT3',
+            scale: 1.2,
+            animations: {
+                idle:   'Idle_2H',
+                walk:   'Walk_2H',
+                attack: 'Attack_2H',
+                death:  'Death_2H',
+            },
+        },
     };
 
     function createSatyr(presetKey, opts = {}) {
         const variant = SATYR_VARIANTS[presetKey];
         const tpl = ProtoModels[variant.modelKey];
-        const scaleMul = (opts.scale != null) ? opts.scale : 1.0;
+        // opts.scale, if provided by the entity template, overrides the
+        // variant's default — keeps room for boss/elite size variants.
+        const scaleMul = (opts.scale != null) ? opts.scale : variant.scale;
 
         const root = new THREE.Group();
 
@@ -406,10 +439,10 @@
         // Animation setup
         const mixer = new THREE.AnimationMixer(model);
         const clips = tpl.animations;
-        const idleClip   = ProtoModels.findClip(clips, 'Idle_'   + variant.animSuffix);
-        const walkClip   = ProtoModels.findClip(clips, 'Walk_'   + variant.animSuffix);
-        const attackClip = ProtoModels.findClip(clips, 'Attack_' + variant.animSuffix);
-        const deathClip  = ProtoModels.findClip(clips, 'Death_'  + variant.animSuffix);
+        const idleClip   = ProtoModels.findClip(clips, variant.animations.idle);
+        const walkClip   = ProtoModels.findClip(clips, variant.animations.walk);
+        const attackClip = ProtoModels.findClip(clips, variant.animations.attack);
+        const deathClip  = ProtoModels.findClip(clips, variant.animations.death);
 
         const idleAction   = idleClip   ? mixer.clipAction(idleClip)   : null;
         const walkAction   = walkClip   ? mixer.clipAction(walkClip)   : null;

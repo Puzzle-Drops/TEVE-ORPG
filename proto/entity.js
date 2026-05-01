@@ -36,7 +36,6 @@
             this.mesh = null;
             this.healthBar = null;
             this.source = null;
-            this.selectionRing = null;  // WC3-style faction ring under unit
 
             this._statusFxAccum = 0;
         }
@@ -78,9 +77,6 @@
                 tickStatusFx(this, 1.0);
             }
 
-            // Selection ring pulse
-            this.tickSelectionRing(dt);
-
             // Health bar — one sprite, single canvas-rendered texture. Redraw
             // only when the HP fraction actually changes.
             if (this.healthBar && this.maxHp > 0) {
@@ -105,52 +101,6 @@
             this.onDeath();
         }
         onDeath() { /* subclass hook */ }
-
-        /** WC3-style faction ring under the unit. Always visible; pulses brighter
-         *  when hovered or targeted by the player. */
-        addSelectionRing(colorHex, radius = 0.85) {
-            const mat = new THREE.MeshBasicMaterial({
-                color: colorHex, transparent: true, opacity: 0.85,
-                side: THREE.DoubleSide,
-                depthTest: false, depthWrite: false,
-            });
-            mat.userData.baseOpacity = 0.85;
-            mat.userData.baseColor = colorHex;
-            const ring = new THREE.Mesh(new THREE.RingGeometry(radius * 0.93, radius, 48), mat);
-            ring.rotation.x = -Math.PI / 2;
-            ring.position.y = 0.03;
-            ring.renderOrder = 7000;
-            if (this.mesh) this.mesh.add(ring);
-            this.selectionRing = ring;
-            this.selectionRingRadius = radius;
-        }
-
-        /** Per-frame: brighter when hovered/targeted, gold when selected. */
-        tickSelectionRing(dt) {
-            if (!this.selectionRing) return;
-            const isHovered  = window.ProtoInput && ProtoInput.hoverEntity === this;
-            const isTargeted = window.Proto && Proto.player && Proto.player.goal && Proto.player.goal.entity === this;
-            const isSelected = window.Proto && Proto.selectedEnemy === this;
-            const mat = this.selectionRing.material;
-            const baseOpacity = mat.userData.baseOpacity || 0.6;
-            const baseColor = mat.userData.baseColor || mat.color.getHex();
-
-            // Color: selected = gold, otherwise base (red for hostile, green for player)
-            const targetHex = isSelected ? 0xfbbf24 : baseColor;
-            mat.color.lerpColors(mat.color, new THREE.Color(targetHex), Math.min(1, 12 * dt));
-
-            // Opacity: brighter on hover/target/select
-            const wantOpacity = (isSelected) ? 1.0 : (isHovered || isTargeted ? 1.0 : baseOpacity);
-            mat.opacity += (wantOpacity - mat.opacity) * Math.min(1, 12 * dt);
-
-            // Pulse: targeted by player, OR selected
-            if (isTargeted || isSelected) {
-                const t = performance.now() / 250;
-                this.selectionRing.scale.setScalar(1 + Math.sin(t) * 0.07);
-            } else {
-                this.selectionRing.scale.setScalar(1);
-            }
-        }
 
         /** HP bar as a single billboarded sprite backed by a per-entity canvas
          *  texture. The plate, gold border, and red gradient fill are all drawn
