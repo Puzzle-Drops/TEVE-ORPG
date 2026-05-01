@@ -376,8 +376,8 @@
      * =======================================================================*/
 
     const SATYR_VARIANTS = {
-        satyr_1h: { animSuffix: '1H_WepR', weaponKey: 'satyr1HAxe' },
-        satyr_2h: { animSuffix: '2H',     weaponKey: 'satyr2HAxe' },
+        satyr_1h: { animSuffix: '1H_WepR' },
+        satyr_2h: { animSuffix: '2H'      },
     };
 
     function createSatyr(presetKey, opts = {}) {
@@ -392,18 +392,6 @@
         model.scale.setScalar(tpl.scaleFactor * scaleMul);
         // FBX import puts the root on its feet at y=0 already; no offset needed.
         root.add(model);
-
-        // Attach the appropriate axe to the right hand. The rig uses bones
-        // named "weapon_r" (or similar); we find the first bone whose lowercase
-        // name contains "weapon" and ends with "_r" or "right".
-        const weaponBone = findWeaponBone(model);
-        if (weaponBone && ProtoModels[variant.weaponKey]) {
-            const axe = ProtoModels[variant.weaponKey].template.clone(true);
-            // Swap the axe materials so the clone doesn't share state with
-            // the cached template (in case we ever tint per-instance).
-            axe.traverse((c) => { if (c.isMesh && c.material) c.material = c.material.clone(); });
-            weaponBone.add(axe);
-        }
 
         // Drop shadow disc, same as the procedural character.
         const shadowMat = new THREE.MeshBasicMaterial({
@@ -563,25 +551,6 @@
                 }
             },
         };
-    }
-
-    function findWeaponBone(model) {
-        let bone = null;
-        model.traverse((n) => {
-            if (bone || !n.isBone) return;
-            const name = (n.name || '').toLowerCase();
-            if (name.includes('weapon') && (name.endsWith('_r') || name.includes('right'))) {
-                bone = n;
-            }
-        });
-        // Fallback: any bone with "weapon" in the name.
-        if (!bone) {
-            model.traverse((n) => {
-                if (bone || !n.isBone) return;
-                if ((n.name || '').toLowerCase().includes('weapon')) bone = n;
-            });
-        }
-        return bone;
     }
 
     function wrapAngle(a) {

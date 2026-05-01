@@ -1,10 +1,6 @@
 /* proto/models.js
- * GLB asset preloader. Loads the satyr body + weapon GLBs and their textures
- * once at boot, caches templates so character.js can clone them per-instance.
- *
- * Animation clip naming convention from the FBX → GLB pipeline:
- *   "Armature|<Anim>_<WeaponConfig>|BaseLayer_Armature"
- * e.g. "Armature|Idle_2H|BaseLayer_Armature", "Armature|Attack_1H_WepR|BaseLayer_Armature".
+ * GLB asset preloader. Loads the satyr body GLB and its texture once at boot,
+ * caches the template so character.js can clone it per-instance.
  */
 (function () {
     'use strict';
@@ -12,8 +8,6 @@
     const ProtoModels = {
         loaded: false,
         satyr: null,        // { template, animations, scaleFactor }
-        satyr1HAxe: null,   // { template }
-        satyr2HAxe: null,   // { template }
     };
 
     const SATYR_TARGET_HEIGHT = 1.9; // world units, matches procedural character ~1.8m
@@ -63,13 +57,8 @@
         const base = 'proto/assets/models/satyr/';
         const v = '?v=' + Date.now(); // bust browser cache while we iterate on the GLB
 
-        const [satyrGltf, axe1Gltf, axe2Gltf] = await Promise.all([
-            loadGLB(base + 'Satyr.glb' + v),
-            loadGLB(base + 'Satyr_1H_Axe.glb' + v),
-            loadGLB(base + 'Satyr_2H_Axe.glb' + v),
-        ]);
+        const satyrGltf = await loadGLB(base + 'Satyr.glb' + v);
 
-        // Body — apply diffuse, compute scale once based on the template.
         applyTexture(satyrGltf.scene, base + 'T_Satyr_Body_Br_D.png');
         const scale = computeScale(satyrGltf.scene, SATYR_TARGET_HEIGHT);
         ProtoModels.satyr = {
@@ -79,12 +68,6 @@
         };
         console.log('[ProtoModels] Satyr loaded — animations:',
             satyrGltf.animations.map(a => a.name));
-
-        // Weapons — same scale (they were authored to attach to the same skeleton).
-        applyTexture(axe1Gltf.scene, base + 'T_Axe_1H_Satyr_Br_D.png');
-        applyTexture(axe2Gltf.scene, base + 'T_Axe_2HL_Satyr_Br_D.png');
-        ProtoModels.satyr1HAxe = { template: axe1Gltf.scene };
-        ProtoModels.satyr2HAxe = { template: axe2Gltf.scene };
 
         ProtoModels.loaded = true;
     };
