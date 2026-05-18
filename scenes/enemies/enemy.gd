@@ -2,6 +2,7 @@ extends CharacterBody3D
 
 @export var move_speed: float = 2.5
 @export var attack_range: float = 2.5
+@export var chase_buffer: float = 1.0  # hysteresis: chase until (attack_range - chase_buffer), leave attack if > attack_range
 @export var attack_cooldown: float = 1.5
 @export var leash_distance: float = 15.0
 
@@ -61,7 +62,8 @@ func _physics_process(delta: float) -> void:
 				var to_target := target.global_position - global_position
 				to_target.y = 0
 				var dist := to_target.length()
-				if dist <= attack_range:
+				# Hysteresis: don't switch to ATTACK until comfortably inside attack_range
+				if dist <= attack_range - chase_buffer:
 					_set_state(State.ATTACK)
 					velocity.x = 0
 					velocity.z = 0
