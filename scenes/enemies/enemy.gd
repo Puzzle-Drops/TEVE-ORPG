@@ -2,7 +2,7 @@ extends CharacterBody3D
 
 @export var move_speed: float = 2.5
 @export var attack_range: float = 2.5
-@export var chase_buffer: float = 1.0  # how much closer than attack_range the enemy tries to be when positioning
+@export var chase_buffer: float = 1.0  # positioning gap: enemy tries to be (attack_range - chase_buffer) close
 @export var attack_cooldown: float = 1.5
 @export var leash_distance: float = 15.0
 
@@ -16,7 +16,8 @@ var state: State = State.IDLE
 var target: Node3D = null
 var spawn_position: Vector3
 var attack_timer: float = 0.0
-var swinging: bool = false  # mid-attack animation — do not interrupt, do not change state
+var swinging: bool = false  # true while the attack animation is playing
+var aggro_exit_pending: bool = false  # target left aggro mid-swing; resolve after swing ends
 
 @onready var animator: AnimationPlayer = $ModelInstance/AnimationPlayer
 
@@ -24,27 +25,46 @@ func _ready() -> void:
 	spawn_position = global_position
 	if animator:
 		animator.animation_finished.connect(_on_animation_finished)
-	_set_state(State.IDLE)
+	_update_animation()
 
 func _set_state(new_state: State) -> void:
 	if state == new_state:
 		return
 	state = new_state
-	if animator == null:
+	_update_animation()
+
+# Decide what animation should be playing for the current state.
+# CRITICAL: never interrupt the swing animation. While swinging is true,
+# this function is a no-op. animation_finished will return us to the
+# state's default animation when the swing completes.
+func _update_animation() -> void:
+	if animator == null or swinging:
 		return
+	var desired := ""
 	match state:
-		State.IDLE: animator.play(anim_idle)
-		State.CHASE: animator.play(anim_walk)
-		State.LEASH: animator.play(anim_walk)
-		State.ATTACK: animator.play(anim_idle)  # idle pose between swings
+		State.IDLE: desired = anim_idle
+		State.CHASE: desired = anim_walk
+		State.LEASH: desired = anim_walk
+		State.ATTACK: desired = anim_idle  # idle pose between swings
+	if animator.current_animation != desired:
+		animator.play(desired)
 
 func _on_animation_finished(anim_name: String) -> void:
-	# When the swing finishes, release the swing lock and apply damage (TODO).
 	if anim_name == anim_attack:
 		swinging = false
-		# TODO[combat]: apply damage to target here. Roll attack_calc against target.armor/resist.
-		# Damage lands at swing-end so a fleeing player who left attack_range mid-swing still gets hit.
-		animator.play(anim_idle)
+		# TODO[combat]: apply damage to target here (rolled against target.armor/resist).
+		# Damage commits at swing-end so a target that ran out of range during the swing
+		# still takes the hit.
+		if aggro_exit_pending:
+			# Player left aggro during the swing — now we can process that exit.
+			aggro_exit_pending = false
+			target = null
+			if state == State.CHASE or state == State.ATTACK:
+				_set_state(State.LEASH)
+			else:
+				_update_animation()
+		else:
+			_update_animation()
 
 func _physics_process(delta: float) -> void:
 	if attack_timer > 0:
@@ -66,7 +86,6 @@ func _physics_process(delta: float) -> void:
 				var to_target := target.global_position - global_position
 				to_target.y = 0
 				var dist := to_target.length()
-				# Trigger ATTACK as soon as we're within attack_range — no buffer for the trigger.
 				if dist <= attack_range:
 					_set_state(State.ATTACK)
 					velocity.x = 0
@@ -92,8 +111,10 @@ func _physics_process(delta: float) -> void:
 
 		State.ATTACK:
 			if not is_instance_valid(target):
-				target = null
-				_set_state(State.IDLE)
+				# Target gone unexpectedly. If swinging, finish swing first
+				# (animation_finished will handle the cleanup). Otherwise leash now.
+				if not swinging:
+					_set_state(State.LEASH)
 				velocity.x = 0
 				velocity.z = 0
 			else:
@@ -101,31 +122,35 @@ func _physics_process(delta: float) -> void:
 				var dist := global_position.distance_to(target.global_position)
 
 				if swinging:
-					# Committed to the swing — no movement, no state change.
-					# Damage will land via _on_animation_finished even if target left range.
-					velocity.x = 0
-					velocity.z = 0
+					# Swing animation is playing and cannot be interrupted.
+					# The enemy can still walk forward to close any gap that opened up
+					# (per spec: "Can move during attack animation but stay on attack animation").
+					if dist > attack_range - chase_buffer:
+						var direction := (target.global_position - global_position).normalized()
+						velocity.x = direction.x * move_speed
+						velocity.z = direction.z * move_speed
+					else:
+						velocity.x = 0
+						velocity.z = 0
 				elif dist > attack_range + chase_buffer:
-					# Target escaped beyond the hysteresis margin — chase again.
-					# (Using chase_buffer on the exit side too so we don't flip-flop right
-					# at attack_range. Deadband is attack_range +/- chase_buffer.)
+					# Target is well outside attack range AND we're not swinging — chase.
 					_set_state(State.CHASE)
 					velocity.x = 0
 					velocity.z = 0
 				elif attack_timer <= 0:
-					# Cooldown ready — start the swing.
+					# Cooldown ready — start swing.
 					animator.play(anim_attack)
 					swinging = true
 					attack_timer = attack_cooldown
 					velocity.x = 0
 					velocity.z = 0
 				elif dist > attack_range - chase_buffer:
-					# On cooldown, in range, but target is at the edge — close the gap.
+					# Between swings, close the gap to the chase target distance.
 					var direction := (target.global_position - global_position).normalized()
 					velocity.x = direction.x * move_speed
 					velocity.z = direction.z * move_speed
 				else:
-					# Cooldown, comfortably inside chase_buffer — stand still.
+					# Comfortably positioned; wait for cooldown.
 					velocity.x = 0
 					velocity.z = 0
 
@@ -143,10 +168,17 @@ func _face_toward(world_pos: Vector3) -> void:
 func _on_aggro_area_body_entered(body: Node3D) -> void:
 	if target == null:
 		target = body
+		aggro_exit_pending = false
 		_set_state(State.CHASE)
 
 func _on_aggro_area_body_exited(body: Node3D) -> void:
 	if body == target:
-		target = null
-		if state == State.CHASE or state == State.ATTACK:
-			_set_state(State.LEASH)
+		if swinging:
+			# Don't change state while the swing is playing — that would interrupt
+			# the animation and prevent animation_finished from ever firing, leaving
+			# swinging=true forever. Defer until the swing completes.
+			aggro_exit_pending = true
+		else:
+			target = null
+			if state == State.CHASE or state == State.ATTACK:
+				_set_state(State.LEASH)
