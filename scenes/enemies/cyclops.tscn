@@ -1,6 +1,13 @@
-[gd_scene format=3 uid="uid://ctmcmd8jwoe0v"]
+[gd_scene load_steps=4 format=3 uid="uid://ctmcmd8jwoe0v"]
 
 [ext_resource type="PackedScene" uid="uid://cpjx35cvmpjik" path="res://assets/models/creatures/cyclops/cyclops.fbx" id="1_a41yu"]
+[ext_resource type="Texture2D" uid="uid://ck5v405ago7w1" path="res://assets/models/creatures/cyclops/textures/T_Cyclops_Gr_D.tga" id="2_diff"]
+[ext_resource type="Texture2D" uid="uid://dq725ajjljupb" path="res://assets/models/creatures/cyclops/textures/T_Cyclops_N.tga" id="3_norm"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cyclops"]
+albedo_texture = ExtResource("2_diff")
+normal_enabled = true
+normal_texture = ExtResource("3_norm")
 
 [node name="cyclops" unique_id=1082740815 instance=ExtResource("1_a41yu")]
 
@@ -27,3 +34,24 @@ bone_idx = 65
 [node name="thigh_twist_01_r" parent="root/Skeleton3D" parent_id_path=PackedInt32Array(423431927) index="5" unique_id=1480514412]
 transform = Transform3D(-0.12629183, -0.14095646, -0.9819276, -0.07934931, -0.9852458, 0.15163839, -0.9888143, 0.09706601, 0.11324371, -0.1612973, 0.061070006, 0.89331955)
 bone_idx = 64
+
+[node name="Body" parent="root/Skeleton3D"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cyclops")
+
+[node name="ArmPad" parent="root/Skeleton3D"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cyclops")
+
+[node name="LegRing" parent="root/Skeleton3D"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cyclops")
+
+[node name="Rings" parent="root/Skeleton3D"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cyclops")
+
+[node name="Skirt" parent="root/Skeleton3D"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cyclops")
+
+[node name="Bracers" parent="root/Skeleton3D"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cyclops")
+
+[node name="Shoulder" parent="root/Skeleton3D"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cyclops")
