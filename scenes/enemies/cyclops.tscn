@@ -57,4 +57,4 @@ surface_material_override/0 = SubResource("StandardMaterial3D_cyclops")
 surface_material_override/0 = SubResource("StandardMaterial3D_cyclops")
 
 [node name="AnimationPlayer" parent="."]
-autoplay = "Idle"
+autoplay = "Idle01"
