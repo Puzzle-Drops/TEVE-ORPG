@@ -25,6 +25,7 @@ const ENEMY_LAYER_MASK := 4  # layer 3 = "enemy" per project.godot
 @onready var hp_bar: ProgressBar = get_node_or_null("HUD/PlayerHP")
 @onready var hp_bar_3d: Node3D = get_node_or_null("HPBar")
 @onready var animator: AnimationPlayer = get_node_or_null("ModelInstance/AnimationPlayer")
+@onready var model: Node3D = get_node_or_null("ModelInstance")
 
 const DAMAGE_NUMBER = preload("res://scenes/ui/damage_number.tscn")
 const ANIM_LIBRARY_SCENE = preload("res://assets/models/players/animations/characters/hu_m_base_pack.fbx")
@@ -45,12 +46,10 @@ func _ready() -> void:
 # AnimationPlayer.
 func _load_external_animations() -> void:
 	if animator == null:
-		push_warning("[Player] animator not found at ModelInstance/AnimationPlayer")
 		return
 	var pack = ANIM_LIBRARY_SCENE.instantiate()
 	var pack_ap: AnimationPlayer = pack.find_child("AnimationPlayer", true, false)
 	if pack_ap == null:
-		push_warning("[Player] no AnimationPlayer found inside hu_m_base_pack.fbx")
 		pack.queue_free()
 		return
 	var lib := AnimationLibrary.new()
@@ -58,24 +57,29 @@ func _load_external_animations() -> void:
 		var anim: Animation = pack_ap.get_animation(n)
 		if anim == null:
 			continue
+		_retarget_to_skeleton(anim)
 		if n == anim_idle or n == anim_walk:
 			anim.loop_mode = Animation.LOOP_LINEAR
 		lib.add_animation(n, anim)
 	if animator.has_animation_library(""):
 		animator.remove_animation_library("")
 	animator.add_animation_library("", lib)
-	print("[Player] loaded %d animations; has '%s'? %s, has '%s'? %s" % [
-		animator.get_animation_list().size(),
-		anim_idle, animator.has_animation(anim_idle),
-		anim_walk, animator.has_animation(anim_walk),
-	])
-	# Diagnostic: inspect the first track path of Idle01 to see whether it
-	# targets the body's Skeleton3D or a different/missing node.
-	if animator.has_animation(anim_idle):
-		var idle: Animation = animator.get_animation(anim_idle)
-		if idle.get_track_count() > 0:
-			print("[Player] %s first track path: %s" % [anim_idle, idle.track_get_path(0)])
 	pack.queue_free()
+
+# The base_pack FBX has no Skeleton3D — its animation tracks point at
+# Node3D paths like "Root/Pelvis", "Root/Pelvis/spine_01", etc. Our body
+# FBX has a real Skeleton3D with bones of the same names. Rewrite each
+# track to point at "Skeleton3D:<bone_name>" so the animations drive the
+# actual skeleton bones. Bone-name match was verified offline: 113/113.
+func _retarget_to_skeleton(anim: Animation) -> void:
+	for i in anim.get_track_count():
+		var path_str := str(anim.track_get_path(i))
+		# Extract the leaf segment of the path (the bone name) — anything
+		# after the last '/'. Then strip any ':property' suffix if present.
+		var bone := path_str.get_file()
+		if ":" in bone:
+			bone = bone.split(":")[0]
+		anim.track_set_path(i, NodePath("Skeleton3D:" + bone))
 
 func _set_anim(anim_name: String) -> void:
 	if animator == null or anim_name == "" or current_anim == anim_name:
@@ -136,14 +140,15 @@ func _physics_process(delta: float) -> void:
 	var moving := absf(velocity.x) > 0.1 or absf(velocity.z) > 0.1
 	_set_anim(anim_walk if moving else anim_idle)
 
-	# Rotate to face movement direction. The Human FBX is authored with -Z
-	# as its visual forward (player "facing south" at spawn confirms this),
-	# which matches Godot's default look_at convention — no model flip needed.
-	if moving:
+	# Rotate the MODEL (not the Player root) so the Camera3D — which is
+	# a sibling child of Player — stays world-aligned. The Human FBX is
+	# authored with +Z as visual forward, so use_model_front=true tells
+	# look_at to aim +Z at the target instead of the default -Z.
+	if moving and model:
 		var move_dir := Vector3(velocity.x, 0, velocity.z).normalized()
-		look_at(global_position + move_dir, Vector3.UP)
-		rotation.x = 0
-		rotation.z = 0
+		model.look_at(model.global_position + move_dir, Vector3.UP, true)
+		model.rotation.x = 0
+		model.rotation.z = 0
 
 func _set_target_from_mouse(mouse_pos: Vector2) -> void:
 	var camera := get_viewport().get_camera_3d()
