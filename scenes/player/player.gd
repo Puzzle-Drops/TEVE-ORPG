@@ -48,6 +48,8 @@ func _physics_process(delta: float) -> void:
 	if attack_timer > 0:
 		attack_timer -= delta
 
+	var stand_still := Input.is_action_pressed("stand_still")
+
 	# Input
 	if Input.is_action_pressed("move_to_cursor"):
 		_set_target_from_mouse(get_viewport().get_mouse_position())
@@ -55,8 +57,13 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("basic_attack"):
 		_try_select_attack_target(get_viewport().get_mouse_position())
 
-	if attack_target != null and not is_instance_valid(attack_target):
-		attack_target = null
+	# Drop the attack target if it's been freed OR dead but still in the
+	# despawn delay window. Either way we stop trying to hit it.
+	if attack_target != null:
+		if not is_instance_valid(attack_target):
+			attack_target = null
+		elif attack_target.has_method("is_alive") and not attack_target.is_alive():
+			attack_target = null
 
 	# Movement / attack state
 	if swinging:
@@ -72,10 +79,18 @@ func _physics_process(delta: float) -> void:
 			velocity.z = 0
 			if attack_timer <= 0:
 				_start_swing()
+		elif stand_still:
+			# Hold position; wait for the target to come into range.
+			velocity.x = 0
+			velocity.z = 0
 		else:
 			var direction := to_target.normalized()
 			velocity.x = direction.x * move_speed
 			velocity.z = direction.z * move_speed
+	elif stand_still:
+		# No target and pressed S — just stand here.
+		velocity.x = 0
+		velocity.z = 0
 	else:
 		# Plain move-to-cursor.
 		var to_target := target_position - global_position
@@ -210,11 +225,21 @@ func _set_anim(anim_name: String) -> void:
 	animator.play(anim_name)
 	current_anim = anim_name
 
-func take_damage(amount: float, _attacker: Node3D) -> void:
+func take_damage(amount: float, attacker: Node3D) -> void:
 	hp -= amount
 	print("[Player] HP: %.1f / %.1f" % [hp, max_hp])
 	_refresh_hp_bar()
 	_spawn_damage_number(amount, Color(1, 0.35, 0.35, 1))
+	# Auto-retaliate: if we have no current target AND we're not actively
+	# walking somewhere (arrived at destination), counter-attack whoever hit
+	# us. The S-key stand-still mode doesn't suppress retaliation — it just
+	# stops us from walking toward the attacker; we'll still swing if they
+	# come into attack_range.
+	if attack_target == null and attacker != null and is_instance_valid(attacker):
+		var to_dest := target_position - global_position
+		to_dest.y = 0
+		if to_dest.length() < stop_distance:
+			attack_target = attacker
 	if hp <= 0:
 		_respawn()
 

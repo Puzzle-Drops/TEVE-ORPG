@@ -83,6 +83,9 @@ func _update_animation() -> void:
 	if animator.current_animation != desired:
 		animator.play(desired)
 
+func is_alive() -> bool:
+	return state != State.DEAD
+
 func take_damage(amount: float, _attacker: Node3D) -> void:
 	if state == State.DEAD:
 		return
