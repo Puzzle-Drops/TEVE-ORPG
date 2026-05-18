@@ -20,6 +20,7 @@ var swinging: bool = false  # true while the attack animation is playing
 var aggro_exit_pending: bool = false  # target left aggro mid-swing; resolve after swing ends
 
 @onready var animator: AnimationPlayer = $ModelInstance/AnimationPlayer
+@onready var aggro_area: Area3D = $AggroArea
 
 func _ready() -> void:
 	spawn_position = global_position
@@ -33,10 +34,9 @@ func _set_state(new_state: State) -> void:
 	state = new_state
 	_update_animation()
 
-# Decide what animation should be playing for the current state.
-# CRITICAL: never interrupt the swing animation. While swinging is true,
-# this function is a no-op. animation_finished will return us to the
-# state's default animation when the swing completes.
+# Default animation for the current state. ATTACK-state animation is managed
+# inline in _physics_process (walk while closing gap, idle while waiting).
+# NEVER interrupts a running swing.
 func _update_animation() -> void:
 	if animator == null or swinging:
 		return
@@ -45,18 +45,15 @@ func _update_animation() -> void:
 		State.IDLE: desired = anim_idle
 		State.CHASE: desired = anim_walk
 		State.LEASH: desired = anim_walk
-		State.ATTACK: desired = anim_idle  # idle pose between swings
+		State.ATTACK: desired = anim_idle
 	if animator.current_animation != desired:
 		animator.play(desired)
 
 func _on_animation_finished(anim_name: String) -> void:
 	if anim_name == anim_attack:
 		swinging = false
-		# TODO[combat]: apply damage to target here (rolled against target.armor/resist).
-		# Damage commits at swing-end so a target that ran out of range during the swing
-		# still takes the hit.
+		# TODO[combat]: apply damage to target here.
 		if aggro_exit_pending:
-			# Player left aggro during the swing — now we can process that exit.
 			aggro_exit_pending = false
 			target = null
 			if state == State.CHASE or state == State.ATTACK:
@@ -65,6 +62,19 @@ func _on_animation_finished(anim_name: String) -> void:
 				_update_animation()
 		else:
 			_update_animation()
+
+# Re-aggro check for when something is already inside the aggro area at the
+# moment we become IDLE. body_entered only fires on *new* overlaps, so if the
+# player is sitting at the spawn point when the cyclops leashes back to it,
+# we'd never know without polling. Called from LEASH -> IDLE transition.
+func _try_aggro_overlapping() -> void:
+	if target != null or aggro_area == null:
+		return
+	for body in aggro_area.get_overlapping_bodies():
+		target = body
+		aggro_exit_pending = false
+		_set_state(State.CHASE)
+		return
 
 func _physics_process(delta: float) -> void:
 	if attack_timer > 0:
@@ -79,6 +89,7 @@ func _physics_process(delta: float) -> void:
 			if not is_instance_valid(target):
 				target = null
 				_set_state(State.IDLE)
+				_try_aggro_overlapping()
 			elif global_position.distance_to(spawn_position) > leash_distance:
 				target = null
 				_set_state(State.LEASH)
@@ -103,6 +114,8 @@ func _physics_process(delta: float) -> void:
 				_set_state(State.IDLE)
 				velocity.x = 0
 				velocity.z = 0
+				# Player may already be inside the aggro area at spawn — re-check.
+				_try_aggro_overlapping()
 			else:
 				var direction := to_spawn.normalized()
 				velocity.x = direction.x * move_speed
@@ -111,8 +124,6 @@ func _physics_process(delta: float) -> void:
 
 		State.ATTACK:
 			if not is_instance_valid(target):
-				# Target gone unexpectedly. If swinging, finish swing first
-				# (animation_finished will handle the cleanup). Otherwise leash now.
 				if not swinging:
 					_set_state(State.LEASH)
 				velocity.x = 0
@@ -122,37 +133,35 @@ func _physics_process(delta: float) -> void:
 				var dist := global_position.distance_to(target.global_position)
 
 				if swinging:
-					# Swing animation is playing and cannot be interrupted.
-					# The enemy can still walk forward to close any gap that opened up
-					# (per spec: "Can move during attack animation but stay on attack animation").
-					if dist > attack_range - chase_buffer:
-						var direction := (target.global_position - global_position).normalized()
-						velocity.x = direction.x * move_speed
-						velocity.z = direction.z * move_speed
-					else:
-						velocity.x = 0
-						velocity.z = 0
+					# Cannot move during the swing animation.
+					velocity.x = 0
+					velocity.z = 0
 				elif dist > attack_range + chase_buffer:
-					# Target is well outside attack range AND we're not swinging — chase.
+					# Target broke out of attack range + hysteresis — chase.
 					_set_state(State.CHASE)
 					velocity.x = 0
 					velocity.z = 0
 				elif attack_timer <= 0:
-					# Cooldown ready — start swing.
+					# Cooldown ready — start swing. Lock velocity for the animation.
 					animator.play(anim_attack)
 					swinging = true
 					attack_timer = attack_cooldown
 					velocity.x = 0
 					velocity.z = 0
 				elif dist > attack_range - chase_buffer:
-					# Between swings, close the gap to the chase target distance.
+					# Between swings, close the gap. Play walk anim explicitly so the
+					# visual matches the motion (the default ATTACK anim is idle).
 					var direction := (target.global_position - global_position).normalized()
 					velocity.x = direction.x * move_speed
 					velocity.z = direction.z * move_speed
+					if animator.current_animation != anim_walk:
+						animator.play(anim_walk)
 				else:
-					# Comfortably positioned; wait for cooldown.
+					# Comfortably in range, waiting for cooldown.
 					velocity.x = 0
 					velocity.z = 0
+					if animator.current_animation != anim_idle:
+						animator.play(anim_idle)
 
 	velocity.y = 0
 	move_and_slide()
@@ -174,9 +183,8 @@ func _on_aggro_area_body_entered(body: Node3D) -> void:
 func _on_aggro_area_body_exited(body: Node3D) -> void:
 	if body == target:
 		if swinging:
-			# Don't change state while the swing is playing — that would interrupt
-			# the animation and prevent animation_finished from ever firing, leaving
-			# swinging=true forever. Defer until the swing completes.
+			# Don't change state — interrupting the swing would prevent
+			# animation_finished from firing. Defer until the swing completes.
 			aggro_exit_pending = true
 		else:
 			target = null
