@@ -18,6 +18,9 @@ var spawn_position: Vector3
 const ENEMY_LAYER_MASK := 4  # layer 3 = "enemy" per project.godot
 
 @onready var hp_bar: ProgressBar = get_node_or_null("HUD/PlayerHP")
+@onready var hp_bar_3d: Node3D = get_node_or_null("HPBar")
+
+const DAMAGE_NUMBER = preload("res://scenes/ui/damage_number.tscn")
 
 func _ready() -> void:
 	hp = max_hp
@@ -111,6 +114,7 @@ func take_damage(amount: float, _attacker: Node3D) -> void:
 	hp -= amount
 	print("[Player] HP: %.1f / %.1f" % [hp, max_hp])
 	_refresh_hp_bar()
+	_spawn_damage_number(amount, Color(1, 0.35, 0.35, 1))  # red for player damage taken
 	if hp <= 0:
 		_respawn()
 
@@ -118,6 +122,15 @@ func _refresh_hp_bar() -> void:
 	if hp_bar:
 		hp_bar.max_value = max_hp
 		hp_bar.value = hp
+	if hp_bar_3d and hp_bar_3d.has_method("set_hp_ratio"):
+		hp_bar_3d.set_hp_ratio(hp / max_hp)
+
+func _spawn_damage_number(amount: float, color: Color) -> void:
+	var dn := DAMAGE_NUMBER.instantiate()
+	get_tree().current_scene.add_child(dn)
+	dn.global_position = global_position + Vector3(0, 2.0, 0)
+	if dn.has_method("setup"):
+		dn.setup(amount, color)
 
 func _respawn() -> void:
 	# Placeholder death handling — reset HP and snap back to spawn.

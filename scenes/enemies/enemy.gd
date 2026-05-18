@@ -31,6 +31,8 @@ var hp: float
 @onready var aggro_area: Area3D = $AggroArea
 @onready var hp_bar: Node3D = get_node_or_null("HPBar")
 
+const DAMAGE_NUMBER = preload("res://scenes/ui/damage_number.tscn")
+
 func _ready() -> void:
 	hp = max_hp
 	spawn_position = global_position
@@ -68,6 +70,7 @@ func take_damage(amount: float, _attacker: Node3D) -> void:
 	hp -= amount
 	print("[%s] HP: %.1f / %.1f" % [name, hp, max_hp])
 	_refresh_hp_bar()
+	_spawn_damage_number(amount, Color(1, 0.92, 0.4, 1))  # yellow for damage dealt to enemy
 	if hp <= 0:
 		_die()
 	elif not swinging:
@@ -77,6 +80,13 @@ func take_damage(amount: float, _attacker: Node3D) -> void:
 func _refresh_hp_bar() -> void:
 	if hp_bar and hp_bar.has_method("set_hp_ratio"):
 		hp_bar.set_hp_ratio(hp / max_hp)
+
+func _spawn_damage_number(amount: float, color: Color) -> void:
+	var dn := DAMAGE_NUMBER.instantiate()
+	get_tree().current_scene.add_child(dn)
+	dn.global_position = global_position + Vector3(0, 3.0, 0)
+	if dn.has_method("setup"):
+		dn.setup(amount, color)
 
 func _die() -> void:
 	state = State.DEAD
