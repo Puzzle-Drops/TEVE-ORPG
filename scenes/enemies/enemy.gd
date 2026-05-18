@@ -38,6 +38,7 @@ enum State { IDLE, CHASE, ATTACK, LEASH, DEAD }
 var state: State = State.IDLE
 var target: Node3D = null
 var spawn_position: Vector3
+var spawn_rotation: Vector3  # captured in _ready, restored when leash returns to spawn
 var attack_timer: float = 0.0
 var swinging: bool = false
 var aggro_exit_pending: bool = false
@@ -53,6 +54,7 @@ func _ready() -> void:
 	_apply_tier()
 	hp = max_hp
 	spawn_position = global_position
+	spawn_rotation = rotation
 	_refresh_hp_bar()
 	if animator:
 		for anim_name in [anim_idle, anim_walk]:
@@ -235,6 +237,7 @@ func _physics_process(delta: float) -> void:
 			to_spawn.y = 0
 			if to_spawn.length() < 0.3:
 				_set_state(State.IDLE)
+				rotation = spawn_rotation  # face original direction again
 				velocity.x = 0
 				velocity.z = 0
 				_try_aggro_overlapping()

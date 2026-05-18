@@ -24,7 +24,7 @@ anim_walk = "Walk_Unarmed"
 anim_attack = "Attack_Unarmed"
 anim_hit = "Hit_Unarmed"
 anim_death = "Death_Unarmed"
-hp_bar_model_height = 2.0
+hp_bar_model_height = 2.8
 hp_bar_gap = 0.4
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
