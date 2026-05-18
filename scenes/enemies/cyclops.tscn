@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://ctmcmd8jwoe0v"]
+
+[ext_resource type="PackedScene" uid="uid://cpjx35cvmpjik" path="res://assets/models/creatures/cyclops/cyclops.fbx" id="1_a41yu"]
+
+[node name="cyclops" unique_id=1082740815 instance=ExtResource("1_a41yu")]
+
+[node name="upperarm_twist_01_r" parent="root/Skeleton3D" parent_id_path=PackedInt32Array(423431927) index="0" unique_id=610321950]
+transform = Transform3D(-0.71629333, 0.0022817336, -0.69779557, 0.02174878, -0.99943537, -0.025593389, -0.69746, -0.033508543, 0.7158392, -0.25602937, 0.08444519, 1.4800937)
+bone_idx = 5
+
+[node name="upperarm_twist_01_l" parent="root/Skeleton3D" parent_id_path=PackedInt32Array(423431927) index="1" unique_id=2007544538]
+transform = Transform3D(-0.7163385, 0.025307672, -0.6972936, -0.016111186, 0.9984752, 0.052790187, 0.6975664, 0.049049836, -0.7148386, 0.25956723, 0.07644175, 1.4814932)
+bone_idx = 36
+
+[node name="calf_twist_01_l" parent="root/Skeleton3D" parent_id_path=PackedInt32Array(423431927) index="2" unique_id=1856976340]
+transform = Transform3D(-0.06724189, -0.17690769, -0.9819278, -0.27979818, 0.94800824, -0.15163618, 0.95770097, 0.2645452, -0.1132443, 0.20987935, 0.030545406, 0.51294184)
+bone_idx = 61
+
+[node name="thigh_twist_01_l" parent="root/Skeleton3D" parent_id_path=PackedInt32Array(423431927) index="3" unique_id=1848132545]
+transform = Transform3D(-0.12629248, -0.14095405, -0.9819278, 0.079349816, 0.98524636, -0.15163611, 0.98881423, -0.097066306, -0.113244504, 0.16129714, 0.06106972, 0.89331985)
+bone_idx = 60
+
+[node name="calf_twist_01_r" parent="root/Skeleton3D" parent_id_path=PackedInt32Array(423431927) index="4" unique_id=1938085990]
+transform = Transform3D(-0.06724041, -0.17690973, -0.9819276, 0.27979842, -0.9480076, 0.15163846, -0.9577009, -0.26454547, 0.11324352, -0.20987946, 0.030545834, 0.512941)
+bone_idx = 65
+
+[node name="thigh_twist_01_r" parent="root/Skeleton3D" parent_id_path=PackedInt32Array(423431927) index="5" unique_id=1480514412]
+transform = Transform3D(-0.12629183, -0.14095646, -0.9819276, -0.07934931, -0.9852458, 0.15163839, -0.9888143, 0.09706601, 0.11324371, -0.1612973, 0.061070006, 0.89331955)
+bone_idx = 64
