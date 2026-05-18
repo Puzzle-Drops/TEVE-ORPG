@@ -10,6 +10,10 @@ extends CharacterBody3D
 @export var attack_cooldown: float = 0.8
 @export var damage_number_offset: Vector3 = Vector3(0, 0.3, 0)  # spawn position relative to player origin (chest, since origin is capsule center)
 
+@export_group("Animations")
+@export var anim_idle: String = "Idle01"
+@export var anim_walk: String = "Run_Forward"
+
 var hp: float
 var target_position: Vector3
 var attack_target: Node3D = null
@@ -20,14 +24,55 @@ const ENEMY_LAYER_MASK := 4  # layer 3 = "enemy" per project.godot
 
 @onready var hp_bar: ProgressBar = get_node_or_null("HUD/PlayerHP")
 @onready var hp_bar_3d: Node3D = get_node_or_null("HPBar")
+@onready var animator: AnimationPlayer = get_node_or_null("ModelInstance/AnimationPlayer")
 
 const DAMAGE_NUMBER = preload("res://scenes/ui/damage_number.tscn")
+const ANIM_LIBRARY_SCENE = preload("res://assets/models/players/animations/characters/hu_m_base_pack.fbx")
+
+var current_anim: String = ""
 
 func _ready() -> void:
 	hp = max_hp
 	spawn_position = global_position
 	target_position = global_position
 	_refresh_hp_bar()
+	_load_external_animations()
+	_set_anim(anim_idle)
+
+# The Human body FBX has only T_Pose; the 223-clip library lives in
+# hu_m_base_pack.fbx. Instantiate that scene, grab its AnimationPlayer's
+# library, attach it (with idle/walk forced to loop) to our model's
+# AnimationPlayer.
+func _load_external_animations() -> void:
+	if animator == null:
+		return
+	var pack = ANIM_LIBRARY_SCENE.instantiate()
+	var pack_ap: AnimationPlayer = pack.find_child("AnimationPlayer", true, false)
+	if pack_ap == null:
+		pack.queue_free()
+		return
+	var lib := AnimationLibrary.new()
+	for n in pack_ap.get_animation_list():
+		var anim: Animation = pack_ap.get_animation(n)
+		if anim == null:
+			continue
+		# Force common locomotion clips to loop (FBX importer brings them in
+		# as one-shot by default, same gotcha as the enemy idle/walk fix).
+		if n == anim_idle or n == anim_walk:
+			anim.loop_mode = Animation.LOOP_LINEAR
+		lib.add_animation(n, anim)
+	if animator.has_animation_library(""):
+		animator.remove_animation_library("")
+	animator.add_animation_library("", lib)
+	pack.queue_free()
+
+func _set_anim(anim_name: String) -> void:
+	if animator == null or anim_name == "" or current_anim == anim_name:
+		return
+	if not animator.has_animation(anim_name):
+		return
+	animator.play(anim_name)
+	current_anim = anim_name
 
 func _physics_process(delta: float) -> void:
 	if attack_timer > 0:
@@ -75,6 +120,10 @@ func _physics_process(delta: float) -> void:
 
 	velocity.y = 0
 	move_and_slide()
+
+	# Drive animation state from horizontal velocity.
+	var moving := absf(velocity.x) > 0.1 or absf(velocity.z) > 0.1
+	_set_anim(anim_walk if moving else anim_idle)
 
 func _set_target_from_mouse(mouse_pos: Vector2) -> void:
 	var camera := get_viewport().get_camera_3d()
