@@ -125,12 +125,22 @@ func _apply_tier() -> void:
 func _tint_meshes(node: Node, color: Color) -> void:
 	if node is MeshInstance3D:
 		var mi: MeshInstance3D = node
-		for i in mi.get_surface_override_material_count():
-			var mat: Material = mi.get_surface_override_material(i)
-			if mat is StandardMaterial3D:
-				var unique := mat.duplicate() as StandardMaterial3D
-				unique.albedo_color = color
-				mi.set_surface_override_material(i, unique)
+		# Two paths depending on how the creature scene applies its base material:
+		#   - cyclops.tscn uses per-surface overrides (set in the .tscn directly)
+		#   - satyr.tscn etc. use creature_base.gd which sets material_override
+		# We duplicate either kind so this instance's tint doesn't bleed to others
+		# sharing the same underlying material resource.
+		if mi.material_override is StandardMaterial3D:
+			var unique := mi.material_override.duplicate() as StandardMaterial3D
+			unique.albedo_color = color
+			mi.material_override = unique
+		else:
+			for i in mi.get_surface_override_material_count():
+				var mat: Material = mi.get_surface_override_material(i)
+				if mat is StandardMaterial3D:
+					var unique := mat.duplicate() as StandardMaterial3D
+					unique.albedo_color = color
+					mi.set_surface_override_material(i, unique)
 	for child in node.get_children():
 		_tint_meshes(child, color)
 
