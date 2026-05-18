@@ -1,0 +1,49 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Twilight's Forever"
+config/description="3D multiplayer ORPG, 8-player co-op dungeons"
+config/features=PackedStringArray("4.6", "Forward Plus")
+boot_splash/image="uid://dcjerlwgk7as5"
+config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[dotnet]
+
+project/assembly_name="Twilight-s Forever"
+
+[layer_names]
+
+3d_physics/layer_1="world"
+3d_physics/layer_2="player"
+3d_physics/layer_3="enemy"
+3d_physics/layer_4="npc"
+3d_physics/layer_5="player_hitbox"
+3d_physics/layer_6="enemy_hitbox"
+3d_physics/layer_7="interactable"
+3d_physics/layer_8="projectile"
+3d_physics/layer_9="trigger"
+
+[physics]
+
+3d/physics_engine="Jolt Physics"
+
+[rendering]
+
+rendering_device/driver.windows="d3d12"
+anti_aliasing/quality/msaa_3d=1
