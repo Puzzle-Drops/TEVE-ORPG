@@ -1,12 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scenes/player/player.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="2_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hp_bar_3d.tscn" id="3_hpbar"]
+[ext_resource type="PackedScene" path="res://scenes/player/human_male.tscn" id="4_model"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_player"]
 
 [node name="Player" type="CharacterBody3D"]
 collision_layer = 2
@@ -16,8 +15,8 @@ script = ExtResource("1_script")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_player")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("CapsuleMesh_player")
+[node name="ModelInstance" parent="." instance=ExtResource("4_model")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 10, 10)
