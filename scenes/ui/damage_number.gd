@@ -4,10 +4,6 @@ extends Label3D
 @export var duration: float = 0.8
 
 var elapsed: float = 0.0
-var start_position: Vector3
-
-func _ready() -> void:
-	start_position = position
 
 func _process(delta: float) -> void:
 	elapsed += delta
@@ -15,11 +11,12 @@ func _process(delta: float) -> void:
 		queue_free()
 		return
 	var t := elapsed / duration
-	position = start_position + Vector3(0, rise_distance * t, 0)
-	# Fade out, accelerating toward the end
+	# Rise at a constant rate from wherever the caller placed us.
+	# (Don't cache start_position in _ready — the spawner sets global_position
+	# AFTER add_child, by which point _ready has already fired.)
+	position.y += (rise_distance / duration) * delta
 	modulate.a = 1.0 - (t * t)
 
-# Convenience setter so callers don't need to know about Label3D's quirks.
 func setup(amount: float, color: Color) -> void:
 	text = str(int(round(amount)))
 	modulate = color
