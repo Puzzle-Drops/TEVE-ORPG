@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dtolol4a64rku"]
 
-[ext_resource type="PackedScene" uid="uid://ctmcmd8jwoe0v" path="res://scenes/enemies/cyclops.tscn" id="1_tjl6x"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/enemy_cyclops.tscn" id="1_enemy"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
 
 [node name="Node3D" type="Node3D" unique_id=942218959]
@@ -11,7 +11,7 @@
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
 size = Vector3(20, 0.1, 20)
 
-[node name="cyclops" parent="." unique_id=1082740815 instance=ExtResource("1_tjl6x")]
+[node name="EnemyCyclops" parent="." instance=ExtResource("1_enemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.345324, 0, -3.837923)
 
 [node name="Player" parent="." instance=ExtResource("2_player")]

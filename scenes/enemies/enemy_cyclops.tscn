@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scenes/enemies/enemy.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://ctmcmd8jwoe0v" path="res://scenes/enemies/cyclops.tscn" id="2_cyclops"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
+height = 2.5
+radius = 0.8
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_aggro"]
+radius = 6.0
+
+[node name="EnemyCyclops" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+shape = SubResource("CapsuleShape3D_body")
+
+[node name="ModelInstance" parent="." instance=ExtResource("2_cyclops")]
+
+[node name="AggroArea" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="AggroShape" type="CollisionShape3D" parent="AggroArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("SphereShape3D_aggro")
+
+[connection signal="body_entered" from="AggroArea" to="." method="_on_aggro_area_body_entered"]
+[connection signal="body_exited" from="AggroArea" to="." method="_on_aggro_area_body_exited"]
