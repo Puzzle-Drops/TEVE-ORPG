@@ -207,13 +207,28 @@ func _load_external_animations() -> void:
 # FBX has a real Skeleton3D with bones of the same names. Rewrite each
 # track to point at "Skeleton3D:<bone_name>" so the animations drive the
 # actual skeleton bones. Bone-name match was verified offline: 113/113.
+#
+# Also strips Root-bone tracks. Root motion in this animation pack is
+# authored on the Root bone; if left in, every animation forces the
+# model's visual facing to its authored frame, overriding our code-driven
+# look_at rotation (player would "snap back" to the animation's facing
+# each time a new clip plays). Removing those tracks lets the rest of
+# the skeleton animate naturally while we drive position/rotation in code.
 func _retarget_to_skeleton(anim: Animation) -> void:
+	var indices_to_remove := []
 	for i in anim.get_track_count():
 		var path_str := str(anim.track_get_path(i))
 		var bone := path_str.get_file()
 		if ":" in bone:
 			bone = bone.split(":")[0]
+		if bone == "Root":
+			indices_to_remove.append(i)
+			continue
 		anim.track_set_path(i, NodePath("Skeleton3D:" + bone))
+	# Remove in reverse so the remaining indices stay valid.
+	indices_to_remove.reverse()
+	for i in indices_to_remove:
+		anim.remove_track(i)
 
 func _set_anim(anim_name: String) -> void:
 	if animator == null or swinging:
