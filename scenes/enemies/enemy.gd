@@ -2,7 +2,7 @@ extends CharacterBody3D
 
 @export var move_speed: float = 2.5
 @export var attack_range: float = 2.5
-@export var chase_buffer: float = 1.0  # hysteresis: chase until (attack_range - chase_buffer), leave attack if > attack_range
+@export var chase_buffer: float = 1.0  # how much closer than attack_range the enemy tries to be when positioning
 @export var attack_cooldown: float = 1.5
 @export var leash_distance: float = 15.0
 
@@ -16,6 +16,7 @@ var state: State = State.IDLE
 var target: Node3D = null
 var spawn_position: Vector3
 var attack_timer: float = 0.0
+var swinging: bool = false  # mid-attack animation — do not interrupt, do not change state
 
 @onready var animator: AnimationPlayer = $ModelInstance/AnimationPlayer
 
@@ -35,11 +36,14 @@ func _set_state(new_state: State) -> void:
 		State.IDLE: animator.play(anim_idle)
 		State.CHASE: animator.play(anim_walk)
 		State.LEASH: animator.play(anim_walk)
-		State.ATTACK: animator.play(anim_idle)  # idle while waiting for attack cooldown
+		State.ATTACK: animator.play(anim_idle)  # idle pose between swings
 
 func _on_animation_finished(anim_name: String) -> void:
-	# After an attack swing finishes, return to idle so we don't hold the last frame
+	# When the swing finishes, release the swing lock and apply damage (TODO).
 	if anim_name == anim_attack:
+		swinging = false
+		# TODO[combat]: apply damage to target here. Roll attack_calc against target.armor/resist.
+		# Damage lands at swing-end so a fleeing player who left attack_range mid-swing still gets hit.
 		animator.play(anim_idle)
 
 func _physics_process(delta: float) -> void:
@@ -62,8 +66,8 @@ func _physics_process(delta: float) -> void:
 				var to_target := target.global_position - global_position
 				to_target.y = 0
 				var dist := to_target.length()
-				# Hysteresis: don't switch to ATTACK until comfortably inside attack_range
-				if dist <= attack_range - chase_buffer:
+				# Trigger ATTACK as soon as we're within attack_range — no buffer for the trigger.
+				if dist <= attack_range:
 					_set_state(State.ATTACK)
 					velocity.x = 0
 					velocity.z = 0
@@ -87,19 +91,41 @@ func _physics_process(delta: float) -> void:
 				_face_toward(spawn_position)
 
 		State.ATTACK:
-			velocity.x = 0
-			velocity.z = 0
 			if not is_instance_valid(target):
 				target = null
 				_set_state(State.IDLE)
+				velocity.x = 0
+				velocity.z = 0
 			else:
 				_face_toward(target.global_position)
 				var dist := global_position.distance_to(target.global_position)
-				if dist > attack_range:
+
+				if swinging:
+					# Committed to the swing — no movement, no state change.
+					# Damage will land via _on_animation_finished even if target left range.
+					velocity.x = 0
+					velocity.z = 0
+				elif dist > attack_range:
+					# Target escaped during cooldown — chase again.
 					_set_state(State.CHASE)
+					velocity.x = 0
+					velocity.z = 0
 				elif attack_timer <= 0:
+					# Cooldown ready — start the swing.
 					animator.play(anim_attack)
+					swinging = true
 					attack_timer = attack_cooldown
+					velocity.x = 0
+					velocity.z = 0
+				elif dist > attack_range - chase_buffer:
+					# On cooldown, in range, but target is at the edge — close the gap.
+					var direction := (target.global_position - global_position).normalized()
+					velocity.x = direction.x * move_speed
+					velocity.z = direction.z * move_speed
+				else:
+					# Cooldown, comfortably inside chase_buffer — stand still.
+					velocity.x = 0
+					velocity.z = 0
 
 	velocity.y = 0
 	move_and_slide()
