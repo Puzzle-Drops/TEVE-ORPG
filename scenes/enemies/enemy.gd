@@ -15,6 +15,10 @@ extends CharacterBody3D
 @export_group("Tier")
 @export_range(1, 5) var tier: int = 1
 
+@export_group("HP Bar Placement")
+@export var hp_bar_model_height: float = 3.0  # height of the unscaled model (head height in local space)
+@export var hp_bar_gap: float = 0.6  # constant world-space gap to keep above the head, regardless of tier
+
 const TIER_DATA := {
 	1: {"color": Color(0.55, 1.0, 0.55), "scale": 1.0,  "hp_mult": 1.0, "damage_mult": 1.0},
 	2: {"color": Color(0.55, 0.75, 1.0), "scale": 1.1,  "hp_mult": 1.5, "damage_mult": 1.2},
@@ -108,6 +112,9 @@ func _apply_tier() -> void:
 	# regardless of tier (otherwise tier 5's bar is 50% bigger than tier 1's).
 	if hp_bar:
 		hp_bar.scale = Vector3.ONE / data["scale"]
+		# Place the bar so the world-space gap above the (scaled) head is constant.
+		# World y_bar = model_height*scale + gap. Convert back to local: divide by scale.
+		hp_bar.position.y = hp_bar_model_height + hp_bar_gap / data["scale"]
 	# Tint every MeshInstance3D in the model. Materials are duplicated per-
 	# instance so this doesn't bleed across other cyclops sharing the same
 	# StandardMaterial3D sub-resource from cyclops.tscn.
