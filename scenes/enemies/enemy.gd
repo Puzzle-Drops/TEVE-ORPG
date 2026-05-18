@@ -12,6 +12,17 @@ extends CharacterBody3D
 @export var despawn_delay: float = 3.0  # seconds after death anim before queue_free
 @export var damage_number_offset: Vector3 = Vector3(0, 1.5, 0)  # spawn position relative to enemy origin (torso)
 
+@export_group("Tier")
+@export_range(1, 5) var tier: int = 1
+
+const TIER_DATA := {
+	1: {"color": Color(0.55, 1.0, 0.55), "scale": 1.0,  "hp_mult": 1.0, "damage_mult": 1.0},
+	2: {"color": Color(0.55, 0.75, 1.0), "scale": 1.1,  "hp_mult": 1.5, "damage_mult": 1.2},
+	3: {"color": Color(1.0,  0.45, 0.45),"scale": 1.2,  "hp_mult": 2.5, "damage_mult": 1.5},
+	4: {"color": Color(1.0,  0.85, 0.35),"scale": 1.3,  "hp_mult": 4.0, "damage_mult": 1.8},
+	5: {"color": Color(0.85, 0.4,  1.0), "scale": 1.5,  "hp_mult": 7.0, "damage_mult": 2.5},
+}
+
 @export_group("Animations")
 @export var anim_idle: String = "Idle01"
 @export var anim_walk: String = "walk"
@@ -35,6 +46,7 @@ var hp: float
 const DAMAGE_NUMBER = preload("res://scenes/ui/damage_number.tscn")
 
 func _ready() -> void:
+	_apply_tier()
 	hp = max_hp
 	spawn_position = global_position
 	_refresh_hp_bar()
@@ -81,6 +93,39 @@ func take_damage(amount: float, _attacker: Node3D) -> void:
 func _refresh_hp_bar() -> void:
 	if hp_bar and hp_bar.has_method("set_hp_ratio"):
 		hp_bar.set_hp_ratio(hp / max_hp)
+
+func _apply_tier() -> void:
+	# Look up tier config; fall back to tier 1 if out of range.
+	var data: Dictionary = TIER_DATA.get(tier, TIER_DATA[1])
+	# Scale the whole body: visual, collision, aggro all grow together.
+	scale = Vector3.ONE * data["scale"]
+	# Attack range scales with size — a bigger creature has longer reach.
+	attack_range *= data["scale"]
+	# Stat multipliers
+	max_hp *= data["hp_mult"]
+	damage *= data["damage_mult"]
+	# Counter-scale the HP bar so it stays the same world size on screen
+	# regardless of tier (otherwise tier 5's bar is 50% bigger than tier 1's).
+	if hp_bar:
+		hp_bar.scale = Vector3.ONE / data["scale"]
+	# Tint every MeshInstance3D in the model. Materials are duplicated per-
+	# instance so this doesn't bleed across other cyclops sharing the same
+	# StandardMaterial3D sub-resource from cyclops.tscn.
+	var model := get_node_or_null("ModelInstance")
+	if model:
+		_tint_meshes(model, data["color"])
+
+func _tint_meshes(node: Node, color: Color) -> void:
+	if node is MeshInstance3D:
+		var mi: MeshInstance3D = node
+		for i in mi.get_surface_override_material_count():
+			var mat: Material = mi.get_surface_override_material(i)
+			if mat is StandardMaterial3D:
+				var unique := mat.duplicate() as StandardMaterial3D
+				unique.albedo_color = color
+				mi.set_surface_override_material(i, unique)
+	for child in node.get_children():
+		_tint_meshes(child, color)
 
 func _spawn_damage_number(amount: float, color: Color) -> void:
 	var dn := DAMAGE_NUMBER.instantiate()
