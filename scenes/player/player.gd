@@ -17,10 +17,13 @@ var spawn_position: Vector3
 
 const ENEMY_LAYER_MASK := 4  # layer 3 = "enemy" per project.godot
 
+@onready var hp_bar: ProgressBar = get_node_or_null("HUD/PlayerHP")
+
 func _ready() -> void:
 	hp = max_hp
 	spawn_position = global_position
 	target_position = global_position
+	_refresh_hp_bar()
 
 func _physics_process(delta: float) -> void:
 	if attack_timer > 0:
@@ -107,8 +110,14 @@ func _perform_attack() -> void:
 func take_damage(amount: float, _attacker: Node3D) -> void:
 	hp -= amount
 	print("[Player] HP: %.1f / %.1f" % [hp, max_hp])
+	_refresh_hp_bar()
 	if hp <= 0:
 		_respawn()
+
+func _refresh_hp_bar() -> void:
+	if hp_bar:
+		hp_bar.max_value = max_hp
+		hp_bar.value = hp
 
 func _respawn() -> void:
 	# Placeholder death handling — reset HP and snap back to spawn.
@@ -118,3 +127,4 @@ func _respawn() -> void:
 	global_position = spawn_position
 	target_position = global_position
 	attack_target = null
+	_refresh_hp_bar()

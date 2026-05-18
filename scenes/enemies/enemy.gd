@@ -29,10 +29,12 @@ var hp: float
 
 @onready var animator: AnimationPlayer = $ModelInstance/AnimationPlayer
 @onready var aggro_area: Area3D = $AggroArea
+@onready var hp_bar: Node3D = get_node_or_null("HPBar")
 
 func _ready() -> void:
 	hp = max_hp
 	spawn_position = global_position
+	_refresh_hp_bar()
 	if animator:
 		for anim_name in [anim_idle, anim_walk]:
 			if animator.has_animation(anim_name):
@@ -65,11 +67,16 @@ func take_damage(amount: float, _attacker: Node3D) -> void:
 		return
 	hp -= amount
 	print("[%s] HP: %.1f / %.1f" % [name, hp, max_hp])
+	_refresh_hp_bar()
 	if hp <= 0:
 		_die()
 	elif not swinging:
 		# Brief hit reaction. Skip if mid-swing — don't want to interrupt our own attack anim.
 		animator.play(anim_hit)
+
+func _refresh_hp_bar() -> void:
+	if hp_bar and hp_bar.has_method("set_hp_ratio"):
+		hp_bar.set_hp_ratio(hp / max_hp)
 
 func _die() -> void:
 	state = State.DEAD
@@ -80,6 +87,8 @@ func _die() -> void:
 	collision_layer = 0
 	if aggro_area:
 		aggro_area.monitoring = false
+	if hp_bar:
+		hp_bar.visible = false
 	if animator and animator.has_animation(anim_death):
 		animator.play(anim_death)
 	# Despawn after the death anim plays out (rough; tuneable per-enemy).

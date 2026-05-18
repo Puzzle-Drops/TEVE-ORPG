@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scenes/enemies/enemy.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://ctmcmd8jwoe0v" path="res://scenes/enemies/cyclops.tscn" id="2_cyclops"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hp_bar_3d.tscn" id="3_hpbar"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 height = 2.5
@@ -31,6 +32,9 @@ collision_mask = 2
 [node name="AggroShape" type="CollisionShape3D" parent="AggroArea"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("SphereShape3D_aggro")
+
+[node name="HPBar" parent="." instance=ExtResource("3_hpbar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6, 0)
 
 [connection signal="body_entered" from="AggroArea" to="." method="_on_aggro_area_body_entered"]
 [connection signal="body_exited" from="AggroArea" to="." method="_on_aggro_area_body_exited"]
