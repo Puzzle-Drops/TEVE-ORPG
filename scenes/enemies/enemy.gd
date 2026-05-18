@@ -105,8 +105,10 @@ func _physics_process(delta: float) -> void:
 					# Damage will land via _on_animation_finished even if target left range.
 					velocity.x = 0
 					velocity.z = 0
-				elif dist > attack_range:
-					# Target escaped during cooldown — chase again.
+				elif dist > attack_range + chase_buffer:
+					# Target escaped beyond the hysteresis margin — chase again.
+					# (Using chase_buffer on the exit side too so we don't flip-flop right
+					# at attack_range. Deadband is attack_range +/- chase_buffer.)
 					_set_state(State.CHASE)
 					velocity.x = 0
 					velocity.z = 0
