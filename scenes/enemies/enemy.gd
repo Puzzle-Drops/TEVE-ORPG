@@ -2,9 +2,14 @@ extends CharacterBody3D
 
 @export var move_speed: float = 2.5
 @export var attack_range: float = 2.5
-@export var chase_buffer: float = 1.0  # positioning gap: enemy tries to be (attack_range - chase_buffer) close
+@export var chase_buffer: float = 1.0
 @export var attack_cooldown: float = 1.5
 @export var leash_distance: float = 15.0
+
+@export_group("Combat")
+@export var max_hp: float = 50.0
+@export var damage: float = 5.0
+@export var despawn_delay: float = 3.0  # seconds after death anim before queue_free
 
 @export_group("Animations")
 @export var anim_idle: String = "Idle01"
@@ -13,23 +18,22 @@ extends CharacterBody3D
 @export var anim_hit: String = "hit"
 @export var anim_death: String = "Death"
 
-enum State { IDLE, CHASE, ATTACK, LEASH }
+enum State { IDLE, CHASE, ATTACK, LEASH, DEAD }
 var state: State = State.IDLE
 var target: Node3D = null
 var spawn_position: Vector3
 var attack_timer: float = 0.0
-var swinging: bool = false  # true while the attack animation is playing
-var aggro_exit_pending: bool = false  # target left aggro mid-swing; resolve after swing ends
+var swinging: bool = false
+var aggro_exit_pending: bool = false
+var hp: float
 
 @onready var animator: AnimationPlayer = $ModelInstance/AnimationPlayer
 @onready var aggro_area: Area3D = $AggroArea
 
 func _ready() -> void:
+	hp = max_hp
 	spawn_position = global_position
 	if animator:
-		# Godot's FBX importer brings animations in as one-shot by default.
-		# Force idle and walk to loop so the cyclops doesn't freeze on the last
-		# frame mid-gameplay. Attack stays one-shot so animation_finished fires.
 		for anim_name in [anim_idle, anim_walk]:
 			if animator.has_animation(anim_name):
 				var a := animator.get_animation(anim_name)
@@ -44,11 +48,8 @@ func _set_state(new_state: State) -> void:
 	state = new_state
 	_update_animation()
 
-# Default animation for the current state. ATTACK-state animation is managed
-# inline in _physics_process (walk while closing gap, idle while waiting).
-# NEVER interrupts a running swing.
 func _update_animation() -> void:
-	if animator == null or swinging:
+	if animator == null or swinging or state == State.DEAD:
 		return
 	var desired := ""
 	match state:
@@ -59,10 +60,37 @@ func _update_animation() -> void:
 	if animator.current_animation != desired:
 		animator.play(desired)
 
+func take_damage(amount: float, _attacker: Node3D) -> void:
+	if state == State.DEAD:
+		return
+	hp -= amount
+	print("[%s] HP: %.1f / %.1f" % [name, hp, max_hp])
+	if hp <= 0:
+		_die()
+	elif not swinging:
+		# Brief hit reaction. Skip if mid-swing — don't want to interrupt our own attack anim.
+		animator.play(anim_hit)
+
+func _die() -> void:
+	state = State.DEAD
+	swinging = false
+	target = null
+	velocity = Vector3.ZERO
+	# Stop being collidable so the player can walk through the corpse.
+	collision_layer = 0
+	if aggro_area:
+		aggro_area.monitoring = false
+	if animator and animator.has_animation(anim_death):
+		animator.play(anim_death)
+	# Despawn after the death anim plays out (rough; tuneable per-enemy).
+	get_tree().create_timer(despawn_delay).timeout.connect(queue_free)
+
 func _on_animation_finished(anim_name: String) -> void:
 	if anim_name == anim_attack:
 		swinging = false
-		# TODO[combat]: apply damage to target here.
+		# Apply damage at swing-end so a target that ran out mid-swing still gets hit.
+		if is_instance_valid(target) and target.has_method("take_damage"):
+			target.take_damage(damage, self)
 		if aggro_exit_pending:
 			aggro_exit_pending = false
 			target = null
@@ -72,13 +100,11 @@ func _on_animation_finished(anim_name: String) -> void:
 				_update_animation()
 		else:
 			_update_animation()
+	elif anim_name == anim_hit:
+		_update_animation()
 
-# Re-aggro check for when something is already inside the aggro area at the
-# moment we become IDLE. body_entered only fires on *new* overlaps, so if the
-# player is sitting at the spawn point when the cyclops leashes back to it,
-# we'd never know without polling. Called from LEASH -> IDLE transition.
 func _try_aggro_overlapping() -> void:
-	if target != null or aggro_area == null:
+	if target != null or aggro_area == null or state == State.DEAD:
 		return
 	for body in aggro_area.get_overlapping_bodies():
 		target = body
@@ -87,6 +113,11 @@ func _try_aggro_overlapping() -> void:
 		return
 
 func _physics_process(delta: float) -> void:
+	if state == State.DEAD:
+		velocity = Vector3.ZERO
+		move_and_slide()
+		return
+
 	if attack_timer > 0:
 		attack_timer -= delta
 
@@ -124,7 +155,6 @@ func _physics_process(delta: float) -> void:
 				_set_state(State.IDLE)
 				velocity.x = 0
 				velocity.z = 0
-				# Player may already be inside the aggro area at spawn — re-check.
 				_try_aggro_overlapping()
 			else:
 				var direction := to_spawn.normalized()
@@ -143,31 +173,25 @@ func _physics_process(delta: float) -> void:
 				var dist := global_position.distance_to(target.global_position)
 
 				if swinging:
-					# Cannot move during the swing animation.
 					velocity.x = 0
 					velocity.z = 0
 				elif dist > attack_range + chase_buffer:
-					# Target broke out of attack range + hysteresis — chase.
 					_set_state(State.CHASE)
 					velocity.x = 0
 					velocity.z = 0
 				elif attack_timer <= 0:
-					# Cooldown ready — start swing. Lock velocity for the animation.
 					animator.play(anim_attack)
 					swinging = true
 					attack_timer = attack_cooldown
 					velocity.x = 0
 					velocity.z = 0
 				elif dist > attack_range - chase_buffer:
-					# Between swings, close the gap. Play walk anim explicitly so the
-					# visual matches the motion (the default ATTACK anim is idle).
 					var direction := (target.global_position - global_position).normalized()
 					velocity.x = direction.x * move_speed
 					velocity.z = direction.z * move_speed
 					if animator.current_animation != anim_walk:
 						animator.play(anim_walk)
 				else:
-					# Comfortably in range, waiting for cooldown.
 					velocity.x = 0
 					velocity.z = 0
 					if animator.current_animation != anim_idle:
@@ -178,13 +202,15 @@ func _physics_process(delta: float) -> void:
 
 func _face_toward(world_pos: Vector3) -> void:
 	var look_pos := world_pos
-	look_pos.y = global_position.y  # yaw only
+	look_pos.y = global_position.y
 	if global_position.distance_to(look_pos) > 0.01:
 		look_at(look_pos, Vector3.UP)
 		rotation.x = 0
 		rotation.z = 0
 
 func _on_aggro_area_body_entered(body: Node3D) -> void:
+	if state == State.DEAD:
+		return
 	if target == null:
 		target = body
 		aggro_exit_pending = false
@@ -193,8 +219,6 @@ func _on_aggro_area_body_entered(body: Node3D) -> void:
 func _on_aggro_area_body_exited(body: Node3D) -> void:
 	if body == target:
 		if swinging:
-			# Don't change state — interrupting the swing would prevent
-			# animation_finished from firing. Defer until the swing completes.
 			aggro_exit_pending = true
 		else:
 			target = null
