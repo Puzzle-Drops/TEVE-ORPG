@@ -14,6 +14,8 @@ radius = 6.0
 collision_layer = 4
 collision_mask = 1
 script = ExtResource("1_script")
+move_speed = 3.5
+attack_range = 3.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)

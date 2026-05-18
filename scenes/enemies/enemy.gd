@@ -10,6 +10,8 @@ extends CharacterBody3D
 @export var anim_idle: String = "Idle01"
 @export var anim_walk: String = "walk"
 @export var anim_attack: String = "Attack01"
+@export var anim_hit: String = "hit"
+@export var anim_death: String = "Death"
 
 enum State { IDLE, CHASE, ATTACK, LEASH }
 var state: State = State.IDLE
