@@ -6,10 +6,10 @@
 billboard = 1
 no_depth_test = true
 fixed_size = true
-pixel_size = 0.008
+pixel_size = 0.004
 text = "0"
-font_size = 64
-outline_size = 12
+font_size = 48
+outline_size = 6
 modulate = Color(1, 0.92, 0.4, 1)
 outline_modulate = Color(0, 0, 0, 1)
 horizontal_alignment = 1

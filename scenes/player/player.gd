@@ -8,6 +8,7 @@ extends CharacterBody3D
 @export var attack_damage: float = 10.0
 @export var attack_range: float = 2.5
 @export var attack_cooldown: float = 0.8
+@export var damage_number_offset: Vector3 = Vector3(0, 0.3, 0)  # spawn position relative to player origin (chest, since origin is capsule center)
 
 var hp: float
 var target_position: Vector3
@@ -128,7 +129,7 @@ func _refresh_hp_bar() -> void:
 func _spawn_damage_number(amount: float, color: Color) -> void:
 	var dn := DAMAGE_NUMBER.instantiate()
 	get_tree().current_scene.add_child(dn)
-	dn.global_position = global_position + Vector3(0, 2.0, 0)
+	dn.global_position = global_position + damage_number_offset
 	if dn.has_method("setup"):
 		dn.setup(amount, color)
 

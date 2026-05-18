@@ -10,6 +10,7 @@ extends CharacterBody3D
 @export var max_hp: float = 50.0
 @export var damage: float = 5.0
 @export var despawn_delay: float = 3.0  # seconds after death anim before queue_free
+@export var damage_number_offset: Vector3 = Vector3(0, 1.5, 0)  # spawn position relative to enemy origin (torso)
 
 @export_group("Animations")
 @export var anim_idle: String = "Idle01"
@@ -84,7 +85,7 @@ func _refresh_hp_bar() -> void:
 func _spawn_damage_number(amount: float, color: Color) -> void:
 	var dn := DAMAGE_NUMBER.instantiate()
 	get_tree().current_scene.add_child(dn)
-	dn.global_position = global_position + Vector3(0, 3.0, 0)
+	dn.global_position = global_position + damage_number_offset
 	if dn.has_method("setup"):
 		dn.setup(amount, color)
 
