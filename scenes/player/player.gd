@@ -45,10 +45,12 @@ func _ready() -> void:
 # AnimationPlayer.
 func _load_external_animations() -> void:
 	if animator == null:
+		push_warning("[Player] animator not found at ModelInstance/AnimationPlayer")
 		return
 	var pack = ANIM_LIBRARY_SCENE.instantiate()
 	var pack_ap: AnimationPlayer = pack.find_child("AnimationPlayer", true, false)
 	if pack_ap == null:
+		push_warning("[Player] no AnimationPlayer found inside hu_m_base_pack.fbx")
 		pack.queue_free()
 		return
 	var lib := AnimationLibrary.new()
@@ -56,14 +58,23 @@ func _load_external_animations() -> void:
 		var anim: Animation = pack_ap.get_animation(n)
 		if anim == null:
 			continue
-		# Force common locomotion clips to loop (FBX importer brings them in
-		# as one-shot by default, same gotcha as the enemy idle/walk fix).
 		if n == anim_idle or n == anim_walk:
 			anim.loop_mode = Animation.LOOP_LINEAR
 		lib.add_animation(n, anim)
 	if animator.has_animation_library(""):
 		animator.remove_animation_library("")
 	animator.add_animation_library("", lib)
+	print("[Player] loaded %d animations; has '%s'? %s, has '%s'? %s" % [
+		animator.get_animation_list().size(),
+		anim_idle, animator.has_animation(anim_idle),
+		anim_walk, animator.has_animation(anim_walk),
+	])
+	# Diagnostic: inspect the first track path of Idle01 to see whether it
+	# targets the body's Skeleton3D or a different/missing node.
+	if animator.has_animation(anim_idle):
+		var idle: Animation = animator.get_animation(anim_idle)
+		if idle.get_track_count() > 0:
+			print("[Player] %s first track path: %s" % [anim_idle, idle.track_get_path(0)])
 	pack.queue_free()
 
 func _set_anim(anim_name: String) -> void:
@@ -124,6 +135,15 @@ func _physics_process(delta: float) -> void:
 	# Drive animation state from horizontal velocity.
 	var moving := absf(velocity.x) > 0.1 or absf(velocity.z) > 0.1
 	_set_anim(anim_walk if moving else anim_idle)
+
+	# Rotate to face movement direction. The Human FBX is authored with -Z
+	# as its visual forward (player "facing south" at spawn confirms this),
+	# which matches Godot's default look_at convention — no model flip needed.
+	if moving:
+		var move_dir := Vector3(velocity.x, 0, velocity.z).normalized()
+		look_at(global_position + move_dir, Vector3.UP)
+		rotation.x = 0
+		rotation.z = 0
 
 func _set_target_from_mouse(mouse_pos: Vector2) -> void:
 	var camera := get_viewport().get_camera_3d()
