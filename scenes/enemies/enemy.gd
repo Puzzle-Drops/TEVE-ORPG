@@ -25,6 +25,14 @@ var aggro_exit_pending: bool = false  # target left aggro mid-swing; resolve aft
 func _ready() -> void:
 	spawn_position = global_position
 	if animator:
+		# Godot's FBX importer brings animations in as one-shot by default.
+		# Force idle and walk to loop so the cyclops doesn't freeze on the last
+		# frame mid-gameplay. Attack stays one-shot so animation_finished fires.
+		for anim_name in [anim_idle, anim_walk]:
+			if animator.has_animation(anim_name):
+				var a := animator.get_animation(anim_name)
+				if a != null:
+					a.loop_mode = Animation.LOOP_LINEAR
 		animator.animation_finished.connect(_on_animation_finished)
 	_update_animation()
 
