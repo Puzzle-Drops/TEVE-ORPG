@@ -48,6 +48,7 @@ const ANIM_LIBRARY_SCENE = preload("res://assets/models/players/animations/chara
 @onready var model: Node3D = get_node_or_null("ModelInstance")
 
 func _ready() -> void:
+	add_to_group("player")  # so the CameraRig can find us by group lookup
 	hp = max_hp
 	spawn_position = global_position
 	target_position = global_position
