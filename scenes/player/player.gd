@@ -2,6 +2,7 @@ extends CharacterBody3D
 
 @export var move_speed: float = 5.0
 @export var stop_distance: float = 0.2
+@export var turn_speed: float = 12.0  # radians/sec; how fast the model yaws toward face direction
 
 @export_group("Combat")
 @export var max_hp: float = 100.0
@@ -185,7 +186,9 @@ func _physics_process(delta: float) -> void:
 		_set_anim(anim_walk if moving else anim_idle)
 
 	# Face direction: pending_target during wind-up beats everything;
-	# otherwise attack_target > movement direction.
+	# otherwise attack_target > movement direction. Rotation is rate-limited
+	# (turn_speed rad/sec) so the model eases into the new facing instead of
+	# snapping — feels less robotic than instant look_at.
 	if model:
 		var face_dir := Vector3.ZERO
 		if locked and pending_target != null and is_instance_valid(pending_target):
@@ -197,9 +200,15 @@ func _physics_process(delta: float) -> void:
 		elif absf(velocity.x) > 0.1 or absf(velocity.z) > 0.1:
 			face_dir = Vector3(velocity.x, 0, velocity.z)
 		if face_dir.length() > 0.01:
-			model.look_at(model.global_position + face_dir.normalized(), Vector3.UP, true)
-			model.rotation.x = 0
-			model.rotation.z = 0
+			var dir_norm := face_dir.normalized()
+			# Model uses +Z as visual forward (use_model_front in the previous
+			# look_at). Desired yaw = angle in XZ where +Z faces dir_norm.
+			var target_yaw := atan2(dir_norm.x, dir_norm.z)
+			var diff := angle_difference(model.rotation.y, target_yaw)
+			var step := clampf(diff, -turn_speed * delta, turn_speed * delta)
+			model.rotation.y += step
+		model.rotation.x = 0
+		model.rotation.z = 0
 
 func _raycast_enemy(mouse_pos: Vector2) -> Node3D:
 	var camera := get_viewport().get_camera_3d()
