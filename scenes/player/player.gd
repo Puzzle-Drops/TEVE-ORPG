@@ -157,8 +157,11 @@ func _physics_process(delta: float) -> void:
 			velocity.x = direction.x * move_speed
 			velocity.z = direction.z * move_speed
 		else:
-			# Arrived at the attack-move target. Done.
+			# Arrived at the attack-move target. Done — clear the destination
+			# AND sync target_position so the fallback move-to-cursor branch
+			# doesn't pull us back to wherever target_position was last set.
 			has_attack_move_dest = false
+			target_position = global_position
 			velocity.x = 0
 			velocity.z = 0
 	else:
