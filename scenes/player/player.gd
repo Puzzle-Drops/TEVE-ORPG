@@ -29,11 +29,12 @@ var cast_timer: float = 0.0       # > 0 = locked in cast point (wind-up); fires 
 var pending_target: Node3D = null # captured at swing start; projectile homes on this
 var spawn_position: Vector3
 var current_anim: String = ""
-# Attack-move: press A to "arm", next left-click sets the destination.
-# Player walks toward destination and auto-engages enemies in range along the way.
-var attack_move_armed: bool = false
+# Attack-move: A on ground sets destination; player walks toward it and
+# auto-engages enemies within attack_move_engage_range along the way.
 var attack_move_destination: Vector3 = Vector3.ZERO
 var has_attack_move_dest: bool = false
+# Stand-still toggle: S key flips it on/off. Any move/attack command clears it.
+var stand_still_active: bool = false
 
 const ENEMY_LAYER_MASK := 4  # layer 3 = "enemy" per project.godot
 const DAMAGE_NUMBER = preload("res://scenes/ui/damage_number.tscn")
@@ -64,25 +65,50 @@ func _physics_process(delta: float) -> void:
 			_fire_projectile()
 
 	var locked := cast_timer > 0  # true only during the (short) cast-point window
-	var stand_still := Input.is_action_pressed("stand_still")
 
 	# Input — accepted even during cast point so we can queue intent.
-	if Input.is_action_just_pressed("attack_move"):
-		attack_move_armed = true
-	if Input.is_action_pressed("move_to_cursor"):
-		_set_target_from_mouse(get_viewport().get_mouse_position())
-		attack_target = null
-		has_attack_move_dest = false  # right-click cancels attack-move
-		attack_move_armed = false
-	if Input.is_action_just_pressed("basic_attack"):
-		if attack_move_armed:
-			_set_attack_move_destination(get_viewport().get_mouse_position())
-			attack_move_armed = false
+	# Right-click: enemy under cursor -> attack; ground -> move there.
+	if Input.is_action_just_pressed("move_to_cursor"):
+		var enemy := _raycast_enemy(get_viewport().get_mouse_position())
+		if enemy != null:
+			attack_target = enemy
+			has_attack_move_dest = false
+			stand_still_active = false
 		else:
-			# Normal left-click: pick a specific target if it's an enemy.
-			_try_select_attack_target(get_viewport().get_mouse_position())
-			if attack_target != null:
+			var ground = _raycast_ground(get_viewport().get_mouse_position())
+			if ground != null:
+				target_position = ground
+				attack_target = null
 				has_attack_move_dest = false
+				stand_still_active = false
+	# Right-click held (after initial press) updates the move target while
+	# we're not currently attacking. Lets you drag the cursor and have the
+	# player follow continuously.
+	elif Input.is_action_pressed("move_to_cursor"):
+		if attack_target == null and not has_attack_move_dest:
+			var ground = _raycast_ground(get_viewport().get_mouse_position())
+			if ground != null:
+				target_position = ground
+
+	# A key: enemy under cursor -> attack; ground -> attack-move to there.
+	if Input.is_action_just_pressed("attack_move"):
+		var enemy := _raycast_enemy(get_viewport().get_mouse_position())
+		if enemy != null:
+			attack_target = enemy
+			has_attack_move_dest = false
+		else:
+			var ground = _raycast_ground(get_viewport().get_mouse_position())
+			if ground != null:
+				attack_move_destination = ground
+				has_attack_move_dest = true
+				attack_target = null
+				target_position = global_position
+		stand_still_active = false
+
+	# S key: toggle stand-still on/off. Doesn't clear targets — when you
+	# release the toggle, the player resumes whatever they were doing.
+	if Input.is_action_just_pressed("stand_still"):
+		stand_still_active = not stand_still_active
 
 	if attack_target != null:
 		if not is_instance_valid(attack_target):
@@ -111,14 +137,14 @@ func _physics_process(delta: float) -> void:
 			velocity.z = 0
 			if attack_timer <= 0:
 				_start_swing()
-		elif stand_still:
+		elif stand_still_active:
 			velocity.x = 0
 			velocity.z = 0
 		else:
 			var direction := to_target.normalized()
 			velocity.x = direction.x * move_speed
 			velocity.z = direction.z * move_speed
-	elif stand_still:
+	elif stand_still_active:
 		velocity.x = 0
 		velocity.z = 0
 	elif has_attack_move_dest:
@@ -172,23 +198,10 @@ func _physics_process(delta: float) -> void:
 			model.rotation.x = 0
 			model.rotation.z = 0
 
-func _set_target_from_mouse(mouse_pos: Vector2) -> void:
+func _raycast_enemy(mouse_pos: Vector2) -> Node3D:
 	var camera := get_viewport().get_camera_3d()
-	if not camera:
-		return
-	var from := camera.project_ray_origin(mouse_pos)
-	var dir := camera.project_ray_normal(mouse_pos)
-	if absf(dir.y) < 0.0001:
-		return
-	var t := -from.y / dir.y
-	if t < 0:
-		return
-	target_position = from + dir * t
-
-func _try_select_attack_target(mouse_pos: Vector2) -> void:
-	var camera := get_viewport().get_camera_3d()
-	if not camera:
-		return
+	if camera == null:
+		return null
 	var from := camera.project_ray_origin(mouse_pos)
 	var to := from + camera.project_ray_normal(mouse_pos) * 1000.0
 	var space := get_world_3d().direct_space_state
@@ -196,26 +209,24 @@ func _try_select_attack_target(mouse_pos: Vector2) -> void:
 	query.collision_mask = ENEMY_LAYER_MASK
 	var result := space.intersect_ray(query)
 	if result.is_empty():
-		return
+		return null
 	var collider = result["collider"]
 	if collider != null and collider.has_method("take_damage"):
-		attack_target = collider
+		return collider
+	return null
 
-func _set_attack_move_destination(mouse_pos: Vector2) -> void:
+func _raycast_ground(mouse_pos: Vector2):
 	var camera := get_viewport().get_camera_3d()
-	if not camera:
-		return
+	if camera == null:
+		return null
 	var from := camera.project_ray_origin(mouse_pos)
 	var dir := camera.project_ray_normal(mouse_pos)
 	if absf(dir.y) < 0.0001:
-		return
+		return null
 	var t := -from.y / dir.y
 	if t < 0:
-		return
-	attack_move_destination = from + dir * t
-	has_attack_move_dest = true
-	attack_target = null  # clear any explicit click-target; we engage by proximity now
-	target_position = global_position  # cancel any plain move-to-cursor in progress
+		return null
+	return from + dir * t
 
 func _find_nearest_enemy(max_dist: float) -> Node3D:
 	var nearest: Node3D = null
@@ -337,7 +348,7 @@ func take_damage(amount: float, attacker: Node3D) -> void:
 	if attack_target == null and attacker != null and is_instance_valid(attacker):
 		var to_dest := target_position - global_position
 		to_dest.y = 0
-		if to_dest.length() < stop_distance:
+		if to_dest.length() < stop_distance and not has_attack_move_dest:
 			attack_target = attacker
 	if hp <= 0:
 		_respawn()
@@ -365,5 +376,5 @@ func _respawn() -> void:
 	pending_target = null
 	cast_timer = 0.0
 	has_attack_move_dest = false
-	attack_move_armed = false
+	stand_still_active = false
 	_refresh_hp_bar()
