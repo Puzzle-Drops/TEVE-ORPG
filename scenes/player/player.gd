@@ -11,6 +11,7 @@ extends CharacterBody3D
 @export var cast_point: float = 0.3           # wind-up duration; locked here, then projectile fires
 @export var projectile_speed: float = 100.0   # melee = very fast/invisible; ranged classes will go slower
 @export var projectile_visible: bool = false  # melee invisible by convention
+@export var attack_move_engage_range: float = 6.0  # auto-engage radius while attack-moving
 @export var damage_number_offset: Vector3 = Vector3(0, 0.3, 0)
 
 @export_group("Animations")
@@ -28,6 +29,11 @@ var cast_timer: float = 0.0       # > 0 = locked in cast point (wind-up); fires 
 var pending_target: Node3D = null # captured at swing start; projectile homes on this
 var spawn_position: Vector3
 var current_anim: String = ""
+# Attack-move: press A to "arm", next left-click sets the destination.
+# Player walks toward destination and auto-engages enemies in range along the way.
+var attack_move_armed: bool = false
+var attack_move_destination: Vector3 = Vector3.ZERO
+var has_attack_move_dest: bool = false
 
 const ENEMY_LAYER_MASK := 4  # layer 3 = "enemy" per project.godot
 const DAMAGE_NUMBER = preload("res://scenes/ui/damage_number.tscn")
@@ -61,17 +67,35 @@ func _physics_process(delta: float) -> void:
 	var stand_still := Input.is_action_pressed("stand_still")
 
 	# Input — accepted even during cast point so we can queue intent.
+	if Input.is_action_just_pressed("attack_move"):
+		attack_move_armed = true
 	if Input.is_action_pressed("move_to_cursor"):
 		_set_target_from_mouse(get_viewport().get_mouse_position())
 		attack_target = null
+		has_attack_move_dest = false  # right-click cancels attack-move
+		attack_move_armed = false
 	if Input.is_action_just_pressed("basic_attack"):
-		_try_select_attack_target(get_viewport().get_mouse_position())
+		if attack_move_armed:
+			_set_attack_move_destination(get_viewport().get_mouse_position())
+			attack_move_armed = false
+		else:
+			# Normal left-click: pick a specific target if it's an enemy.
+			_try_select_attack_target(get_viewport().get_mouse_position())
+			if attack_target != null:
+				has_attack_move_dest = false
 
 	if attack_target != null:
 		if not is_instance_valid(attack_target):
 			attack_target = null
 		elif attack_target.has_method("is_alive") and not attack_target.is_alive():
 			attack_target = null
+
+	# Auto-engage during attack-move: if we're heading somewhere and not
+	# currently attacking anything, grab the nearest enemy in range.
+	if has_attack_move_dest and attack_target == null and cast_timer <= 0:
+		var nearby := _find_nearest_enemy(attack_move_engage_range)
+		if nearby != null:
+			attack_target = nearby
 
 	# Movement / attack state
 	if locked:
@@ -97,6 +121,20 @@ func _physics_process(delta: float) -> void:
 	elif stand_still:
 		velocity.x = 0
 		velocity.z = 0
+	elif has_attack_move_dest:
+		# Walk toward the attack-move destination; auto-engage logic above
+		# will set attack_target if an enemy comes into engage range.
+		var to_dest := attack_move_destination - global_position
+		to_dest.y = 0
+		if to_dest.length() > stop_distance:
+			var direction := to_dest.normalized()
+			velocity.x = direction.x * move_speed
+			velocity.z = direction.z * move_speed
+		else:
+			# Arrived at the attack-move target. Done.
+			has_attack_move_dest = false
+			velocity.x = 0
+			velocity.z = 0
 	else:
 		var to_target := target_position - global_position
 		to_target.y = 0
@@ -162,6 +200,36 @@ func _try_select_attack_target(mouse_pos: Vector2) -> void:
 	var collider = result["collider"]
 	if collider != null and collider.has_method("take_damage"):
 		attack_target = collider
+
+func _set_attack_move_destination(mouse_pos: Vector2) -> void:
+	var camera := get_viewport().get_camera_3d()
+	if not camera:
+		return
+	var from := camera.project_ray_origin(mouse_pos)
+	var dir := camera.project_ray_normal(mouse_pos)
+	if absf(dir.y) < 0.0001:
+		return
+	var t := -from.y / dir.y
+	if t < 0:
+		return
+	attack_move_destination = from + dir * t
+	has_attack_move_dest = true
+	attack_target = null  # clear any explicit click-target; we engage by proximity now
+	target_position = global_position  # cancel any plain move-to-cursor in progress
+
+func _find_nearest_enemy(max_dist: float) -> Node3D:
+	var nearest: Node3D = null
+	var nearest_dist := max_dist
+	for e in get_tree().get_nodes_in_group("enemies"):
+		if not is_instance_valid(e):
+			continue
+		if e.has_method("is_alive") and not e.is_alive():
+			continue
+		var d := global_position.distance_to(e.global_position)
+		if d < nearest_dist:
+			nearest_dist = d
+			nearest = e
+	return nearest
 
 func _start_swing() -> void:
 	# Capture the target NOW so the projectile commits to whoever was clicked,
@@ -296,4 +364,6 @@ func _respawn() -> void:
 	attack_target = null
 	pending_target = null
 	cast_timer = 0.0
+	has_attack_move_dest = false
+	attack_move_armed = false
 	_refresh_hp_bar()

@@ -51,6 +51,7 @@ var hp: float
 const DAMAGE_NUMBER = preload("res://scenes/ui/damage_number.tscn")
 
 func _ready() -> void:
+	add_to_group("enemies")
 	_apply_tier()
 	hp = max_hp
 	spawn_position = global_position
