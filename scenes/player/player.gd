@@ -7,7 +7,10 @@ extends CharacterBody3D
 @export var max_hp: float = 100.0
 @export var attack_damage: float = 10.0
 @export var attack_range: float = 2.5
-@export var attack_cooldown: float = 0.8
+@export var attack_cooldown: float = 1.0
+@export var cast_point: float = 0.3           # wind-up duration; locked here, then projectile fires
+@export var projectile_speed: float = 100.0   # melee = very fast/invisible; ranged classes will go slower
+@export var projectile_visible: bool = false  # melee invisible by convention
 @export var damage_number_offset: Vector3 = Vector3(0, 0.3, 0)
 
 @export_group("Animations")
@@ -20,13 +23,15 @@ extends CharacterBody3D
 var hp: float
 var target_position: Vector3
 var attack_target: Node3D = null
-var attack_timer: float = 0.0
+var attack_timer: float = 0.0     # cooldown between swings
+var cast_timer: float = 0.0       # > 0 = locked in cast point (wind-up); fires projectile at 0
+var pending_target: Node3D = null # captured at swing start; projectile homes on this
 var spawn_position: Vector3
-var swinging: bool = false  # mid-attack animation; movement and anim changes locked
 var current_anim: String = ""
 
 const ENEMY_LAYER_MASK := 4  # layer 3 = "enemy" per project.godot
 const DAMAGE_NUMBER = preload("res://scenes/ui/damage_number.tscn")
+const PROJECTILE = preload("res://scenes/projectile/projectile.tscn")
 const ANIM_LIBRARY_SCENE = preload("res://assets/models/players/animations/characters/hu_m_base_pack.fbx")
 
 @onready var hp_bar: ProgressBar = get_node_or_null("HUD/PlayerHP")
@@ -40,25 +45,28 @@ func _ready() -> void:
 	target_position = global_position
 	_refresh_hp_bar()
 	_load_external_animations()
-	if animator:
-		animator.animation_finished.connect(_on_animation_finished)
 	_set_anim(anim_idle)
 
 func _physics_process(delta: float) -> void:
 	if attack_timer > 0:
 		attack_timer -= delta
 
+	# Cast point tick — fire projectile when the wind-up completes.
+	if cast_timer > 0:
+		cast_timer -= delta
+		if cast_timer <= 0:
+			_fire_projectile()
+
+	var locked := cast_timer > 0  # true only during the (short) cast-point window
 	var stand_still := Input.is_action_pressed("stand_still")
 
-	# Input
+	# Input — accepted even during cast point so we can queue intent.
 	if Input.is_action_pressed("move_to_cursor"):
 		_set_target_from_mouse(get_viewport().get_mouse_position())
 		attack_target = null
 	if Input.is_action_just_pressed("basic_attack"):
 		_try_select_attack_target(get_viewport().get_mouse_position())
 
-	# Drop the attack target if it's been freed OR dead but still in the
-	# despawn delay window. Either way we stop trying to hit it.
 	if attack_target != null:
 		if not is_instance_valid(attack_target):
 			attack_target = null
@@ -66,8 +74,8 @@ func _physics_process(delta: float) -> void:
 			attack_target = null
 
 	# Movement / attack state
-	if swinging:
-		# Locked in attack animation — no movement, no new swings.
+	if locked:
+		# Wind-up: stand still, face the target we committed to.
 		velocity.x = 0
 		velocity.z = 0
 	elif attack_target != null:
@@ -80,7 +88,6 @@ func _physics_process(delta: float) -> void:
 			if attack_timer <= 0:
 				_start_swing()
 		elif stand_still:
-			# Hold position; wait for the target to come into range.
 			velocity.x = 0
 			velocity.z = 0
 		else:
@@ -88,11 +95,9 @@ func _physics_process(delta: float) -> void:
 			velocity.x = direction.x * move_speed
 			velocity.z = direction.z * move_speed
 	elif stand_still:
-		# No target and pressed S — just stand here.
 		velocity.x = 0
 		velocity.z = 0
 	else:
-		# Plain move-to-cursor.
 		var to_target := target_position - global_position
 		to_target.y = 0
 		if to_target.length() > stop_distance:
@@ -106,16 +111,20 @@ func _physics_process(delta: float) -> void:
 	velocity.y = 0
 	move_and_slide()
 
-	# Anim state (skip while swinging — the attack anim is playing and
-	# locked; _on_animation_finished restores the right anim afterward).
-	if not swinging:
+	# Animation. During cast point the attack anim is playing — don't override.
+	# After cast point we're free, so idle/walk takes over.
+	if not locked:
 		var moving := absf(velocity.x) > 0.1 or absf(velocity.z) > 0.1
 		_set_anim(anim_walk if moving else anim_idle)
 
-	# Face direction: attack target > movement direction > no change.
+	# Face direction: pending_target during wind-up beats everything;
+	# otherwise attack_target > movement direction.
 	if model:
 		var face_dir := Vector3.ZERO
-		if attack_target != null and is_instance_valid(attack_target):
+		if locked and pending_target != null and is_instance_valid(pending_target):
+			face_dir = pending_target.global_position - model.global_position
+			face_dir.y = 0
+		elif attack_target != null and is_instance_valid(attack_target):
 			face_dir = attack_target.global_position - model.global_position
 			face_dir.y = 0
 		elif absf(velocity.x) > 0.1 or absf(velocity.z) > 0.1:
@@ -155,28 +164,35 @@ func _try_select_attack_target(mouse_pos: Vector2) -> void:
 		attack_target = collider
 
 func _start_swing() -> void:
-	if animator == null or not animator.has_animation(anim_attack):
-		# No attack anim available — fall back to instant damage on cooldown
-		# so combat still works.
-		_apply_attack_damage()
-		attack_timer = attack_cooldown
-		return
-	animator.play(anim_attack)
-	current_anim = anim_attack
-	swinging = true
+	# Capture the target NOW so the projectile commits to whoever was clicked,
+	# even if attack_target gets switched mid-cast.
+	pending_target = attack_target
+	cast_timer = cast_point
 	attack_timer = attack_cooldown
+	# Speed up the attack animation to fit the cast point window. The FBX
+	# clip is ~1.0s; if cast_point is 0.3s, play at ~3.3x so the swing
+	# visual completes right as the projectile fires.
+	if animator and animator.has_animation(anim_attack):
+		var anim: Animation = animator.get_animation(anim_attack)
+		var speed_scale := 1.0
+		if anim and anim.length > 0.0 and cast_point > 0.0:
+			speed_scale = anim.length / cast_point
+		animator.play(anim_attack, -1, speed_scale)
+		current_anim = anim_attack
 
-func _apply_attack_damage() -> void:
-	if attack_target == null or not is_instance_valid(attack_target):
+func _fire_projectile() -> void:
+	if pending_target == null or not is_instance_valid(pending_target):
+		pending_target = null
 		return
-	if attack_target.has_method("take_damage"):
-		attack_target.take_damage(attack_damage, self)
-
-func _on_animation_finished(anim_name: String) -> void:
-	if anim_name == anim_attack:
-		swinging = false
-		_apply_attack_damage()
-		# Anim will be re-set by _physics_process next tick (idle or walk).
+	if pending_target.has_method("is_alive") and not pending_target.is_alive():
+		pending_target = null
+		return
+	var proj := PROJECTILE.instantiate()
+	get_tree().current_scene.add_child(proj)
+	proj.global_position = global_position + Vector3(0, 1.0, 0)  # chest height
+	if proj.has_method("setup"):
+		proj.setup(self, pending_target, attack_damage, projectile_speed, projectile_visible)
+	pending_target = null
 
 func _load_external_animations() -> void:
 	if animator == null:
@@ -231,7 +247,7 @@ func _retarget_to_skeleton(anim: Animation) -> void:
 		anim.remove_track(i)
 
 func _set_anim(anim_name: String) -> void:
-	if animator == null or swinging:
+	if animator == null or cast_timer > 0:
 		return
 	if anim_name == "" or current_anim == anim_name:
 		return
@@ -278,5 +294,6 @@ func _respawn() -> void:
 	global_position = spawn_position
 	target_position = global_position
 	attack_target = null
-	swinging = false
+	pending_target = null
+	cast_timer = 0.0
 	_refresh_hp_bar()
