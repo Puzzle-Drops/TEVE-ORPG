@@ -12,10 +12,14 @@ config_version=5
 
 config/name="Twilight's Forever"
 config/description="3D multiplayer ORPG, 8-player co-op dungeons"
-run/main_scene="uid://dtolol4a64rku"
+run/main_scene="res://scenes/ui/lobby.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 boot_splash/image="uid://dcjerlwgk7as5"
 config/icon="res://icon.svg"
+
+[autoload]
+
+Network="*res://autoload/network.gd"
 
 [display]
 
